@@ -12,4 +12,6 @@ Salim -> SalimBouch
 Tobias -> Tobias199711
 Lennart -> lennaht
 Fabian -> naibafz
-Linux -> SDeKay
+Linus -> SDeKay
+Lukas -> lukas150800
+Hadi -> HadiAltarifi
