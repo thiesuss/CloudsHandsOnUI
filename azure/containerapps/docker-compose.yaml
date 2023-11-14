@@ -1,0 +1,15 @@
+version: v2
+services:
+  bestellungsverwaltung:
+    image: lennahht/aca-demo-bestellungsverwaltung:latest
+    ports:
+      - 8080:80
+    environment:
+      - INVENTORY_API_URL=http://lagerverwaltung/api
+      - CORS=true
+  lagerverwaltung:
+    image: lennahht/aca-demo-lagerverwaltung:latest
+    ports:
+      - 8081:80
+    environment:
+      - CORS=true
