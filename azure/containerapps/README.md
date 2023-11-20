@@ -6,8 +6,8 @@ The order management depends on the inventory management.
 
 ## Development
 ### Environment
-* NodeJS (getestet mit 20.9.0)
-* npm (getestet mit 10.1.0)
+* NodeJS (tested with 20.9.0)
+* npm (testet with 10.1.0)
 
 ### Steps
 To be executed per application part.
@@ -22,7 +22,7 @@ Start the development server:
 $ npm run dev
 ```
 
-Define environment variables by creatint a .env file. Just copy the template:
+Define environment variables by creating a .env file. Just copy the template:
 ```bash
 cp .env.template .env
 ```
