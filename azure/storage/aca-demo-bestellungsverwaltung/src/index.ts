@@ -7,6 +7,7 @@ import defaultErrorHandler from './middleware/defaultErrorHandler';
 import router from './router';
 
 import InventoryService from './services/InventoryService';
+import redis from './redis';
 
 dotenv.config();
 
@@ -15,6 +16,11 @@ if (!process.env.INVENTORY_API_URL) {
 }
 
 export const inventoryService = new InventoryService(process.env.INVENTORY_API_URL);
+
+redis.connect()
+    .then(() => {
+        console.log('Connected to Redis on host ', process.env.REDIS_HOST)
+    });
 
 const app = express();
 app.use(morgan('combined'));
