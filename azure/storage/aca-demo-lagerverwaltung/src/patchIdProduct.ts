@@ -14,7 +14,9 @@ export default async function (req: Request, res: Response) {
     try {
             const exists = await redis.hExists('inventory:items:' + req.params.id, 'stock');
             if (exists) {
-                await redis.hIncrBy('inventory:items:'+ req.params.id, 'stock', req.body.stock);
+                await redis.hSet('inventory:items:'+ req.params.id, {
+                    stock: req.body.stock
+                });
                 const updproduct = await redis.hGetAll('inventory:items:'+ req.params.id);
                 res.json(updproduct);
             } else {
