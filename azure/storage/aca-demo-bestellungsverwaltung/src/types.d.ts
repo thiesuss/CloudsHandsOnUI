@@ -1,5 +1,5 @@
 export interface OrderPosition {
-    id: number,
+    id: string,
     quantity: number
 }
 
@@ -9,11 +9,11 @@ export interface Order {
 }
 
 export interface OrderEntry extends Order {
-    id: number
+    id: string
 }
 
 export interface Product {
-    id: number,
+    id: string,
     name: string,
     price: number,
     stock: number

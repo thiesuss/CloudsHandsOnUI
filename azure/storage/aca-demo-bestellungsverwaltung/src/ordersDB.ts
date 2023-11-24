@@ -1,7 +1,7 @@
 import { Order, OrderEntry } from './types';
+import { v4 as uuid } from 'uuid';
 
 export class Orders {
-    private counter: number = 1;
     private orders: OrderEntry[] = [];
 
     getOrders(): OrderEntry[] {
@@ -9,12 +9,12 @@ export class Orders {
     }
 
     addOrder(order: Order): OrderEntry {
-        const orderEntry: OrderEntry = { id: this.counter++, ...order };
+        const orderEntry: OrderEntry = { id: uuid(), ...order };
         this.orders.push(orderEntry);
         return orderEntry;
     }
 
-    findById(id: number): OrderEntry | null {
+    findById(id: string): OrderEntry | null {
         return this.orders.find(order => order.id === id) || null;
     }
 }

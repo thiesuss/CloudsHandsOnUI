@@ -17,10 +17,7 @@ if (!process.env.INVENTORY_API_URL) {
 
 export const inventoryService = new InventoryService(process.env.INVENTORY_API_URL);
 
-redis.connect()
-    .then(() => {
-        console.log('Connected to Redis on host ', process.env.REDIS_HOST)
-    });
+redis.connect();
 
 const app = express();
 app.use(morgan('combined'));

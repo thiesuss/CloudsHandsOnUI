@@ -10,9 +10,14 @@ const client = createClient({
         tls: true
     },
     password: process.env.REDIS_PASS
-})
+});
+
 client.on('error', e => {
     console.error('Redis Client Error', e);
+});
+
+client.on('connect', () => {
+    console.log(`Connected to Redis on host ${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`);
 });
 
 export default client;

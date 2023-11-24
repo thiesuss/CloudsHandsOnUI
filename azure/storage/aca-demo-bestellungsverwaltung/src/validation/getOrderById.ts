@@ -4,7 +4,6 @@ export default {
     id: {
         in: ['params'],
         exists: true,
-        isInt: true,
-        toInt: true
+        isUUID: { version: 4 }
     }
 } as Schema;

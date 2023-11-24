@@ -16,7 +16,7 @@ export default class InventoryService {
         return products;
     }
 
-    async getProductById(productId: number): Promise<Product> {
+    async getProductById(productId: string): Promise<Product> {
         const res = await fetch(this.apiUrl + '/products/' + productId);
 
         if (!res.ok && res.status === 404) {
@@ -30,7 +30,7 @@ export default class InventoryService {
         return product;
     }
 
-    async updateProductStock(productId: number, stock: number): Promise<Product> {
+    async updateProductStock(productId: string, stock: number): Promise<Product> {
         const res = await fetch(this.apiUrl + '/products/' + productId, {
             method: 'PATCH',
             headers: {

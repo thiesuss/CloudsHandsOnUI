@@ -15,10 +15,7 @@ export default {
     },
     'items.*.id': {
         exists: true,
-        isInt: {
-            options: { min: 1 }
-        },
-        toInt: true
+        isUUID: { version: 4 }
     },
     'items.*.quantity': {
         exists: true,
