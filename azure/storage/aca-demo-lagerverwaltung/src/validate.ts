@@ -14,6 +14,6 @@ export const productStockValidate = [
 import { param } from 'express-validator';
 export const idParamValidate = [
     param('id','"id" is empty').notEmpty(),
-    param('id','Expected type of parameter "id" is Number (integer), got another type instead!').isInt()
+    param('id','Expected type of parameter "id" is String, got another type instead!').isUUID()
 ];
 

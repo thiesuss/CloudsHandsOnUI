@@ -7,6 +7,12 @@ import cors from 'cors';
 import morgan from 'morgan';
 //Importiert etwas womit alle übergebenen validierungsregeln in 
 //einem Methodenaufruf abgearbeitet werden validationResult(req);
+//npm run dev hoppsscotch http//localhost:8080/api/products/
+
+
+
+import redis from './redis';//falls woanders redis nutzen nicht noch mal connect aber import redis
+//https://redis.io/docs/data-types/ // hashes Node.js
 
 dotenv.config();
 //app ist der Server, Router ist einfacherer Server. app kann mehrere Router besitzen
@@ -17,85 +23,34 @@ if(process.env.CORS === 'true'){
 }
 app.use(express.json()); // Add this line to enable JSON parsing in the request body
 
+redis.connect()
+    .then(() => {
+        console.log('Connected to Redis on host ', process.env.REDIS_HOST)
+    });//Connection aufbau zum Redis Cache
 
-let products: Product[] = [];
 
+
+export const products: Product[] = [];
+
+import postProduct from './postProduct';
 //Ein neues Produkt erstellen
-app.post('/api/products', productNamePriceValidateRules, productStockValidate, (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ validationErrors: errors.array() });
-    }
-    
-    const product: Product = {
-        id: products.length +1,
-        name: req.body.name,
-        price: req.body.price,
-        stock: req.body.stock,
-    };
+app.post('/api/products', productNamePriceValidateRules, productStockValidate, postProduct);
 
-    products.push(product);
-    res.status(201).json(product);
-});
-
+import getAllProducts from './getAllProducts'; //auslagern der Function
 //Liste an Produkten antworten
-app.get('/api/products', (req: Request, res: Response) => {
-    res.json(products);
-});
+app.get('/api/products', getAllProducts); //function als default daher einfach der Name der Datei
 
+import getIdProduct from './getIdProduct';
 //Ein Produkt antworten oder keines -> Error
-app.get('/api/products/:id', idParamValidate, (req: Request, res: Response) => {
-    const errors = validationResult(req); // auf gültige id prüfen
-    if (!errors.isEmpty()) { //Alle Fehlermelden
-        return res.status(400).json({ validationErrors: errors.array() });
-    }
+app.get('/api/products/:id', idParamValidate, getIdProduct);
 
-    const product = products.find((p) => p.id === parseInt(req.params.id));
+import patchIdProduct from './patchIdProduct';
+//vorhandenes Product ändern
+app.patch('/api/products/:id', idParamValidate, productStockValidate, patchIdProduct);
 
-    if(!product) {
-        
-        res.status(404).json({ error:'Product does not exist!'});
-    } else {
-        res.json(product);
-    }
-});
-
-app.patch('/api/products/:id', idParamValidate, productStockValidate, (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ validationErrors: errors.array() });
-    }
-        const product = products.find((p) => p.id === parseInt(req.params.id));
-
-    if(!product) {
-        
-        res.status(404).json({ error:'Product does not exist!'});
-    } else {
-
-        product.stock = req.body.stock;
-
-        res.json(product);
-    }
-
-});
-
-app.delete('/api/products/:id', idParamValidate,(req: Request, res: Response) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ validationErrors: errors.array() });
-    }
-
-    const index = products.findIndex((p) => p.id === parseInt(req.params.id));
-
-    if(index === -1) {
-        
-        res.status(404).json({ error:'Product does not exist!'});
-    } else {
-        products.splice(index, 1);
-        res.status(204).send();
-    }
-});
+import deleteIdProduct from './deleteIdProduct';
+//product loeschen
+app.delete('/api/products/:id', idParamValidate,deleteIdProduct);
 
 
 
