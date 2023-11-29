@@ -2,9 +2,10 @@
 import { BlobServiceClient, BlockBlobClient, BlockBlobParallelUploadOptions, ContainerClient } from '@azure/storage-blob';
 import * as dotenv from 'dotenv';
 dotenv.config();
+require('dotenv').config();
 
-const accountName = "cloudshandson";
-const sasToken = "sp=racwdli&st=2023-11-28T11:19:32Z&se=2024-04-28T18:19:32Z&sv=2022-11-02&sr=c&sig=6XFvb9rIVOPP3z2h0ehKpHy1xbTPdnO76Tm1pYMT67g%3D";
+const accountName = process.env.STORAGE_ACCOUNT_NAME;
+const sasToken = process.env.SAS_TOKEN;
 if (!accountName) throw Error('Azure Storage accountName not found');
 if (!sasToken) throw Error('Azure Storage accountKey not found');
 
@@ -31,7 +32,7 @@ async function main() {
   //const blobClient = containerClient.getBlockBlobClient(blobName);
   
   // uploading File from local path
-  uploadBlobFromLocalPath(containerClient, 'testimage3', 'C:/Users/thies/VSCode Projects/testimages/testimage3.png');
+  uploadBlobFromLocalPath(containerClient, 'testimage2neu.png', 'C:/Users/thies/VSCode Projects/testimages/testimage2.png');
   //uploadBlobWithIndexTags(containerClient, 'testimage3', 'C:/Users/thies/VSCode Projects/testimages/testimage3.png')
 
 }
@@ -56,8 +57,7 @@ async function uploadBlobFromLocalPath(
     const uploadOptions: BlockBlobParallelUploadOptions = {
       tags: {
         'Sealed': 'false',
-        'Content': 'image',
-        'Date': '28.11.2023',
+        'Content': 'image/png',
       }
     };
   
