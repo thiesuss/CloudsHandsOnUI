@@ -1,0 +1,108 @@
+Index: redis-trigger/Function.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System;\r\nusing System.IO;\r\nusing System.Threading.Tasks;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing Microsoft.Azure.WebJobs;\r\nusing Microsoft.Azure.WebJobs.Extensions.Http;\r\nusing Microsoft.AspNetCore.Http;\r\nusing Microsoft.Extensions.Logging;\r\nusing Newtonsoft.Json;\r\nusing Microsoft.Extensions.Logging;\r\nusing StackExchange.Redis;\r\nusing System;\r\nusing System.Data.SqlClient;\r\nusing System.Collections.Generic;\r\nusing System.Runtime.InteropServices.ComTypes;\r\n\r\nnamespace Microsoft.Azure.WebJobs.Extensions.Redis\r\n{\r\n    public static class WriteBehind\r\n    {\r\n        public const string connectionString = \"redisConnectionString\";\r\n        public const string CosmosDBAdress = \"SQLConnectionString\";\r\n\r\n        [FunctionName(\"KeyeventTrigger\")]\r\n        public static void KeyeventTrigger(\r\n            [RedisPubSubTrigger(connectionString, \"__keyevent@0__:set\")] string message,\r\n            ILogger logger)\r\n        {\r\n            // Retrieve a Redis connection string from environmental variables.\r\n            var redisConnectionString = System.Environment.GetEnvironmentVariable(connectionString);\r\n\r\n            // Connect to a Redis cache instance.\r\n            var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);\r\n            var cache = redisConnection.GetDatabase();\r\n            \r\n\r\n\r\n            // Get the key that was set and its value.\r\n            var key = message;\r\n            string[] path = key.Split(\":\");\r\n            var value = cache.HashValues(key);\r\n            logger.LogInformation($\"Key {key} was set to {value}\");\r\n\r\n            switch (path[1])\r\n            {\r\n                case \"item\": InsertItem(key, value);\r\n                    break;\r\n                case \"image\": InsertImage(key, value);\r\n                    break;\r\n                default: InsertOrder(key, value);\r\n                    break;\r\n            }\r\n            \r\n            // Define the name of the table you created and the column names.\r\n            String tableName = \"dbo.inventory\";\r\n            String column1Value = \"ItemName\";\r\n            String column2Value = \"Price\";\r\n\r\n\r\n            logger.LogInformation($\"C# Redis trigger function executed at: {DateTime.Now}\");\r\n        }\r\n\r\n        private static void InsertOrder(string key, RedisValue[] value)\r\n        {\r\n            throw new NotImplementedException();\r\n        }\r\n\r\n        private static void InsertImage(string key, RedisValue[] value)\r\n        {\r\n            throw new NotImplementedException();\r\n        }\r\n\r\n        private static void InsertItem(string key, RedisValue[] value)\r\n        {\r\n            throw new NotImplementedException();\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/redis-trigger/Function.cs b/redis-trigger/Function.cs
+--- a/redis-trigger/Function.cs	
++++ b/redis-trigger/Function.cs	
+@@ -18,8 +18,8 @@
+ {
+     public static class WriteBehind
+     {
+-        public const string connectionString = "redisConnectionString";
+-        public const string CosmosDBAdress = "SQLConnectionString";
++        public const string connectionString = "DemoTestDev.redis.cache.windows.net:6380,password=pL7fz0N7YvQ3Pgi3R3ajlbiVodYHibiW1AzCaIauZPE=,ssl=True,abortConnect=False";
++        public const string CosmosDBAdress = "AccountEndpoint=https://lager-db.documents.azure.com:443/;AccountKey=Ab2EzMc9NKZcdFGad620GUb7a8cXgUF22D80ZKjwuFfmOcJzLQlDtYeDovz2XerJJ4uXAJoNdhoQACDbSPkxUA==;";
+ 
+         [FunctionName("KeyeventTrigger")]
+         public static void KeyeventTrigger(
+@@ -27,10 +27,10 @@
+             ILogger logger)
+         {
+             // Retrieve a Redis connection string from environmental variables.
+-            var redisConnectionString = System.Environment.GetEnvironmentVariable(connectionString);
++            //var redisConnectionString = System.Environment.GetEnvironmentVariable(connectionString);
+ 
+             // Connect to a Redis cache instance.
+-            var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
++            var redisConnection = ConnectionMultiplexer.Connect(connectionString);
+             var cache = redisConnection.GetDatabase();
+             
+ 
+Index: .idea/.idea.redis-trigger/.idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.idea.redis-trigger/.idea/vcs.xml b/.idea/.idea.redis-trigger/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/.idea.redis-trigger/.idea/vcs.xml	
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/.idea.redis-trigger/.idea/indexLayout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.idea.redis-trigger/.idea/indexLayout.xml b/.idea/.idea.redis-trigger/.idea/indexLayout.xml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/.idea.redis-trigger/.idea/indexLayout.xml	
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="UserContentModel">
++    <attachedFolders />
++    <explicitIncludes />
++    <explicitExcludes />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/.idea.redis-trigger/.idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.idea.redis-trigger/.idea/.gitignore b/.idea/.idea.redis-trigger/.idea/.gitignore
+new file mode 100644
+--- /dev/null	
++++ b/.idea/.idea.redis-trigger/.idea/.gitignore	
+@@ -0,0 +1,13 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Rider ignored files
++/modules.xml
++/projectSettingsUpdater.xml
++/.idea.redis-trigger.iml
++/contentModel.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: .idea/.idea.redis-trigger/.idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.idea.redis-trigger/.idea/encodings.xml b/.idea/.idea.redis-trigger/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/.idea.redis-trigger/.idea/encodings.xml	
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding" addBOMForNewFiles="with BOM under Windows, with no BOM otherwise" />
++</project>
+\ No newline at end of file
