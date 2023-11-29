@@ -5,6 +5,8 @@ import { productNamePriceValidateRules, productStockValidate, idParamValidate } 
 import { body, validationResult } from 'express-validator'; 
 import cors from 'cors';
 import morgan from 'morgan';
+import { BlobServiceClient, BlockBlobClient, BlockBlobParallelUploadOptions, ContainerClient } from '@azure/storage-blob';
+import fileUpload from 'express-fileupload';
 //Importiert etwas womit alle übergebenen validierungsregeln in 
 //einem Methodenaufruf abgearbeitet werden validationResult(req);
 //npm run dev hoppsscotch http//localhost:8080/api/products/
@@ -28,9 +30,22 @@ redis.connect()
         console.log('Connected to Redis on host ', process.env.REDIS_HOST)
     });//Connection aufbau zum Redis Cache
 
+if (!process.env.BLOB_ACCOUNT_URL) {
+    throw new Error('No Blob Account URL given');
+}
 
+if (!process.env.BLOB_CONTAINER_NAME) {
+    throw new Error('No Blob Container name given');
+}
 
-export const products: Product[] = [];
+if (!process.env.BLOB_SAS_UPLOAD_TOKEN) {
+    throw new Error('No SAS token given');
+}
+
+export const blobServiceClient =
+    new BlobServiceClient(`${process.env.BLOB_ACCOUNT_URL}?${process.env.BLOB_SAS_UPLOAD_TOKEN}`);
+export const blobContainerClient =
+    blobServiceClient.getContainerClient(process.env.BLOB_CONTAINER_NAME);
 
 import postProduct from './postProduct';
 //Ein neues Produkt erstellen
@@ -52,7 +67,8 @@ import deleteIdProduct from './deleteIdProduct';
 //product loeschen
 app.delete('/api/products/:id', idParamValidate,deleteIdProduct);
 
-
+import uploadPicture from './uploadPicture';
+app.put('/api/products/:id/picture', idParamValidate, fileUpload(), uploadPicture, getIdProduct);
 
 
 

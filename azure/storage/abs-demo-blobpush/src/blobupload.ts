@@ -2,7 +2,6 @@
 import { BlobServiceClient, BlockBlobClient, BlockBlobParallelUploadOptions, ContainerClient } from '@azure/storage-blob';
 import * as dotenv from 'dotenv';
 dotenv.config();
-require('dotenv').config();
 
 const accountName = process.env.STORAGE_ACCOUNT_NAME;
 const sasToken = process.env.SAS_TOKEN;
