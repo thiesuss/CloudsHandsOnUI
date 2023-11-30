@@ -12,8 +12,6 @@ import {
 
 
 import { useEffect, useState } from 'react';
-import { Toaster } from './components/ui/toaster';
-import { useToast } from './components/ui/use-toast';
 
 interface Position {
   id: number;
@@ -33,26 +31,18 @@ interface Order {
   items: Position[];
 }
 
+const lagerUrl = process.env.LAGER_URL;
+const orderUrl = process.env.ORDER_URL;
+
 function App() {
 
   const [items, setItems] = useState<Item[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
 
-
-  const { toast } = useToast();
-
-  function callToast(data: Response) {
-    toast({
-      variant: data.status === 200 ? "default" : "destructive",
-      title: data.status === 200 ? "Erfolgreich" : "Fehler",
-      description: data.status === 200 ? "Deine Anfrage wurde erfolgreich bearbeitet." : `Deine Anfrage wurde Abgelehnt. HTTP Code: ${data.status}.`,
-      duration: 1500,
-    })
-  }
   
   function fetchOrders() { 
     console.log("fetching tasks");
-    fetch('http://localhost:8000/api/orders', {
+    fetch(`${orderUrl}/orders`, {
       method: 'GET',
     })
     .then((response) => response.json())
@@ -62,14 +52,13 @@ function App() {
   
   function fetchItems() { 
     console.log("fetching persons");
-    fetch('http://localhost:9000/api/products', {
+    fetch(`${lagerUrl}/products`, {
       method: 'GET',
     })
     .then((response) => response.json())
     .then((data) => setItems(data))
     .catch((error) => console.error(error));
   }
-
 
   useEffect(() => {
     fetchOrders();
@@ -79,7 +68,6 @@ function App() {
   return (
     <>
       <div className="bg-gray-800 flex items-center justify-center h-screen  w-screen">
-        <Toaster />
         <div className="w-80% max-w-screen-lg p-8 text-2xl text-white">
           <div className='flex justify-center'>
             <Button onClick={() => {fetchItems(); fetchOrders(); console.log("Click!")}}>Refresh</Button>
