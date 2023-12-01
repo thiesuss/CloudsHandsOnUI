@@ -1,5 +1,4 @@
 import { validationResult } from "express-validator";
-import { products } from ".";
 import { Request, Response } from "express";
 import { Product } from "./products";
 import redis from './redis';
