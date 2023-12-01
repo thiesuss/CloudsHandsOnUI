@@ -8,6 +8,10 @@ export interface Order {
     items: OrderPosition[]
 }
 
+export interface RedisOrder {
+    customer: string
+}
+
 export interface OrderEntry extends Order {
     id: string
 }
