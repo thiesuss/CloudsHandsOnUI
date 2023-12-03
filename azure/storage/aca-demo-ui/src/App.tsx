@@ -10,6 +10,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 import { useEffect, useState } from 'react';
 
@@ -23,6 +32,7 @@ interface Item {
   name: string;
   price: number;
   stock: number;
+  image: string | undefined;
 }
 
 interface Order {
@@ -30,9 +40,6 @@ interface Order {
   customer: string;
   items: Position[];
 }
-
-const lagerUrl = process.env.LAGER_URL;
-const orderUrl = process.env.ORDER_URL;
 
 function App() {
 
@@ -42,7 +49,7 @@ function App() {
   
   function fetchOrders() { 
     console.log("fetching tasks");
-    fetch(`${orderUrl}/orders`, {
+    fetch("https://bestellverwaltung.lennartbeneke.de/api/orders", {
       method: 'GET',
     })
     .then((response) => response.json())
@@ -52,11 +59,11 @@ function App() {
   
   function fetchItems() { 
     console.log("fetching persons");
-    fetch(`${lagerUrl}/products`, {
+    fetch("https://lagerverwaltung.lennartbeneke.de/api/products", {
       method: 'GET',
     })
     .then((response) => response.json())
-    .then((data) => setItems(data))
+    .then((data) => {setItems(data); console.log(data)})
     .catch((error) => console.error(error));
   }
 
@@ -72,7 +79,7 @@ function App() {
           <div className='flex justify-center'>
             <Button onClick={() => {fetchItems(); fetchOrders(); console.log("Click!")}}>Refresh</Button>
           </div>
-          <div className=' mb-'>
+          <div>
             <Table className='mb-16'>
               <TableCaption>Lagerbestand.</TableCaption>
               <TableHeader>
@@ -83,11 +90,34 @@ function App() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {items.map((item) => (
+                {items.map((item: Item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell className="text-right">{item.price} €</TableCell>
                     <TableCell className="text-right">{item.stock}</TableCell>
+                    <TableCell>
+                      {item.image &&
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline">Foto</Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle>Foto für {item.name}</DialogTitle>
+                              <DialogDescription>
+                                {item.name} | {item.price} € | {item.stock} Stück
+                              </DialogDescription>
+                            </DialogHeader>
+                            <picture>
+                              <img src={`https://cloudshandson.blob.core.windows.net/bildspeicher/${item.image}?st=2023-12-01T15:50:23Z&se=2023-12-06T23:50:23Z&si=webapp&spr=https&sv=2022-11-02&sr=c&sig=oK5PxXskq26DgSnYIf4A3Dl6J7wABUNlwCp%2BIl5kk1w%3D`} alt={item.name} />
+                            </picture>
+                            <DialogFooter>
+                              <Button type="submit">Save changes</Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      }
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
