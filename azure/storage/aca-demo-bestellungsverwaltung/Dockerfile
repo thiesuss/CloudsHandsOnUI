@@ -17,6 +17,9 @@ ENV CORS false
 # the following env variable has to be given and be a valid URL
 ENV INVENTORY_API_URL=
 ENV NODE_ENV production
+ENV REDIS_HOST ""
+ENV REDIS_PORT=6380
+ENV REDIS_PASS ""
 
 USER node
 

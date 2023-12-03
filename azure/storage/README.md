@@ -39,12 +39,12 @@ This requires you to have Docker installed.
 
 Build the Docker Image:
 ```bash
-$ docker build -t lennahht/aca-demo-bestellungsverwaltung:latest .
+$ docker build -t lennahht/storage-bestellungsverwaltung:latest .
 ```
 
 Push the Image to a remote registry:
 ```bash
-$ docker push lennahht/aca-demo-bestellungsverwaltung:latest .
+$ docker push lennahht/storage-bestellungsverwaltung:latest .
 ```
 
 You can configure the container by setting the environment variables
