@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import ApiError from '../ApiError';
-import { Order, OrderEntry, OrderPosition, Product } from '../types';
+import { Order, OrderEntry, ChangeStockMessage, Product } from '../types';
 import ordersDB from '../ordersDB';
 import { inventoryService } from '..';
+import { stockSender } from '../sbClient';
 
 export default async function (req: Request<{}, {}, Order>, res: Response, next: NextFunction) {
     try {
@@ -29,12 +30,32 @@ export default async function (req: Request<{}, {}, Order>, res: Response, next:
 
         const orderEntry: OrderEntry = ordersDB.addOrder(order);
 
+        const messages: ChangeStockMessage[] = [];
         for (const position of order.items) {
             let product: Product | undefined = products.find(p => p.id === position.id);
             if (!product) continue;
 
-            await inventoryService.updateProductStock(product.id, product.stock - position.quantity);
+            //await inventoryService.updateProductStock(product.id, product.stock - position.quantity);
+            messages.push({
+                body: {
+                    type: 'decr',
+                    amount: position.quantity,
+                    productId: product.id
+                }
+            })
         }
+
+        let batch = await stockSender.createMessageBatch();
+        for (const msg of messages) {
+            if (!batch.tryAddMessage(msg)) {
+                await stockSender.sendMessages(batch);
+                batch = await stockSender.createMessageBatch();
+                if (!batch.tryAddMessage(msg)) {
+                    throw new Error('Can\'t add message to batch.');
+                }
+            }
+        }
+        await stockSender.sendMessages(batch);
 
         res.status(200);
         return res.json(orderEntry);

@@ -10,10 +10,10 @@ if (!process.env.AZ_SERVICE_BUS_STOCK_QUEUE) {
 
 export let sbClient: ServiceBusClient;
 if (process.env.AZ_SERVICE_BUS_CONNECTIONSTRING) {
-    console.log('Trying to connect to Service Bus via Default Credentials');
+    console.log('Trying to connect to Service Bus via Connection String');
     sbClient = new ServiceBusClient(process.env.AZ_SERVICE_BUS_CONNECTIONSTRING);
 } else {
-    console.log('Trying to connect to Service Bus via Connection String');
+    console.log('Trying to connect to Service Bus via Default Credentials');
     if (!process.env.AZ_SERVICE_BUS_NAMESPACE) {
         throw new Error('Environment variable AZ_SERVICE_BUS_NAMESPACE not set.');
     }
