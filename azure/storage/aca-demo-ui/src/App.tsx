@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog"
 
 import { useEffect, useState } from 'react';
@@ -49,7 +50,7 @@ function App() {
   
   function fetchOrders() { 
     console.log("fetching tasks");
-    fetch("https://bestellverwaltung.lennartbeneke.de/api/orders", {
+    fetch("https://poster-bestellverwaltung.grayplant-94041422.germanywestcentral.azurecontainerapps.io/api/orders", {
       method: 'GET',
     })
     .then((response) => response.json())
@@ -59,11 +60,27 @@ function App() {
   
   function fetchItems() { 
     console.log("fetching persons");
-    fetch("https://lagerverwaltung.lennartbeneke.de/api/products", {
+    fetch("https://poster-lagerverwaltung.grayplant-94041422.germanywestcentral.azurecontainerapps.io/api/products", {
       method: 'GET',
     })
     .then((response) => response.json())
-    .then((data) => {setItems(data); console.log(data)})
+    .then((data) => {
+      console.log(data);
+      let newItems: Item[] = [];
+      data.map((raw: any) => {
+        let item: Item = {
+          id: raw.id,
+          name: raw.name,
+          price: raw.price,
+          stock: raw.stock,
+          image: raw.image === null || Object.keys(raw.image).length === 0 ? undefined : raw.image.filename
+        };
+        console.log(item);
+        newItems.push(item);
+      });
+      setItems(newItems); 
+
+    })
     .catch((error) => console.error(error));
   }
 
@@ -74,7 +91,7 @@ function App() {
 
   return (
     <>
-      <div className="bg-gray-800 flex items-center justify-center h-screen  w-screen">
+      <div className="bg-gray-800 flex justify-center h-screen w-screen overflow-auto">
         <div className="w-80% max-w-screen-lg p-8 text-2xl text-white">
           <div className='flex justify-center'>
             <Button onClick={() => {fetchItems(); fetchOrders(); console.log("Click!")}}>Refresh</Button>
@@ -84,6 +101,7 @@ function App() {
               <TableCaption>Lagerbestand.</TableCaption>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[100px] font-bold pr-32">ID</TableHead>
                   <TableHead className="w-[100px] font-bold pr-32">Name</TableHead>
                   <TableHead className="font-bold text-right">Preis</TableHead>
                   <TableHead className="font-bold text-right">Bestand</TableHead>
@@ -92,6 +110,7 @@ function App() {
               <TableBody>
                 {items.map((item: Item) => (
                   <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.id}</TableCell>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell className="text-right">{item.price} €</TableCell>
                     <TableCell className="text-right">{item.stock}</TableCell>
@@ -99,20 +118,22 @@ function App() {
                       {item.image &&
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="outline">Foto</Button>
+                            <Button>Foto</Button>
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
-                              <DialogTitle>Foto für {item.name}</DialogTitle>
+                              <DialogTitle>Foto von {item.name}</DialogTitle>
                               <DialogDescription>
                                 {item.name} | {item.price} € | {item.stock} Stück
                               </DialogDescription>
                             </DialogHeader>
                             <picture>
-                              <img src={`https://cloudshandson.blob.core.windows.net/bildspeicher/${item.image}?st=2023-12-01T15:50:23Z&se=2023-12-06T23:50:23Z&si=webapp&spr=https&sv=2022-11-02&sr=c&sig=oK5PxXskq26DgSnYIf4A3Dl6J7wABUNlwCp%2BIl5kk1w%3D`} alt={item.name} />
-                            </picture>
+                              <img src={`https://postermesse.blob.core.windows.net/productimages/${item.image}`} alt={item.name} />
+                            </picture>ſ
                             <DialogFooter>
-                              <Button type="submit">Save changes</Button>
+                              <DialogClose>
+                                <Button variant="outline">Schließen</Button>
+                              </DialogClose>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
@@ -139,7 +160,7 @@ function App() {
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">{order.id}</TableCell>
                       <TableCell className="font-medium">{order.customer}</TableCell>
-                      <TableCell className="text-right">{item.id}</TableCell>
+                      <TableCell className="text-right">{items.find(obj => obj.id === item.id)?.name}</TableCell>
                       <TableCell className="text-right">{item.quantity}</TableCell>
                     </TableRow>
                   ))
