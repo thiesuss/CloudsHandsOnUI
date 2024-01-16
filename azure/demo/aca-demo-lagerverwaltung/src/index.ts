@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import express, { NextFunction, Request, Response } from 'express';
-import { Product } from './products';
+import { Product } from './types';
 import { productNamePriceValidateRules, productStockValidate, idParamValidate } from './validate'; 
-import { body, validationResult } from 'express-validator'; 
+import * as azureInsights from 'applicationinsights';
 import cors from 'cors';
 import morgan from 'morgan';
 import { BlobServiceClient, BlockBlobClient, BlockBlobParallelUploadOptions, ContainerClient } from '@azure/storage-blob';
@@ -17,6 +17,16 @@ import redis from './redis';//falls woanders redis nutzen nicht noch mal connect
 //https://redis.io/docs/data-types/ // hashes Node.js
 
 dotenv.config();
+
+if (process.env.AZ_INSIGHTS_CONNECTIONSTRING) {
+    console.log('Starting Application Insights');
+    azureInsights.setup(process.env.AZ_INSIGHTS_CONNECTIONSTRING)
+        .setDistributedTracingMode(azureInsights.DistributedTracingModes.AI_AND_W3C);
+    azureInsights.defaultClient.context.tags[azureInsights.defaultClient.context.keys.cloudRole] = 'lagerverwaltung';
+    azureInsights.start();
+}
+import { init } from "./receiverHandler";
+
 //app ist der Server, Router ist einfacherer Server. app kann mehrere Router besitzen
 const app = express();
 app.use(morgan('combined')); //Logging aktivieren
@@ -24,6 +34,8 @@ if(process.env.CORS === 'true'){
     app.use(cors()); 
 }
 app.use(express.json()); // Add this line to enable JSON parsing in the request body
+
+init(); //receiver Anbinden
 
 redis.connect()
     .then(() => {

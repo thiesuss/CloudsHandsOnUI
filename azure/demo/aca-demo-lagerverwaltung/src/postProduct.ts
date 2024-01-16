@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
-import { Product } from "./products";
+import { Product } from "./types";
 import redis from './redis';
 
 import { v4 as uuid } from 'uuid';
