@@ -2,14 +2,23 @@ import dotenv from 'dotenv';
 import express, { NextFunction, Request, Response } from 'express';
 import { Product } from './types';
 import { productNamePriceValidateRules, productStockValidate, idParamValidate } from './validate'; 
-import { body, validationResult } from 'express-validator'; 
+import * as azureInsights from 'applicationinsights';
 import cors from 'cors';
 import morgan from 'morgan';
-import {init} from "./receiverHandler";
 //Importiert etwas womit alle übergebenen validierungsregeln in 
 //einem Methodenaufruf abgearbeitet werden validationResult(req);
 
 dotenv.config();
+
+if (process.env.AZ_INSIGHTS_CONNECTIONSTRING) {
+    console.log('Starting Application Insights');
+    azureInsights.setup(process.env.AZ_INSIGHTS_CONNECTIONSTRING)
+        .setDistributedTracingMode(azureInsights.DistributedTracingModes.AI_AND_W3C);
+    azureInsights.defaultClient.context.tags[azureInsights.defaultClient.context.keys.cloudRole] = 'lagerverwaltung';
+    azureInsights.start();
+}
+import { init } from "./receiverHandler";
+
 //app ist der Server, Router ist einfacherer Server. app kann mehrere Router besitzen
 const app = express();
 app.use(morgan('combined')); //Logging aktivieren

@@ -1,14 +1,24 @@
 import dotenv from 'dotenv';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import defaultErrorHandler from './middleware/defaultErrorHandler';
+import * as azureInsights from 'applicationinsights';
 
-import router from './router';
 
 import InventoryService from './services/InventoryService';
 
 dotenv.config();
+
+if (process.env.AZ_INSIGHTS_CONNECTIONSTRING) {
+    console.log('Starting Application Insights');
+    azureInsights.setup(process.env.AZ_INSIGHTS_CONNECTIONSTRING)
+        .setDistributedTracingMode(azureInsights.DistributedTracingModes.AI_AND_W3C);
+    azureInsights.defaultClient.context.tags[azureInsights.defaultClient.context.keys.cloudRole] = 'bestellverwaltung';
+    azureInsights.start();
+}
+
+import router from './router';
 
 if (!process.env.INVENTORY_API_URL) {
     throw new Error('Environment variable INVENTORY_API_URL must be defined!');

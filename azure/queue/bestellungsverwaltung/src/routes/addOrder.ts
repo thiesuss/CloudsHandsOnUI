@@ -4,10 +4,17 @@ import { Order, OrderEntry, ChangeStockMessage, Product } from '../types';
 import ordersDB from '../ordersDB';
 import { inventoryService } from '..';
 import { stockSender } from '../sbClient';
+import * as azureInsights from 'applicationinsights';
+import { CorrelationContext } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
 
 export default async function (req: Request<{}, {}, Order>, res: Response, next: NextFunction) {
     try {
         const order: Order = req.body;
+        
+        azureInsights.defaultClient?.trackEvent({ name: 'attemptedOrder', properties: { items: order.items } });
+        const ctx: CorrelationContext = azureInsights.getCorrelationContext();
+        const diagnosticId: string | undefined = ctx.operation.traceparent?.toString();
+        console.log(diagnosticId);
 
         let products: Product[] = [];
         for (const position of order.items) {
@@ -31,18 +38,26 @@ export default async function (req: Request<{}, {}, Order>, res: Response, next:
         const orderEntry: OrderEntry = ordersDB.addOrder(order);
 
         const messages: ChangeStockMessage[] = [];
+        
         for (const position of order.items) {
             let product: Product | undefined = products.find(p => p.id === position.id);
             if (!product) continue;
 
-            //await inventoryService.updateProductStock(product.id, product.stock - position.quantity);
-            messages.push({
+            const msg: ChangeStockMessage = {
                 body: {
                     type: 'decr',
                     amount: position.quantity,
                     productId: product.id
                 }
-            })
+            }
+
+            if (diagnosticId) {
+                msg.applicationProperties = {
+                    'Diagnostic-Id': diagnosticId
+                }
+            }
+
+            messages.push(msg);
         }
 
         let batch = await stockSender.createMessageBatch();
