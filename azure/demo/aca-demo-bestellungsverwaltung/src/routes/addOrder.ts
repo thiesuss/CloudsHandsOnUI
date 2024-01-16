@@ -14,7 +14,7 @@ export default async function (req: Request<{}, {}, Order>, res: Response, next:
 
         azureInsights.defaultClient?.trackEvent({ name: 'attemptedOrder', properties: { items: order.items } });
         const ctx: CorrelationContext = azureInsights.getCorrelationContext();
-        const diagnosticId: string | undefined = ctx.operation.traceparent?.toString();
+        const diagnosticId: string | undefined = ctx?.operation.traceparent?.toString();
         console.log(diagnosticId);
 
         let products: Product[] = [];
