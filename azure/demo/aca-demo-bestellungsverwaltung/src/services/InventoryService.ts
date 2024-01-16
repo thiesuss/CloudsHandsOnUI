@@ -1,5 +1,7 @@
-import ApiError from "../ApiError";
-import { Product } from "../types";
+import ApiError from '../ApiError';
+import { Product } from '../types';
+import fetch from 'node-fetch-commonjs';
+
 export default class InventoryService {
     apiUrl: string = '';
     
@@ -20,7 +22,7 @@ export default class InventoryService {
         const res = await fetch(this.apiUrl + '/products/' + productId);
 
         if (!res.ok && res.status === 404) {
-            const msg = (await res.json()).error ?? 'Resource not found';
+            const msg = (await (res.json() as Promise<any>)).error ?? 'Resource not found';
             throw new ApiError(msg, 404);
         } else if (!res.ok) {
             throw new Error('Error accessing Inventory API');
@@ -40,7 +42,7 @@ export default class InventoryService {
         });
 
         if (!res.ok && res.status === 404) {
-            const msg = (await res.json()).error ?? 'Resource not found';
+            const msg = (await (res.json() as Promise<any>)).error ?? 'Resource not found';
             throw new ApiError(msg, 404);
         } else if (!res.ok) {
             throw new Error('Error accessing Inventory API');

@@ -1,3 +1,5 @@
+import { ServiceBusMessage } from "@azure/service-bus"
+
 export interface OrderPosition {
     id: string,
     quantity: number
@@ -21,4 +23,13 @@ export interface Product {
     name: string,
     price: number,
     stock: number
+}
+
+
+export interface ChangeStockMessage extends ServiceBusMessage {
+    body: {
+        productId: string,
+        amount: number,
+        type: 'incr' | 'decr'
+    }
 }

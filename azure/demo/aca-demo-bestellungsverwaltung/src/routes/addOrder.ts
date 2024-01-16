@@ -1,14 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import { v4 as uuid } from 'uuid';
 import ApiError from '../ApiError';
-import { Order, OrderEntry, OrderPosition, Product } from '../types';
-//import ordersDB from '../ordersDB';
+import { ChangeStockMessage, Order, OrderEntry, Product } from '../types';
 import redis from '../redis';
 import { inventoryService } from '..';
+import { stockSender } from '../sbClient';
+import * as azureInsights from 'applicationinsights';
+import { CorrelationContext } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
 
 export default async function (req: Request<{}, {}, Order>, res: Response, next: NextFunction) {
     try {
         const order: Order = req.body;
+
+        azureInsights.defaultClient?.trackEvent({ name: 'attemptedOrder', properties: { items: order.items } });
+        const ctx: CorrelationContext = azureInsights.getCorrelationContext();
+        const diagnosticId: string | undefined = ctx.operation.traceparent?.toString();
+        console.log(diagnosticId);
 
         let products: Product[] = [];
         for (const position of order.items) {
@@ -29,15 +36,42 @@ export default async function (req: Request<{}, {}, Order>, res: Response, next:
             products.push(product);
         }
 
-        //const orderEntry: OrderEntry = ordersDB.addOrder(order);
         const orderEntry: OrderEntry = await writeOrderToCache(order);
+
+        const messages: ChangeStockMessage[] = [];
 
         for (const position of order.items) {
             let product: Product | undefined = products.find(p => p.id === position.id);
             if (!product) continue;
 
-            await inventoryService.updateProductStock(product.id, product.stock - position.quantity);
+            const msg: ChangeStockMessage = {
+                body: {
+                    type: 'decr',
+                    amount: position.quantity,
+                    productId: product.id
+                }
+            }
+
+            if (diagnosticId) {
+                msg.applicationProperties = {
+                    'Diagnostic-Id': diagnosticId
+                }
+            }
+
+            messages.push(msg);
         }
+
+        let batch = await stockSender.createMessageBatch();
+        for (const msg of messages) {
+            if (!batch.tryAddMessage(msg)) {
+                await stockSender.sendMessages(batch);
+                batch = await stockSender.createMessageBatch();
+                if (!batch.tryAddMessage(msg)) {
+                    throw new Error('Can\'t add message to batch.');
+                }
+            }
+        }
+        await stockSender.sendMessages(batch);
 
         res.status(200);
         return res.json(orderEntry);
