@@ -9,9 +9,7 @@ import 'package:meowmed/screens/login.dart';
 import 'package:openapi/api.dart';
 
 class LoggedOutState implements LoginState {
-  LoginStateContext _loginStateContext;
-
-  LoggedOutState(this._loginStateContext) {}
+  LoggedOutState() {}
 
   Future<LoginState> login(String username, String password) async {
     //START MOCK
@@ -27,14 +25,13 @@ class LoggedOutState implements LoginState {
             city: "Hannover"));
     //END MOCK
     final cachedObj = CachedObj<EmployeeRes>(id, employee);
-    final state = LoggedInState(_loginStateContext, cachedObj);
+    final state = LoggedInState(cachedObj);
     await nextState(state);
     // throw WrongCredentialsException();
     // throw TimeoutException("a");
     return state;
   }
 
-  @override
   Widget getWidget() {
     return LoginPage(this);
   }
@@ -50,10 +47,8 @@ class LoggedOutState implements LoginState {
   }
 
   @override
-  Future<LoginState> nextState(LoginState state) async {
+  Future<void> nextState(LoginState state) async {
     await this.dispose();
-    _loginStateContext.state.add(state);
-    state.init();
-    return state;
+    LoginStateContext.getInstance().notifyOfStateChange(state);
   }
 }

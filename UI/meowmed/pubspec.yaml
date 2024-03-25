@@ -12,16 +12,16 @@ dependencies:
   openapi:
     path: ../openapi
   rxdart:
-  injectable:
-  get_it:
   logger: ^2.0.2+1
+  # injectable:
+  # get_it:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  injectable_generator:
-  build_runner:
+  # injectable_generator:
+  # build_runner:
 
 flutter:
   uses-material-design: true

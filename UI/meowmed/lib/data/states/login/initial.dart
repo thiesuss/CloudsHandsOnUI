@@ -4,11 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedOut.dart';
 import 'package:meowmed/data/states/login/state.dart';
-import 'package:meowmed/data/states/state.dart';
 
 class LoginStateInitial implements LoginState {
-  LoginStateInitial(this._loginStateContext) {}
-  LoginStateContext _loginStateContext;
+  LoginStateInitial() {
+  }
 
   @override
   Widget getWidget() {
@@ -23,15 +22,13 @@ class LoginStateInitial implements LoginState {
 
   @override
   Future<void> init() async {
-    final state = LoggedOutState(_loginStateContext);
+    final state = LoggedOutState();
     await nextState(state);
   }
 
   @override
-  Future<LoginState> nextState(LoginState state) async {
+  Future<void> nextState(LoginState state) async {
     await this.dispose();
-    _loginStateContext.state.add(state);
-    state.init();
-    return state;
+    LoginStateContext.getInstance().notifyOfStateChange(state);
   }
 }

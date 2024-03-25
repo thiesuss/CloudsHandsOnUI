@@ -3,16 +3,30 @@ import 'package:meowmed/data/states/login/state.dart';
 import 'package:rxdart/rxdart.dart';
 
 class LoginStateContext {
-  BehaviorSubject<LoginState?> _state = BehaviorSubject.seeded(null);
+  // TODO: auf injectable umstellen
+  static LoginStateContext getInstance() {
+    if (_instance == null) {
+      _instance = LoginStateContext._internal();
+    }
+    return _instance!;
+  }
 
-  BehaviorSubject<LoginState?> get state => _state;
+  static LoginStateContext? _instance;
 
-  LoginStateContext() {
-    _state.listen((value) {
+  LoginStateContext._internal() {
+    print("LoginStateContext created");
+    state.listen((value) {
       print("State changed to $value");
     });
-    final newState = LoginStateInitial(this);
-    _state.add(newState);
-    newState.init();
+    final newState = LoginStateInitial();
+    notifyOfStateChange(newState);
+  }
+
+  BehaviorSubject<LoginState?> _state = BehaviorSubject.seeded(null);
+  Stream<LoginState?> get state => _state.stream;
+
+  void notifyOfStateChange(LoginState state) {
+    _state.add(state);
+    state.init();
   }
 }

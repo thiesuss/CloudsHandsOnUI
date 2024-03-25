@@ -6,6 +6,6 @@ import 'package:meowmed/data/states/state.dart';
 abstract class LoginState implements AppState, StatefullObj {
   LoginState(this._loginStateContext);
   final LoginStateContext _loginStateContext;
-  Future<LoginState> nextState(LoginState state);
+  Future<void> nextState(LoginState state);
   Widget getWidget();
 }

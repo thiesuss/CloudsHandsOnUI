@@ -11,13 +11,12 @@ import 'package:openapi/api.dart';
 
 class LoggedInState implements LoginState {
   final CachedObj<EmployeeRes> employee;
-  LoginStateContext _loginStateContext;
   StreamSubscription? _employeeSubscription;
-  LoggedInState(this._loginStateContext, this.employee) {}
+  LoggedInState(this.employee) {}
 
-  Future<LoginState> logout() async {
-    final state = LoggedOutState(_loginStateContext);
-    return nextState(state);
+  Future<void> logout() async {
+    final state = LoggedOutState();
+    await nextState(state);
   }
 
   @override
@@ -32,20 +31,19 @@ class LoggedInState implements LoginState {
 
   @override
   Future<void> init() async {
-    _employeeSubscription = _loginStateContext.state.listen((state) {
+    _employeeSubscription =
+        LoginStateContext.getInstance().state.listen((state) {
       if (employee.isDeleted()) {
         this.dispose();
-        final state = LoggedOutState(_loginStateContext);
-        _loginStateContext.state.add(state);
+        final state = LoggedOutState();
+        LoginStateContext.getInstance().notifyOfStateChange(state);
       }
     });
   }
 
   @override
-  Future<LoginState> nextState(LoginState state) async {
+  Future<void> nextState(LoginState state) async {
     await this.dispose();
-    _loginStateContext.state.add(state);
-    state.init();
-    return state;
+    LoginStateContext.getInstance().notifyOfStateChange(state);
   }
 }
