@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowmed/widgets/header.dart';
 
 class NewContract extends StatefulWidget {
   const NewContract({super.key});
@@ -17,10 +18,7 @@ class _NewContractState extends State<NewContract> {
           children: [
             Row(
               children: [
-                Text(
-                  "Neuen Vertrag Anlegen",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
+                Header("Neuen Vertrag Anlegen", []),
                 Expanded(child: Container()),
                 Container(
                   width: 350,

@@ -29,8 +29,9 @@ class LoggedOutState implements LoginState {
     final cachedObj = CachedObj<EmployeeRes>(id, employee);
     final state = LoggedInState(_loginStateContext, cachedObj);
     await nextState(state);
-    throw WrongCredentialsException();
-    throw TimeoutException("a");
+    // throw WrongCredentialsException();
+    // throw TimeoutException("a");
+    return state;
   }
 
   @override

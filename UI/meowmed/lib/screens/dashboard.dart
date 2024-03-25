@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meowmed/screens/newcustomer.dart';
+import 'package:meowmed/widgets/header.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -9,7 +11,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  String text = "Neuer Kunde";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,10 +20,7 @@ class _DashboardState extends State<Dashboard> {
           children: [
             Row(
               children: [
-                Text(
-                  "Mitarbeiter Dashboard",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
+                Header("Mitarbeiter Dashboard", []),
                 Expanded(child: Container()),
                 Container(height: 15, width: 60, color: Colors.red),
               ],
@@ -38,13 +36,18 @@ class _DashboardState extends State<Dashboard> {
                             hintText: "Suche..."))),
                 IconButton(
                     onPressed: () {
-                      setState(() {
-                        text = "Hallo";
-                      });
+                      UnimplementedError();
                     },
                     icon: Icon(Icons.search)),
                 Expanded(child: Container()),
-                TextButton(onPressed: () {}, child: Text(text))
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NewCustomer()));
+                    },
+                    child: Text("Neuer Kunde"))
               ],
             ),
             Row(

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meowmed/widgets/header.dart';
 
 class NewCustomer extends StatefulWidget {
   const NewCustomer({super.key});
@@ -19,9 +20,9 @@ class _NewCustomerState extends State<NewCustomer> {
           children: [
             Row(
               children: [
-                Text(
+                Header(
                   "Neuen Kunden Anlegen",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  [],
                 ),
                 Expanded(child: Container()),
                 Container(
@@ -172,11 +173,20 @@ class _NewCustomerState extends State<NewCustomer> {
                 SizedBox(
                   width: 30,
                 ),
-                TextButton(onPressed: () {}, child: Text("Anlegen")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      throw UnimplementedError();
+                    },
+                    child: Text("Anlegen")),
                 SizedBox(
                   width: 30,
                 ),
-                TextButton(onPressed: () {}, child: Text("Abbrechen")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Abbrechen")),
                 Expanded(child: Container()),
               ],
             )

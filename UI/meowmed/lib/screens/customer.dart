@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowmed/widgets/header.dart';
 
 class Customer extends StatefulWidget {
   const Customer({super.key});
@@ -17,10 +18,7 @@ class _CustomerState extends State<Customer> {
         children: [
           Row(
             children: [
-              Text(
-                "Kundendetails",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
+              Header("Kundendetails", []),
               Expanded(child: Container()),
               Container(
                 width: 350,
