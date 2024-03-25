@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:meowmed/screens/customer.dart';
-import 'package:meowmed/screens/dashboard.dart';
-import 'package:meowmed/screens/newcontract.dart';
-import 'package:meowmed/screens/newcustomer.dart';
+import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
+import 'package:meowmed/data/states/login/context.dart';
+import 'package:meowmed/data/states/login/loginStateWidget.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
+  MainApp({super.key});
+  LoginStateContext loginStateContext = LoginStateContext();
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Customer()
-    );
+    return MaterialApp(
+        home: LoginStateWidget(loginStateContext: loginStateContext));
   }
 }

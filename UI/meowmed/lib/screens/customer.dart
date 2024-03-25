@@ -31,7 +31,9 @@ class _CustomerState extends State<Customer> {
               )
             ],
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           Row(
             children: [
               Expanded(child: Container()),
@@ -130,7 +132,8 @@ class _CustomerState extends State<Customer> {
                       width: 230,
                       child: TextFormField(
                         readOnly: true,
-                        initialValue: "12 23457 W 031", //hier die Value hin per API
+                        initialValue:
+                            "12 23457 W 031", //hier die Value hin per API
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "SV-Nummer",
@@ -144,7 +147,8 @@ class _CustomerState extends State<Customer> {
                       width: 230,
                       child: TextFormField(
                         readOnly: true,
-                        initialValue: "12341233534647", //hier die Value hin per API
+                        initialValue:
+                            "12341233534647", //hier die Value hin per API
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Steuer ID",
@@ -179,7 +183,8 @@ class _CustomerState extends State<Customer> {
                       width: 330,
                       child: TextFormField(
                         readOnly: true,
-                        initialValue: "Hauptstrasse 7, 01234 Bielefeld, Deutschland", //hier die Value hin per API
+                        initialValue:
+                            "Hauptstrasse 7, 01234 Bielefeld, Deutschland", //hier die Value hin per API
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Adresse",
@@ -193,7 +198,8 @@ class _CustomerState extends State<Customer> {
                       width: 330,
                       child: TextFormField(
                         readOnly: true,
-                        initialValue: "DE12 3456 7890 1234", //hier die Value hin per API
+                        initialValue:
+                            "DE12 3456 7890 1234", //hier die Value hin per API
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Bankverbindung",
@@ -267,7 +273,7 @@ class _CustomerState extends State<Customer> {
               TextButton(onPressed: () {}, child: Text("Bearbeiten")),
               TextButton(onPressed: () {}, child: Text("Löschen")),
               Expanded(child: Container())
-              ],
+            ],
           )
         ],
       ),
