@@ -68,7 +68,7 @@ class _CustomerListState extends State<CustomerList> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Customer()));
+                                    builder: (context) => Customer(e)));
                           },
                           icon: Icon(Icons.edit)),
                       IconButton(
