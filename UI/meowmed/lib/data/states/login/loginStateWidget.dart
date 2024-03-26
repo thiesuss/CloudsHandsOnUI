@@ -8,7 +8,7 @@ class LoginStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: LoginStateContext.getInstance().state,
+      stream: LoginStateContext.getInstance().stateStream,
       initialData: null,
       builder: (BuildContext context, AsyncSnapshot<LoginState?> snapshot) {
         if (!snapshot.hasData) {

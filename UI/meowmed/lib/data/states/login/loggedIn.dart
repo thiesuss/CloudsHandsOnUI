@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
+import 'package:meowmed/data/services/contractservice.dart';
+import 'package:meowmed/data/services/customerservice.dart';
+import 'package:meowmed/data/services/employeeservice.dart';
+import 'package:meowmed/data/services/mock.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedOut.dart';
 import 'package:meowmed/data/states/login/state.dart';
@@ -12,7 +16,18 @@ import 'package:openapi/api.dart';
 class LoggedInState implements LoginState {
   final CachedObj<EmployeeRes> employee;
   StreamSubscription? _employeeSubscription;
-  LoggedInState(this.employee) {}
+  LoggedInState(
+    this.employee,
+    this.client,
+    this.contractService,
+    this.customerService,
+    this.employeeService,
+  ) {}
+
+  ApiClient client;
+  late ContractService contractService;
+  late CustomerService customerService;
+  late EmployeeService employeeService;
 
   Future<void> logout() async {
     final state = LoggedOutState();
@@ -32,18 +47,20 @@ class LoggedInState implements LoginState {
   @override
   Future<void> init() async {
     _employeeSubscription =
-        LoginStateContext.getInstance().state.listen((state) {
+        LoginStateContext.getInstance().stateStream.listen((state) {
       if (employee.isDeleted()) {
         this.dispose();
         final state = LoggedOutState();
         LoginStateContext.getInstance().notifyOfStateChange(state);
       }
     });
+
+
   }
 
   @override
   Future<void> nextState(LoginState state) async {
     await this.dispose();
-    LoginStateContext.getInstance().notifyOfStateChange(state);
+    await LoginStateContext.getInstance().notifyOfStateChange(state);
   }
 }

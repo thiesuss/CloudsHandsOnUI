@@ -2,6 +2,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:meowmed/data/exeptions/loginError.dart';
 import 'package:meowmed/data/exeptions/timeout.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
+import 'package:meowmed/data/services/contractservice.dart';
+import 'package:meowmed/data/services/customerservice.dart';
+import 'package:meowmed/data/services/employeeservice.dart';
+import 'package:meowmed/data/services/mock.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/data/states/login/state.dart';
@@ -11,7 +15,8 @@ import 'package:openapi/api.dart';
 class LoggedOutState implements LoginState {
   LoggedOutState() {}
 
-  Future<LoginState> login(String username, String password) async {
+  Future<LoginState> login(
+      String username, String password, Uri backendUri) async {
     //START MOCK
     String id = "ID1234567890";
     final EmployeeRes employee = EmployeeRes(
@@ -24,16 +29,31 @@ class LoggedOutState implements LoginState {
             zipCode: 30519,
             city: "Hannover"));
     //END MOCK
+
+    ApiClient client = ApiClient(basePath: backendUri.toString());
+
+    final contractService = ContractService(client);
+    final customerService = CustomerService(client);
+    final employeeService = EmployeeService(client);
+
     final cachedObj = CachedObj<EmployeeRes>(id, employee);
-    final state = LoggedInState(cachedObj);
+    final state = LoggedInState(
+        cachedObj, client, contractService, customerService, employeeService);
+
+    // TODO: remove
+    final url = ApiClient().basePath;
+    if (url == "https://api.catinsurance.com/v1") {
+      await MockService().mock(state);
+    }
+
     await nextState(state);
+
     // throw WrongCredentialsException();
-    // throw TimeoutException("a");
     return state;
   }
 
   Widget getWidget() {
-    return LoginPage(this);
+    return LoginPage();
   }
 
   @override
@@ -49,6 +69,6 @@ class LoggedOutState implements LoginState {
   @override
   Future<void> nextState(LoginState state) async {
     await this.dispose();
-    LoginStateContext.getInstance().notifyOfStateChange(state);
+    await LoginStateContext.getInstance().notifyOfStateChange(state);
   }
 }

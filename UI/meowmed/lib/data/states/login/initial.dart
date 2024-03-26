@@ -29,6 +29,6 @@ class LoginStateInitial implements LoginState {
   @override
   Future<void> nextState(LoginState state) async {
     await this.dispose();
-    LoginStateContext.getInstance().notifyOfStateChange(state);
+    await LoginStateContext.getInstance().notifyOfStateChange(state);
   }
 }

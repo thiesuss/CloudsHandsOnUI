@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
+import 'package:meowmed/data/services/customerservice.dart';
+import 'package:meowmed/data/states/login/context.dart';
+import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/newcustomer.dart';
 import 'package:meowmed/widgets/customerlist.dart';
 import 'package:meowmed/widgets/header.dart';
@@ -15,32 +18,15 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  List<CachedObj<CustomerRes>> orig = [
-    CachedObj<CustomerRes>(
-      "1",
-      CustomerRes(
-          id: "1",
-          familyStatus: CustomerResFamilyStatusEnum.geschieden,
-          birthDate: DateTime.now(),
-          socialSecurityNumber: "1234567890",
-          taxId: "1234567890",
-          jobStatus: CustomerResJobStatusEnum.arbeitslos,
-          bankDetails: BankDetails(iban: "asd", bic: "ad", name: "asd"),
-          firstName: "Max",
-          lastName: "Mustermann",
-          address: Address(
-              city: "Musterstadt",
-              houseNumber: "1",
-              street: "Musterstraße",
-              zipCode: 12345)),
-    ),
-  ];
+  late List<CachedObj<CustomerRes>> orig;
 
   @override
   void initState() {
-    customers = BehaviorSubject.seeded([
-      orig[0],
-    ]);
+    final state = (LoginStateContext.getInstance().state as LoggedInState);
+    final repo = state.customerService.repo;
+    final cached = repo.getAll();
+    orig = cached;
+    customers = BehaviorSubject.seeded(orig);
     super.initState();
   }
 

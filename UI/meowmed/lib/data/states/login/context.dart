@@ -15,7 +15,7 @@ class LoginStateContext {
 
   LoginStateContext._internal() {
     print("LoginStateContext created");
-    state.listen((value) {
+    stateStream.listen((value) {
       print("State changed to $value");
     });
     final newState = LoginStateInitial();
@@ -23,10 +23,11 @@ class LoginStateContext {
   }
 
   BehaviorSubject<LoginState?> _state = BehaviorSubject.seeded(null);
-  Stream<LoginState?> get state => _state.stream;
+  Stream<LoginState?> get stateStream => _state.stream;
+  LoginState? get state => _state.value;
 
-  void notifyOfStateChange(LoginState state) {
+  Future<void> notifyOfStateChange(LoginState state) async {
     _state.add(state);
-    state.init();
+    await state.init();
   }
 }

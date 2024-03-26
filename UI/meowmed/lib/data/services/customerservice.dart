@@ -58,4 +58,8 @@ class CustomerService implements StatefullObj {
     // await customerApi.updateCustomer(customerReq.id, customerReq);
     throw UnimplementedError("UpdateCustomer hat keine ID?");
   }
+
+  Future<void> injectCustomer(CachedObj<CustomerRes> customerRes) async {
+    repo.add(customerRes);
+  }
 }

@@ -52,4 +52,8 @@ class EmployeeService implements StatefullObj {
     // repo.add();
     throw UnimplementedError("UpdateEmployee hat keine ID?");
   }
+
+  Future<void> injectEmployee(CachedObj<EmployeeRes> employeeRes) async {
+    repo.add(employeeRes);
+  }
 }

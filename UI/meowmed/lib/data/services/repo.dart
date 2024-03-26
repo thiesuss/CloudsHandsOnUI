@@ -13,13 +13,13 @@ class Repo<T> implements StatefullObj {
     return _items[id]!;
   }
 
-  Future<List<CachedObj<T>>> getAll() async {
+  List<CachedObj<T>> getAll() {
     return _items.values.toList();
   }
 
   void add(CachedObj<T> item) {
     // TODO: do not use dynamic
-    String id = (item as dynamic).id;
+    String id = item.getId();
     bool exists = _items.containsKey(id);
     if (exists) {
       _items[id]!.setObj(item.getObj(), clean: item.isClean());

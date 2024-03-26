@@ -58,4 +58,8 @@ class ContractService implements StatefullObj {
     repo.add(cachedObj);
     return cachedObj;
   }
+
+  Future<void> injectContract(CachedObj<ContractRes> contract) async {
+    repo.add(contract);
+  }
 }
