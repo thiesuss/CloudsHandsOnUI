@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowmed/screens/newcontract.dart';
 import 'package:meowmed/widgets/header.dart';
 
 class Customer extends StatefulWidget {
@@ -221,7 +222,12 @@ class _CustomerState extends State<Customer> {
                           border: OutlineInputBorder(), hintText: "Suche..."))),
               IconButton(onPressed: () {}, icon: Icon(Icons.search)),
               Expanded(child: Container()),
-              TextButton(onPressed: () {}, child: Text("Neuer Vertrag"))
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => NewContract()));
+                  },
+                  child: Text("Neuer Vertrag"))
             ],
           ),
           SizedBox(
@@ -267,7 +273,11 @@ class _CustomerState extends State<Customer> {
           Row(
             children: [
               Expanded(child: Container()),
-              TextButton(onPressed: () {}, child: Text("Zurück")),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Zurück")),
               TextButton(onPressed: () {}, child: Text("Bearbeiten")),
               TextButton(onPressed: () {}, child: Text("Löschen")),
               Expanded(child: Container())

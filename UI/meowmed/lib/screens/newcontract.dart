@@ -104,7 +104,11 @@ class _NewContractState extends State<NewContract> {
                     SizedBox(
                       height: 30,
                     ),
-                    TextButton(onPressed: () {}, child: Text("Abbrechen")),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Abbrechen")),
                   ],
                 ),
                 Expanded(child: Container())
