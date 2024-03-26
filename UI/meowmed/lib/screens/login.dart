@@ -39,7 +39,6 @@ class _LoginPageState extends State<LoginPage> {
             Expanded(child: Container()),
             Card(
               child: Container(
-                height: 400,
                 width: 400,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black, width: 2),
@@ -49,6 +48,15 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    // TODO: Extract Logo
+                    Container(
+                      width: 350,
+                      height: 50,
+                      child: Image(
+                        image: AssetImage(
+                            'assets/images/MeowcroservicesLogoNew.png'),
+                      ),
+                    ),
                     TextFormField(
                       controller: _usernameController,
                       decoration: InputDecoration(
