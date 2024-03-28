@@ -24,10 +24,24 @@ class _CustomerState extends State<Customer> {
   TextEditingController nachnamecontroller = TextEditingController();
   TextEditingController familienstatuscontroller = TextEditingController();
   TextEditingController titelcontroller = TextEditingController();
+  TextEditingController geburtsdatumcontroller = TextEditingController();
+  TextEditingController svnummercontroller = TextEditingController();
+  TextEditingController steueridcontroller = TextEditingController();
+  TextEditingController bruttocontroller = TextEditingController();
+  TextEditingController adressecontroller = TextEditingController();
+  TextEditingController bankverbindungcontroller = TextEditingController();
 
   @override
   void initState() {
     vornamecontroller.text = customer.getObj().firstName;
+    nachnamecontroller.text = customer.getObj().lastName;
+    familienstatuscontroller.text = customer.getObj().familyStatus.toString();
+    titelcontroller.text = customer.getObj().title.toString();
+    geburtsdatumcontroller.text = customer.getObj().birthDate.toString();
+    svnummercontroller.text = customer.getObj().socialSecurityNumber;
+    steueridcontroller.text = customer.getObj().taxId;
+    adressecontroller.text = customer.getObj().address.toString();
+    bankverbindungcontroller.text = customer.getObj().bankDetails.toString();
 
     //TODO: ändern sobald API verfügbar
     final state = (LoginStateContext.getInstance().state as LoggedInState);
@@ -102,8 +116,9 @@ class _CustomerState extends State<Customer> {
                               return "Eingabe darf nicht leer sein";
                             }
                             if (value.isEmpty) {
-                              return "Bitte Name eingeben";
+                              return "Bitte Vorname eingeben";
                             }
+                            return null;
                           },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -117,7 +132,17 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
+                          controller: nachnamecontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte Nachname eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Nachname",
@@ -130,7 +155,17 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
+                          controller: titelcontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte Titel eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Titel",
@@ -139,16 +174,6 @@ class _CustomerState extends State<Customer> {
                     SizedBox(
                       height: 20,
                     ),
-                    Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          readOnly: !editMode,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Familienstatus",
-                          ),
-                        )),
                   ],
                 ),
                 SizedBox(
@@ -160,7 +185,17 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
+                          controller: geburtsdatumcontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte Geburtsdatum eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Geburtsdatum",
@@ -173,7 +208,17 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
+                          controller: svnummercontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte SV-Nummer eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "SV-Nummer",
@@ -186,7 +231,17 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
+                          controller: steueridcontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte Steuer ID eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Steuer ID",
@@ -199,15 +254,22 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
+                          controller: familienstatuscontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte Familienstatus eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: "Brutto Einkommen",
+                            labelText: "Familienstatus",
                           ),
                         )),
-                    SizedBox(
-                      height: 70,
-                    ) //quasi placeholder
                   ],
                 ),
                 SizedBox(
@@ -219,7 +281,17 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 330,
                         child: TextFormField(
+                          controller: adressecontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte Nachname eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Adresse",
@@ -232,7 +304,17 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 330,
                         child: TextFormField(
+                          controller: bankverbindungcontroller,
                           readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Eingabe darf nicht leer sein";
+                            }
+                            if (value.isEmpty) {
+                              return "Bitte Bankverbindung eingeben";
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Bankverbindung",
@@ -289,12 +371,14 @@ class _CustomerState extends State<Customer> {
                       });
                     },
                     child: Text("Bearbeiten")),
-                TextButton(onPressed: () {}, child: Text("Löschen")),
                 TextButton(
                     onPressed: () {
-                      if (_FormKey.currentState!.validate()) {}
+                      if (_FormKey.currentState!.validate()) {
+                        editMode = false;
+                      }
                     },
                     child: Text("Speichern")),
+                    TextButton(onPressed: () {}, child: Text("Löschen")),
                 Expanded(child: Container())
               ],
             )
