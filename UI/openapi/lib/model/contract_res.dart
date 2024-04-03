@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -13,6 +13,7 @@ part of openapi.api;
 class ContractRes {
   /// Returns a new [ContractRes] instance.
   ContractRes({
+    required this.id,
     required this.startDate,
     required this.endDate,
     required this.coverage,
@@ -25,8 +26,9 @@ class ContractRes {
     required this.environment,
     required this.weight,
     required this.customerId,
-    required this.id,
   });
+
+  String id;
 
   DateTime startDate;
 
@@ -56,10 +58,9 @@ class ContractRes {
 
   String customerId;
 
-  String id;
-
   @override
   bool operator ==(Object other) => identical(this, other) || other is ContractRes &&
+    other.id == id &&
     other.startDate == startDate &&
     other.endDate == endDate &&
     other.coverage == coverage &&
@@ -71,12 +72,12 @@ class ContractRes {
     other.personality == personality &&
     other.environment == environment &&
     other.weight == weight &&
-    other.customerId == customerId &&
-    other.id == id;
+    other.customerId == customerId;
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
+    (id.hashCode) +
     (startDate.hashCode) +
     (endDate.hashCode) +
     (coverage.hashCode) +
@@ -88,14 +89,14 @@ class ContractRes {
     (personality.hashCode) +
     (environment.hashCode) +
     (weight.hashCode) +
-    (customerId.hashCode) +
-    (id.hashCode);
+    (customerId.hashCode);
 
   @override
-  String toString() => 'ContractRes[startDate=$startDate, endDate=$endDate, coverage=$coverage, catName=$catName, breed=$breed, color=$color, birthDate=$birthDate, neutered=$neutered, personality=$personality, environment=$environment, weight=$weight, customerId=$customerId, id=$id]';
+  String toString() => 'ContractRes[id=$id, startDate=$startDate, endDate=$endDate, coverage=$coverage, catName=$catName, breed=$breed, color=$color, birthDate=$birthDate, neutered=$neutered, personality=$personality, environment=$environment, weight=$weight, customerId=$customerId]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+      json[r'id'] = this.id;
       json[r'startDate'] = _dateFormatter.format(this.startDate.toUtc());
       json[r'endDate'] = _dateFormatter.format(this.endDate.toUtc());
       json[r'coverage'] = this.coverage;
@@ -108,7 +109,6 @@ class ContractRes {
       json[r'environment'] = this.environment;
       json[r'weight'] = this.weight;
       json[r'customerId'] = this.customerId;
-      json[r'id'] = this.id;
     return json;
   }
 
@@ -131,6 +131,7 @@ class ContractRes {
       }());
 
       return ContractRes(
+        id: mapValueOfType<String>(json, r'id')!,
         startDate: mapDateTime(json, r'startDate', r'')!,
         endDate: mapDateTime(json, r'endDate', r'')!,
         coverage: num.parse('${json[r'coverage']}'),
@@ -143,7 +144,6 @@ class ContractRes {
         environment: mapValueOfType<String>(json, r'environment')!,
         weight: num.parse('${json[r'weight']}'),
         customerId: mapValueOfType<String>(json, r'customerId')!,
-        id: mapValueOfType<String>(json, r'id')!,
       );
     }
     return null;
@@ -191,6 +191,7 @@ class ContractRes {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
+    'id',
     'startDate',
     'endDate',
     'coverage',
@@ -203,7 +204,6 @@ class ContractRes {
     'environment',
     'weight',
     'customerId',
-    'id',
   };
 }
 

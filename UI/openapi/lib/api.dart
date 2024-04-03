@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -38,7 +38,6 @@ part 'model/contract_req.dart';
 part 'model/contract_res.dart';
 part 'model/customer_req.dart';
 part 'model/customer_res.dart';
-part 'model/db_id_obj.dart';
 part 'model/employee_req.dart';
 part 'model/employee_res.dart';
 part 'model/rate_calculation_req.dart';

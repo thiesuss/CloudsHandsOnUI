@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -16,6 +16,11 @@ void main() {
   // final instance = ContractRes();
 
   group('test ContractRes', () {
+    // String id
+    test('to test the property `id`', () async {
+      // TODO
+    });
+
     // DateTime startDate
     test('to test the property `startDate`', () async {
       // TODO
@@ -74,11 +79,6 @@ void main() {
 
     // String customerId
     test('to test the property `customerId`', () async {
-      // TODO
-    });
-
-    // String id
-    test('to test the property `id`', () async {
       // TODO
     });
 

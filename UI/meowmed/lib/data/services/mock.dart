@@ -6,7 +6,7 @@ class MockService {
   Future<void> mock(LoggedInState loggedInState) async {
     final contractS = loggedInState.contractService;
     final customerS = loggedInState.customerService;
-    final employeeS = loggedInState.employeeService;
+    // final employeeS = loggedInState.employeeService;
 
     final employeeList = [
       EmployeeRes(
@@ -14,6 +14,7 @@ class MockService {
           firstName: "John",
           lastName: "Doe",
           address: Address(
+              id: "4",
               street: "Limmerstr",
               houseNumber: "1",
               zipCode: 30519,
@@ -23,6 +24,7 @@ class MockService {
           firstName: "Jane",
           lastName: "Doe",
           address: Address(
+              id: "4",
               street: "Limmerstr",
               houseNumber: "1",
               zipCode: 30519,
@@ -32,6 +34,7 @@ class MockService {
           firstName: "Max",
           lastName: "Mustermann",
           address: Address(
+              id: "4",
               street: "Limmerstr",
               houseNumber: "1",
               zipCode: 30519,
@@ -40,32 +43,36 @@ class MockService {
 
     final customerList = [
       CustomerRes(
+        email: "test@gmail.com",
         id: "1",
         familyStatus: CustomerResFamilyStatusEnum.geschieden,
         birthDate: DateTime.now(),
         socialSecurityNumber: "1234567890",
         taxId: "1234567890",
         jobStatus: CustomerResJobStatusEnum.arbeitslos,
-        bankDetails: BankDetails(iban: "asd", bic: "ad", name: "asd"),
+        bankDetails: BankDetails(id: "5", iban: "asd", bic: "ad", name: "asd"),
         firstName: "Max",
         lastName: "Mustermann",
         address: Address(
+            id: "asd",
             city: "Musterstadt",
             houseNumber: "1",
             street: "Musterstraße",
             zipCode: 12345),
       ),
       CustomerRes(
+        email: "asd@gmail.com",
         id: "2",
         familyStatus: CustomerResFamilyStatusEnum.geschieden,
         birthDate: DateTime.now(),
         socialSecurityNumber: "1234567890",
         taxId: "1234567890",
         jobStatus: CustomerResJobStatusEnum.arbeitslos,
-        bankDetails: BankDetails(iban: "asd", bic: "ad", name: "asd"),
+        bankDetails: BankDetails(id: "1", iban: "asd", bic: "ad", name: "asd"),
         firstName: "Till",
         lastName: "Lindemann",
         address: Address(
+            id: "2",
             city: "Musterstadt",
             houseNumber: "1",
             street: "Musterstraße",
@@ -78,10 +85,12 @@ class MockService {
         socialSecurityNumber: "1234567890",
         taxId: "1234567890",
         jobStatus: CustomerResJobStatusEnum.arbeitslos,
-        bankDetails: BankDetails(iban: "asd", bic: "ad", name: "asd"),
+        bankDetails: BankDetails(id: "1", iban: "asd", bic: "ad", name: "asd"),
         firstName: "Katy",
         lastName: "Perry",
+        email: "abc@gmail.com",
         address: Address(
+            id: "1",
             city: "Musterstadt",
             houseNumber: "1",
             street: "Musterstraße",
@@ -137,16 +146,18 @@ class MockService {
       ),
     ];
 
-    for (final employee in employeeList) {
-      final cachedObj = CachedObj<EmployeeRes>(employee.id, employee);
-      employeeS.injectEmployee(cachedObj);
-    }
+    // for (final employee in employeeList) {
+    //   final cachedObj = CachedObj<EmployeeRes>(employee.id, employee, clean: false);
+    //   employeeS.injectEmployee(cachedObj);
+    // }
     for (final customer in customerList) {
-      final cachedObj = CachedObj<CustomerRes>(customer.id, customer);
+      final cachedObj =
+          CachedObj<CustomerRes>(customer.id, customer, clean: false);
       customerS.injectCustomer(cachedObj);
     }
     for (final contract in contractList) {
-      final cachedObj = CachedObj<ContractRes>(contract.id, contract);
+      final cachedObj =
+          CachedObj<ContractRes>(contract.id, contract, clean: false);
       contractS.injectContract(cachedObj);
     }
   }

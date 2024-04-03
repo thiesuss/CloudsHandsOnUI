@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -16,6 +16,7 @@ class BankDetails {
     required this.iban,
     required this.bic,
     required this.name,
+    required this.id,
   });
 
   String iban;
@@ -24,27 +25,32 @@ class BankDetails {
 
   String name;
 
+  String id;
+
   @override
   bool operator ==(Object other) => identical(this, other) || other is BankDetails &&
     other.iban == iban &&
     other.bic == bic &&
-    other.name == name;
+    other.name == name &&
+    other.id == id;
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
     (iban.hashCode) +
     (bic.hashCode) +
-    (name.hashCode);
+    (name.hashCode) +
+    (id.hashCode);
 
   @override
-  String toString() => 'BankDetails[iban=$iban, bic=$bic, name=$name]';
+  String toString() => 'BankDetails[iban=$iban, bic=$bic, name=$name, id=$id]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
       json[r'iban'] = this.iban;
       json[r'bic'] = this.bic;
       json[r'name'] = this.name;
+      json[r'id'] = this.id;
     return json;
   }
 
@@ -70,6 +76,7 @@ class BankDetails {
         iban: mapValueOfType<String>(json, r'iban')!,
         bic: mapValueOfType<String>(json, r'bic')!,
         name: mapValueOfType<String>(json, r'name')!,
+        id: mapValueOfType<String>(json, r'id')!,
       );
     }
     return null;
@@ -120,6 +127,7 @@ class BankDetails {
     'iban',
     'bic',
     'name',
+    'id',
   };
 }
 

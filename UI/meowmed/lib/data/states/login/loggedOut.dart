@@ -19,30 +19,29 @@ class LoggedOutState implements LoginState {
       String username, String password, Uri backendUri) async {
     //START MOCK
     String id = "ID1234567890";
-    final EmployeeRes employee = EmployeeRes(
-        id: id,
-        firstName: "John",
-        lastName: "Doe",
-        address: Address(
-            street: "Limmerstr",
-            houseNumber: "1",
-            zipCode: 30519,
-            city: "Hannover"));
+    // final EmployeeRes employee = EmployeeRes(
+    //     id: id,
+    //     firstName: "John",
+    //     lastName: "Doe",
+    //     address: Address(
+    //         street: "Limmerstr",
+    //         houseNumber: "1",
+    //         zipCode: 30519,
+    //         city: "Hannover"));
     //END MOCK
 
     ApiClient client = ApiClient(basePath: backendUri.toString());
-
     final contractService = ContractService(client);
     final customerService = CustomerService(client);
-    final employeeService = EmployeeService(client);
+    // final employeeService = EmployeeService(client);
 
-    final cachedObj = CachedObj<EmployeeRes>(id, employee);
+    // final cachedObj = CachedObj<EmployeeRes>(id, employee);
     final state = LoggedInState(
-        cachedObj, client, contractService, customerService, employeeService);
+        client, contractService, customerService);
 
     // TODO: remove
-    final url = ApiClient().basePath;
-    if (url == "https://api.catinsurance.com/v1") {
+    final url = client.basePath;
+    if (url == "http://localhost:8080") {
       await MockService().mock(state);
     }
 

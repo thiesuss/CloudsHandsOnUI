@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/customerservice.dart';
+import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/newcustomer.dart';
@@ -18,28 +19,50 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  late List<CachedObj<CustomerRes>> orig;
+  late List<CachedObj<CustomerRes>> customers;
+  final debouncer = Debouncer(delay: Duration(milliseconds: 500));
 
   @override
   void initState() {
-    final state = (LoginStateContext.getInstance().state as LoggedInState);
-    final repo = state.customerService.repo;
-    final cached = repo.getAll();
-    orig = cached;
-    customers = BehaviorSubject.seeded(orig);
     super.initState();
+    loadData();
   }
 
-  late BehaviorSubject<List<CachedObj<CustomerRes>>> customers;
+  Future<void> loadData() async {
+    searchController.clear();
+    final state = (LoginStateContext.getInstance().state as LoggedInState);
+    final customerService = state.customerService;
+    final repo = customerService.repo;
+    final cached = repo.getAll();
+    customers = cached;
+    filteredCustomers.add(customers);
+
+    // TODO: teil oben kann weg, sobald api geht
+
+    final customerResList = await customerService.getCustomers();
+    customers = customerResList;
+    filteredCustomers.add(customers);
+  }
+
+  late BehaviorSubject<List<CachedObj<CustomerRes>>> filteredCustomers =
+      BehaviorSubject.seeded([]);
 
   Future<void> _searchCustomer(String search) async {
     final searchLower = search.toLowerCase();
-    final result = orig.where((element) {
+    final result = customers.where((element) {
       final obj = element.getObj();
       return obj.firstName.toLowerCase().contains(searchLower) ||
           obj.lastName.toLowerCase().contains(searchLower);
     }).toList();
-    customers.add(result);
+    filteredCustomers.add(result);
+
+    // TODO: teil oben kann weg, sobald api geht
+
+    final state = (LoginStateContext.getInstance().state as LoggedInState);
+    final customerService = state.customerService;
+    final data = await customerService.searchCustomers(search);
+    customers = data;
+    filteredCustomers.add(data);
   }
 
   TextEditingController searchController = TextEditingController();
@@ -72,6 +95,11 @@ class _DashboardState extends State<Dashboard> {
                     height: 50,
                     width: 230,
                     child: TextField(
+                        onChanged: (text) async {
+                          debouncer.run(() async {
+                            await _searchCustomer(text);
+                          });
+                        },
                         controller: searchController,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -92,7 +120,7 @@ class _DashboardState extends State<Dashboard> {
                     child: Text("Neuer Kunde"))
               ],
             ),
-            Expanded(child: CustomerList(customers))
+            Expanded(child: CustomerList(filteredCustomers))
           ],
         ),
       ),

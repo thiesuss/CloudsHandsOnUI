@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -293,7 +293,7 @@ class CustomerApi {
   ///
   /// * [int] pageSize:
   ///   Items per page
-  Future<List<CustomerReq>?> getCustomers({ int? page, int? pageSize, }) async {
+  Future<List<CustomerRes>?> getCustomers({ int? page, int? pageSize, }) async {
     final response = await getCustomersWithHttpInfo( page: page, pageSize: pageSize, );
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
@@ -303,8 +303,8 @@ class CustomerApi {
     // FormatException when trying to decode an empty string.
     if (response.body.isNotEmpty && response.statusCode != HttpStatus.noContent) {
       final responseBody = await _decodeBodyBytes(response);
-      return (await apiClient.deserializeAsync(responseBody, 'List<CustomerReq>') as List)
-        .cast<CustomerReq>()
+      return (await apiClient.deserializeAsync(responseBody, 'List<CustomerRes>') as List)
+        .cast<CustomerRes>()
         .toList(growable: false);
 
     }
@@ -317,20 +317,14 @@ class CustomerApi {
   ///
   /// Parameters:
   ///
-  /// * [String] id:
-  ///
-  /// * [String] name:
-  ///
-  /// * [String] lastName:
-  ///
-  /// * [String] address:
+  /// * [String] text (required):
   ///
   /// * [int] page:
   ///   Page number
   ///
   /// * [int] pageSize:
   ///   Items per page
-  Future<Response> searchCustomersWithHttpInfo({ String? id, String? name, String? lastName, String? address, int? page, int? pageSize, }) async {
+  Future<Response> searchCustomersWithHttpInfo(String text, { int? page, int? pageSize, }) async {
     // ignore: prefer_const_declarations
     final path = r'/customers/search';
 
@@ -341,18 +335,7 @@ class CustomerApi {
     final headerParams = <String, String>{};
     final formParams = <String, String>{};
 
-    if (id != null) {
-      queryParams.addAll(_queryParams('', 'id', id));
-    }
-    if (name != null) {
-      queryParams.addAll(_queryParams('', 'name', name));
-    }
-    if (lastName != null) {
-      queryParams.addAll(_queryParams('', 'lastName', lastName));
-    }
-    if (address != null) {
-      queryParams.addAll(_queryParams('', 'address', address));
-    }
+      queryParams.addAll(_queryParams('', 'text', text));
     if (page != null) {
       queryParams.addAll(_queryParams('', 'page', page));
     }
@@ -378,21 +361,15 @@ class CustomerApi {
   ///
   /// Parameters:
   ///
-  /// * [String] id:
-  ///
-  /// * [String] name:
-  ///
-  /// * [String] lastName:
-  ///
-  /// * [String] address:
+  /// * [String] text (required):
   ///
   /// * [int] page:
   ///   Page number
   ///
   /// * [int] pageSize:
   ///   Items per page
-  Future<List<CustomerRes>?> searchCustomers({ String? id, String? name, String? lastName, String? address, int? page, int? pageSize, }) async {
-    final response = await searchCustomersWithHttpInfo( id: id, name: name, lastName: lastName, address: address, page: page, pageSize: pageSize, );
+  Future<List<CustomerRes>?> searchCustomers(String text, { int? page, int? pageSize, }) async {
+    final response = await searchCustomersWithHttpInfo(text,  page: page, pageSize: pageSize, );
     if (response.statusCode >= HttpStatus.badRequest) {
       throw ApiException(response.statusCode, await _decodeBodyBytes(response));
     }

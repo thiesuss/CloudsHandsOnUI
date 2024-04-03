@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -17,6 +17,7 @@ class Address {
     required this.houseNumber,
     required this.zipCode,
     required this.city,
+    required this.id,
   });
 
   String street;
@@ -29,12 +30,15 @@ class Address {
 
   String city;
 
+  String id;
+
   @override
   bool operator ==(Object other) => identical(this, other) || other is Address &&
     other.street == street &&
     other.houseNumber == houseNumber &&
     other.zipCode == zipCode &&
-    other.city == city;
+    other.city == city &&
+    other.id == id;
 
   @override
   int get hashCode =>
@@ -42,10 +46,11 @@ class Address {
     (street.hashCode) +
     (houseNumber.hashCode) +
     (zipCode.hashCode) +
-    (city.hashCode);
+    (city.hashCode) +
+    (id.hashCode);
 
   @override
-  String toString() => 'Address[street=$street, houseNumber=$houseNumber, zipCode=$zipCode, city=$city]';
+  String toString() => 'Address[street=$street, houseNumber=$houseNumber, zipCode=$zipCode, city=$city, id=$id]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
@@ -53,6 +58,7 @@ class Address {
       json[r'houseNumber'] = this.houseNumber;
       json[r'zipCode'] = this.zipCode;
       json[r'city'] = this.city;
+      json[r'id'] = this.id;
     return json;
   }
 
@@ -79,6 +85,7 @@ class Address {
         houseNumber: mapValueOfType<String>(json, r'houseNumber')!,
         zipCode: num.parse('${json[r'zipCode']}'),
         city: mapValueOfType<String>(json, r'city')!,
+        id: mapValueOfType<String>(json, r'id')!,
       );
     }
     return null;
@@ -130,6 +137,7 @@ class Address {
     'houseNumber',
     'zipCode',
     'city',
+    'id',
   };
 }
 

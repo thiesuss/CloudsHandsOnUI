@@ -8,6 +8,8 @@ import 'package:openapi/api.dart';
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**id** | **String** |  | 
+**email** | **String** |  | 
 **firstName** | **String** |  | 
 **lastName** | **String** |  | 
 **title** | **String** |  | [optional] 
@@ -18,7 +20,6 @@ Name | Type | Description | Notes
 **jobStatus** | **String** |  | 
 **address** | [**Address**](Address.md) |  | 
 **bankDetails** | [**BankDetails**](BankDetails.md) |  | 
-**id** | **String** |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

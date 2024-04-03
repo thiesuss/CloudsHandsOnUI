@@ -11,7 +11,6 @@ doc/ContractRes.md
 doc/CustomerApi.md
 doc/CustomerReq.md
 doc/CustomerRes.md
-doc/DbIdObj.md
 doc/EmployeeApi.md
 doc/EmployeeReq.md
 doc/EmployeeRes.md
@@ -36,7 +35,6 @@ lib/model/contract_req.dart
 lib/model/contract_res.dart
 lib/model/customer_req.dart
 lib/model/customer_res.dart
-lib/model/db_id_obj.dart
 lib/model/employee_req.dart
 lib/model/employee_res.dart
 lib/model/rate_calculation_req.dart
@@ -50,7 +48,6 @@ test/contract_res_test.dart
 test/customer_api_test.dart
 test/customer_req_test.dart
 test/customer_res_test.dart
-test/db_id_obj_test.dart
 test/employee_api_test.dart
 test/employee_req_test.dart
 test/employee_res_test.dart

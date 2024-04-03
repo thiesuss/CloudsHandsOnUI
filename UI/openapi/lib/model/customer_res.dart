@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -13,6 +13,8 @@ part of openapi.api;
 class CustomerRes {
   /// Returns a new [CustomerRes] instance.
   CustomerRes({
+    required this.id,
+    required this.email,
     required this.firstName,
     required this.lastName,
     this.title,
@@ -23,8 +25,11 @@ class CustomerRes {
     required this.jobStatus,
     required this.address,
     required this.bankDetails,
-    required this.id,
   });
+
+  String id;
+
+  String email;
 
   String firstName;
 
@@ -46,10 +51,10 @@ class CustomerRes {
 
   BankDetails bankDetails;
 
-  String id;
-
   @override
   bool operator ==(Object other) => identical(this, other) || other is CustomerRes &&
+    other.id == id &&
+    other.email == email &&
     other.firstName == firstName &&
     other.lastName == lastName &&
     other.title == title &&
@@ -59,12 +64,13 @@ class CustomerRes {
     other.taxId == taxId &&
     other.jobStatus == jobStatus &&
     other.address == address &&
-    other.bankDetails == bankDetails &&
-    other.id == id;
+    other.bankDetails == bankDetails;
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
+    (id.hashCode) +
+    (email.hashCode) +
     (firstName.hashCode) +
     (lastName.hashCode) +
     (title == null ? 0 : title!.hashCode) +
@@ -74,14 +80,15 @@ class CustomerRes {
     (taxId.hashCode) +
     (jobStatus.hashCode) +
     (address.hashCode) +
-    (bankDetails.hashCode) +
-    (id.hashCode);
+    (bankDetails.hashCode);
 
   @override
-  String toString() => 'CustomerRes[firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails, id=$id]';
+  String toString() => 'CustomerRes[id=$id, email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+      json[r'id'] = this.id;
+      json[r'email'] = this.email;
       json[r'firstName'] = this.firstName;
       json[r'lastName'] = this.lastName;
     if (this.title != null) {
@@ -96,7 +103,6 @@ class CustomerRes {
       json[r'jobStatus'] = this.jobStatus;
       json[r'address'] = this.address;
       json[r'bankDetails'] = this.bankDetails;
-      json[r'id'] = this.id;
     return json;
   }
 
@@ -119,6 +125,8 @@ class CustomerRes {
       }());
 
       return CustomerRes(
+        id: mapValueOfType<String>(json, r'id')!,
+        email: mapValueOfType<String>(json, r'email')!,
         firstName: mapValueOfType<String>(json, r'firstName')!,
         lastName: mapValueOfType<String>(json, r'lastName')!,
         title: CustomerResTitleEnum.fromJson(json[r'title']),
@@ -129,7 +137,6 @@ class CustomerRes {
         jobStatus: CustomerResJobStatusEnum.fromJson(json[r'jobStatus'])!,
         address: Address.fromJson(json[r'address'])!,
         bankDetails: BankDetails.fromJson(json[r'bankDetails'])!,
-        id: mapValueOfType<String>(json, r'id')!,
       );
     }
     return null;
@@ -177,6 +184,8 @@ class CustomerRes {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
+    'id',
+    'email',
     'firstName',
     'lastName',
     'familyStatus',
@@ -186,7 +195,6 @@ class CustomerRes {
     'jobStatus',
     'address',
     'bankDetails',
-    'id',
   };
 }
 

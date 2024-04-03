@@ -16,8 +16,6 @@ class Customer extends StatefulWidget {
 }
 
 class _CustomerState extends State<Customer> {
-  late List<CachedObj<ContractRes>> orig;
-
   _CustomerState(this.customer) {}
   CachedObj<CustomerRes> customer;
   TextEditingController vornamecontroller = TextEditingController();
@@ -33,6 +31,7 @@ class _CustomerState extends State<Customer> {
 
   @override
   void initState() {
+    super.initState();
     vornamecontroller.text = customer.getObj().firstName;
     nachnamecontroller.text = customer.getObj().lastName;
     familienstatuscontroller.text = customer.getObj().familyStatus.toString();
@@ -43,20 +42,31 @@ class _CustomerState extends State<Customer> {
     adressecontroller.text = customer.getObj().address.toString();
     bankverbindungcontroller.text = customer.getObj().bankDetails.toString();
 
-    //TODO: ändern sobald API verfügbar
+    loadContracts();
+  }
+
+  Future<void> loadContracts() async {
     final state = (LoginStateContext.getInstance().state as LoggedInState);
     final repo = state.contractService.repo;
     final cached = repo.getAll();
-    final filtered = cached.where((element) {
+    final cachedContracts = cached.where((element) {
       final obj = element.getObj();
-      return obj.customerId == customer.getObj().id;
+      return obj.id == customer.getObj().id;
     }).toList();
-    orig = filtered;
-    contracts = BehaviorSubject.seeded(orig);
-    super.initState();
+    contractList = cachedContracts;
+    filteredContracts.add(cachedContracts);
+
+    // TODO: teil oben kann weg, sobald api geht
+
+    final contractResList =
+        await state.contractService.getContractsForCustomer(customer.getId());
+    contractList = contractResList;
+    filteredContracts.add(contractResList);
   }
 
-  late BehaviorSubject<List<CachedObj<ContractRes>>> contracts;
+  List<CachedObj<ContractRes>> contractList = [];
+  late BehaviorSubject<List<CachedObj<ContractRes>>> filteredContracts =
+      BehaviorSubject.seeded([]);
 
   bool editMode = false;
   final _FormKey = GlobalKey<FormState>();
@@ -352,7 +362,7 @@ class _CustomerState extends State<Customer> {
             SizedBox(
               height: 20,
             ),
-            ContractList(contracts),
+            ContractList(filteredContracts),
             SizedBox(
               height: 30,
             ),
@@ -378,7 +388,7 @@ class _CustomerState extends State<Customer> {
                       }
                     },
                     child: Text("Speichern")),
-                    TextButton(onPressed: () {}, child: Text("Löschen")),
+                TextButton(onPressed: () {}, child: Text("Löschen")),
                 Expanded(child: Container())
               ],
             )

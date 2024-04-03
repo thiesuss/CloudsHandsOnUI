@@ -59,6 +59,34 @@ class CustomerService implements StatefullObj {
     throw UnimplementedError("UpdateCustomer hat keine ID?");
   }
 
+  Future<List<CachedObj<CustomerRes>>> getCustomers() async {
+    final customerResList = await customerApi.getCustomers();
+    if (customerResList == null) {
+      throw ReadFailed("Customer read failed");
+    }
+    final cachedObjList = <CachedObj<CustomerRes>>[];
+    for (final customerRes in customerResList) {
+      final cachedObj = CachedObj<CustomerRes>(customerRes.id, customerRes);
+      cachedObjList.add(cachedObj);
+      repo.add(cachedObj);
+    }
+    return cachedObjList;
+  }
+
+  Future<List<CachedObj<CustomerRes>>> searchCustomers(String text) async {
+    final customerResList = await customerApi.searchCustomers(text);
+    if (customerResList == null) {
+      throw ReadFailed("Customer search failed");
+    }
+    final cachedObjList = <CachedObj<CustomerRes>>[];
+    for (final customerRes in customerResList) {
+      final cachedObj = CachedObj<CustomerRes>(customerRes.id, customerRes);
+      cachedObjList.add(cachedObj);
+      repo.add(cachedObj);
+    }
+    return cachedObjList;
+  }
+
   Future<void> injectCustomer(CachedObj<CustomerRes> customerRes) async {
     repo.add(customerRes);
   }

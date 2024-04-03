@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -13,6 +13,7 @@ part of openapi.api;
 class CustomerReq {
   /// Returns a new [CustomerReq] instance.
   CustomerReq({
+    required this.email,
     required this.firstName,
     required this.lastName,
     this.title,
@@ -24,6 +25,8 @@ class CustomerReq {
     required this.address,
     required this.bankDetails,
   });
+
+  String email;
 
   String firstName;
 
@@ -47,6 +50,7 @@ class CustomerReq {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is CustomerReq &&
+    other.email == email &&
     other.firstName == firstName &&
     other.lastName == lastName &&
     other.title == title &&
@@ -61,6 +65,7 @@ class CustomerReq {
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
+    (email.hashCode) +
     (firstName.hashCode) +
     (lastName.hashCode) +
     (title == null ? 0 : title!.hashCode) +
@@ -73,10 +78,11 @@ class CustomerReq {
     (bankDetails.hashCode);
 
   @override
-  String toString() => 'CustomerReq[firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails]';
+  String toString() => 'CustomerReq[email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+      json[r'email'] = this.email;
       json[r'firstName'] = this.firstName;
       json[r'lastName'] = this.lastName;
     if (this.title != null) {
@@ -113,6 +119,7 @@ class CustomerReq {
       }());
 
       return CustomerReq(
+        email: mapValueOfType<String>(json, r'email')!,
         firstName: mapValueOfType<String>(json, r'firstName')!,
         lastName: mapValueOfType<String>(json, r'lastName')!,
         title: CustomerReqTitleEnum.fromJson(json[r'title']),
@@ -170,6 +177,7 @@ class CustomerReq {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
+    'email',
     'firstName',
     'lastName',
     'familyStatus',

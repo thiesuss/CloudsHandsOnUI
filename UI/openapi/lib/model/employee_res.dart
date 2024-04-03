@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -13,11 +13,13 @@ part of openapi.api;
 class EmployeeRes {
   /// Returns a new [EmployeeRes] instance.
   EmployeeRes({
+    required this.id,
     required this.firstName,
     required this.lastName,
     required this.address,
-    required this.id,
   });
+
+  String id;
 
   String firstName;
 
@@ -25,32 +27,30 @@ class EmployeeRes {
 
   Address address;
 
-  String id;
-
   @override
   bool operator ==(Object other) => identical(this, other) || other is EmployeeRes &&
+    other.id == id &&
     other.firstName == firstName &&
     other.lastName == lastName &&
-    other.address == address &&
-    other.id == id;
+    other.address == address;
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
+    (id.hashCode) +
     (firstName.hashCode) +
     (lastName.hashCode) +
-    (address.hashCode) +
-    (id.hashCode);
+    (address.hashCode);
 
   @override
-  String toString() => 'EmployeeRes[firstName=$firstName, lastName=$lastName, address=$address, id=$id]';
+  String toString() => 'EmployeeRes[id=$id, firstName=$firstName, lastName=$lastName, address=$address]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+      json[r'id'] = this.id;
       json[r'firstName'] = this.firstName;
       json[r'lastName'] = this.lastName;
       json[r'address'] = this.address;
-      json[r'id'] = this.id;
     return json;
   }
 
@@ -73,10 +73,10 @@ class EmployeeRes {
       }());
 
       return EmployeeRes(
+        id: mapValueOfType<String>(json, r'id')!,
         firstName: mapValueOfType<String>(json, r'firstName')!,
         lastName: mapValueOfType<String>(json, r'lastName')!,
         address: Address.fromJson(json[r'address'])!,
-        id: mapValueOfType<String>(json, r'id')!,
       );
     }
     return null;
@@ -124,10 +124,10 @@ class EmployeeRes {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
+    'id',
     'firstName',
     'lastName',
     'address',
-    'id',
   };
 }
 

@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -47,14 +47,14 @@ void main() {
 
     // Get all customers
     //
-    //Future<List<CustomerReq>> getCustomers({ int page, int pageSize }) async
+    //Future<List<CustomerRes>> getCustomers({ int page, int pageSize }) async
     test('test getCustomers', () async {
       // TODO
     });
 
     // Search for customers
     //
-    //Future<List<CustomerRes>> searchCustomers({ String id, String name, String lastName, String address, int page, int pageSize }) async
+    //Future<List<CustomerRes>> searchCustomers(String text, { int page, int pageSize }) async
     test('test searchCustomers', () async {
       // TODO
     });

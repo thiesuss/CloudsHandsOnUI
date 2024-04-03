@@ -24,12 +24,13 @@ class ContractService implements StatefullObj {
     throw UnimplementedError();
   }
 
-  Future<List<CachedObj>> getContractsForCustomer(String customerID) async {
+  Future<List<CachedObj<ContractRes>>> getContractsForCustomer(
+      String customerID) async {
     final contractRes = await contractApi.getCustomerContracts(customerID);
     if (contractRes == null) {
       throw ReadFailed("Contract read failed");
     }
-    List<CachedObj> cachedObjs = [];
+    List<CachedObj<ContractRes>> cachedObjs = [];
     for (var contract in contractRes) {
       final cachedObj = CachedObj<ContractRes>(contract.id, contract);
       repo.add(cachedObj);
@@ -57,6 +58,14 @@ class ContractService implements StatefullObj {
     final cachedObj = CachedObj<ContractRes>(contractRes.id, contractRes);
     repo.add(cachedObj);
     return cachedObj;
+  }
+
+  Future<RateRes> getRate(RateCalculationReq rateCalcReq) async {
+    final rateRes = await contractApi.calculateRate(rateCalcReq);
+    if (rateRes == null) {
+      throw ReadFailed("Rate read failed");
+    }
+    return rateRes;
   }
 
   Future<void> injectContract(CachedObj<ContractRes> contract) async {

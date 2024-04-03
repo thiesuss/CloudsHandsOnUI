@@ -186,7 +186,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getCustomers**
-> List<CustomerReq> getCustomers(page, pageSize)
+> List<CustomerRes> getCustomers(page, pageSize)
 
 Get all customers
 
@@ -215,7 +215,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**List<CustomerReq>**](CustomerReq.md)
+[**List<CustomerRes>**](CustomerRes.md)
 
 ### Authorization
 
@@ -229,7 +229,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **searchCustomers**
-> List<CustomerRes> searchCustomers(id, name, lastName, address, page, pageSize)
+> List<CustomerRes> searchCustomers(text, page, pageSize)
 
 Search for customers
 
@@ -238,15 +238,12 @@ Search for customers
 import 'package:openapi/api.dart';
 
 final api_instance = CustomerApi();
-final id = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // String | 
-final name = name_example; // String | 
-final lastName = lastName_example; // String | 
-final address = address_example; // String | 
+final text = text_example; // String | 
 final page = 56; // int | Page number
 final pageSize = 56; // int | Items per page
 
 try {
-    final result = api_instance.searchCustomers(id, name, lastName, address, page, pageSize);
+    final result = api_instance.searchCustomers(text, page, pageSize);
     print(result);
 } catch (e) {
     print('Exception when calling CustomerApi->searchCustomers: $e\n');
@@ -257,10 +254,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **String**|  | [optional] 
- **name** | **String**|  | [optional] 
- **lastName** | **String**|  | [optional] 
- **address** | **String**|  | [optional] 
+ **text** | **String**|  | 
  **page** | **int**| Page number | [optional] 
  **pageSize** | **int**| Items per page | [optional] 
 
