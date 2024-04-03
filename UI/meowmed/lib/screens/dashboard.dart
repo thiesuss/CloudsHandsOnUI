@@ -89,6 +89,7 @@ class _DashboardState extends State<Dashboard> {
                 )
               ],
             ),
+            SizedBox(height: 20,),
             Row(
               children: [
                 Container(
@@ -120,6 +121,7 @@ class _DashboardState extends State<Dashboard> {
                     child: Text("Neuer Kunde"))
               ],
             ),
+            SizedBox(height: 30,),
             Expanded(child: CustomerList(filteredCustomers))
           ],
         ),

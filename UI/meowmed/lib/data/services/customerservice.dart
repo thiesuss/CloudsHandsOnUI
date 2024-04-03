@@ -90,4 +90,35 @@ class CustomerService implements StatefullObj {
   Future<void> injectCustomer(CachedObj<CustomerRes> customerRes) async {
     repo.add(customerRes);
   }
+
+  String familienStatustoString(CustomerReqFamilyStatusEnum familyEnum) {
+    switch(familyEnum){
+      case(CustomerReqFamilyStatusEnum.geschieden):
+        return 'Geschieden';
+      case(CustomerReqFamilyStatusEnum.ledig):
+        return 'Ledig';
+      case(CustomerReqFamilyStatusEnum.verheiratet):
+        return 'Verheiratet';
+      case(CustomerReqFamilyStatusEnum.verwitwet):
+        return 'Verwitwet';
+      default: 
+        throw 'Kein Familienstatus verfügbar';
+    }
+  }
+  String titleEnumToString(CustomerReqTitleEnum? titleEnum){
+    switch(titleEnum){
+      case(CustomerReqTitleEnum.drPeriod):
+        return 'Dr.';
+      case(CustomerReqTitleEnum.drPeriodDrPeriod):
+        return 'Dr. Dr.';
+      case(CustomerReqTitleEnum.profPeriodDrPeriod):
+        return 'Prof. Dr.';
+      case(CustomerReqTitleEnum.profPeriodDrPeriodDr):
+        return 'Prof. Dr. Dr.';
+      case(null):
+        return '';
+      default: 
+        throw 'Kein Titel Vorhanden';
+    }
+  }
 }

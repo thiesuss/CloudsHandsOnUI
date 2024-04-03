@@ -1,4 +1,6 @@
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/states/login/context.dart';
@@ -18,22 +20,40 @@ class _NewContractState extends State<NewContract> {
   final contractService =
       (LoginStateContext.getInstance().state as LoggedInState).contractService;
 
+  TextEditingController startDateController = TextEditingController();
+  DateTime startDate = DateTime.now();
+  TextEditingController endDateController = TextEditingController();
+  DateTime endDate = DateTime.now();
+  TextEditingController coverageController = TextEditingController();
+  TextEditingController catNameController = TextEditingController();
+  TextEditingController breedController = TextEditingController();
+  TextEditingController colorController = TextEditingController();
+  TextEditingController birthDateController = TextEditingController();
+  DateTime birthDate = DateTime.now();
+  // TextEditingController neuteredController = TextEditingController();             Nicht mehr relevant wegen checkbox(?)
+  bool isNeutered = false;
+  TextEditingController personalityController = TextEditingController();
+  TextEditingController environmentController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController customerIdController = TextEditingController();
+  TextEditingController zipCodeController = TextEditingController();
+
   Future<void> save() async {
     if (!formKey.currentState!.validate()) {
       return;
     }
     final contractReq = ContractReq(
-      startDate: startDateController.text,
-      endDate: endDateController.text,
-      coverage: coverageController.text,
+      startDate: startDate,
+      endDate: endDate,
+      coverage: double.parse(coverageController.text),
       catName: catNameController.text,
       breed: breedController.text,
       color: colorController.text,
-      birthDate: birthDateController.text,
-      neutered: neuteredController.text,
+      birthDate: birthDate,
+      neutered: isNeutered, //checkbox setState
       personality: personalityController.text,
       environment: environmentController.text,
-      weight: weightController.text,
+      weight: double.parse(weightController.text),
       customerId: customerIdController.text,
     );
     final contractRes = await contractService.createContract(contractReq);
@@ -45,15 +65,15 @@ class _NewContractState extends State<NewContract> {
 
   Future<void> reloadPrice() async {
     final rateReq = RateCalculationReq(
-        coverage: coverageController.text,
+        coverage: double.parse(coverageController.text),
         breed: breedController.text,
         color: colorController.text,
-        birthDate: birthDateController.text,
-        neutered: neuteredController.text,
+        birthDate: birthDate,
+        neutered: isNeutered,
         personality: personalityController.text,
         environment: environmentController.text,
-        weight: weightController.text,
-        zipCode: zipCodeController.text);
+        weight: double.parse(weightController.text),
+        zipCode: int.parse(zipCodeController.text));
     final rateres = await contractService.getRate(rateReq);
     double price = rateres.rate!.toDouble();
     priceSubject.add(price);
@@ -115,25 +135,25 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextFormField(
-                            readOnly: true,
-                            initialValue:
-                                "1234", //hier die ID Value hin per API
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "ID",
-                            ),
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextField(
+                          child: DateTimeFormField(
+                            validator: (value) {
+                            if (value == null) {
+                              return "Bitte Startdatum angeben";
+                            }
+                            return null;
+                          },
+                            dateFormat: DateFormat('dd.MM.yyyy'),
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Beginn"),
+                            firstDate: DateTime.now()
+                                .subtract(const Duration(days: 365)),
+                            lastDate:
+                                DateTime.now().add(const Duration(days: 36500)),
+                            initialPickerDateTime: DateTime.now(),
+                            onChanged: (DateTime? value) {
+                              startDate = value!;
+                            },
                           )),
                       SizedBox(
                         height: 20,
@@ -141,10 +161,24 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: DateTimeFormField(
+                            validator: (value) {
+                            if (value == null) {
+                              return "Bitte Enddatum angeben";
+                            }
+                            return null;
+                          },
+                            dateFormat: DateFormat('dd.MM.yyyy'),
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Ende"),
+                            firstDate: DateTime.now(),
+                            lastDate:
+                                DateTime.now().add(const Duration(days: 36500)),
+                            initialPickerDateTime: DateTime.now(),
+                            onChanged: (DateTime? value) {
+                              endDate = value!;
+                            },
                           )),
                       SizedBox(
                         height: 20,
@@ -152,7 +186,17 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: TextFormField(
+                            validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            if (value is! num) {
+                              return 'Eingabe muss eine Zahl sein';
+                            }
+                            return null;
+                            },
+                            controller: coverageController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Deckung"),
@@ -201,7 +245,17 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: TextFormField(
+                            validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            if (value is! String) {
+                              return 'Eingabe muss ein Name sein';
+                            }
+                            return null;
+                            },
+                            controller: catNameController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Name"),
@@ -212,7 +266,15 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: TextFormField(
+                            validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            //check ob Rasse hier?
+                            return null;
+                            },
+                            controller: breedController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Rasse"),
@@ -223,7 +285,15 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: TextFormField(
+                            validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            //check auf Farbe?
+                            return null;
+                            },
+                            controller: colorController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Farbe"),
@@ -234,10 +304,25 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: DateTimeFormField(
+                            validator: (value) {
+                            if (value == null) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                            },
+                            dateFormat: DateFormat('dd.MM.yyyy'),
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
-                                labelText: "Alter"),
+                                labelText: "Geburtstag"),
+                            firstDate: DateTime.now()
+                                .subtract(const Duration(days: 9300)),
+                            lastDate:
+                                DateTime.now(),
+                            initialPickerDateTime: DateTime.now(),
+                            onChanged: (DateTime? value) {
+                              birthDate = value!;
+                            },
                           )),
                     ],
                   ),
@@ -249,18 +334,14 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Kastriert"),
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextField(
+                          child: TextFormField(
+                            validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                            },
+                            controller: personalityController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Persönlichkeit"),
@@ -271,7 +352,14 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: TextFormField(
+                            validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                            },
+                            controller: environmentController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Umgebung"),
@@ -282,16 +370,48 @@ class _NewContractState extends State<NewContract> {
                       Container(
                           height: 50,
                           width: 230,
-                          child: TextField(
+                          child: TextFormField(
+                            validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            if (value is! num) {
+                              return 'Eingabe muss eine Zahl sein';
+                            }
+                            return null;
+                            },
+                            controller: weightController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: "Gewicht"),
                           )),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Kastriert',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Checkbox(
+                              value: isNeutered,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isNeutered = value!;
+                                });
+                              })
+                        ],
+                      ),
+                      SizedBox(height: 10,)
                     ],
                   ),
                   Expanded(child: Container())
                 ],
-              )
+              ),
             ],
           ),
         ),
