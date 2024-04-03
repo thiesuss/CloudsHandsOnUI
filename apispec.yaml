@@ -56,7 +56,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/CustomerReq"
+                  $ref: "#/components/schemas/CustomerRes"
 
   /contracts:
     post:
@@ -106,22 +106,10 @@ paths:
       summary: Search for customers
       parameters:
         - in: query
-          name: id
+          name: text
           schema:
             type: string
-            format: uuid
-        - in: query
-          name: name
-          schema:
-            type: string
-        - in: query
-          name: lastName
-          schema:
-            type: string
-        - in: query
-          name: address
-          schema:
-            type: string
+          required: true
         - in: query
           name: page
           schema:
@@ -164,7 +152,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomerRes" # TODO return res object
+                $ref: "#/components/schemas/CustomerRes"
     delete:
       operationId: deleteCustomer
       tags:
@@ -318,17 +306,6 @@ paths:
                 $ref: "#/components/schemas/EmployeeRes"
 components:
   schemas:
-    dbId:
-      type: string
-      format: uuid
-      example: "123e4567-e89b-12d3-a456-426614174000"
-    dbIdObj:
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          $ref: "#/components/schemas/dbId"
     CustomerReq:
       type: object
       required:
@@ -342,7 +319,11 @@ components:
         - jobStatus
         - address
         - bankDetails
+        - email
       properties:
+        email:
+          type: string
+          format: email
         firstName:
           type: string
           pattern: "^[A-Z][a-z]*$"
@@ -397,7 +378,13 @@ components:
     CustomerRes:
       allOf:
         - $ref: "#/components/schemas/CustomerReq"
-        - $ref: "#/components/schemas/dbIdObj"
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
     ContractReq:
       type: object
       required:
@@ -454,11 +441,19 @@ components:
           minimum: 50
           description: "In Gramm"
         customerId:
-          $ref: "#/components/schemas/dbId"
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
     ContractRes:
       allOf:
         - $ref: "#/components/schemas/ContractReq"
-        - $ref: "#/components/schemas/dbIdObj"
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
 
     RateCalculationReq:
       type: object
@@ -520,6 +515,7 @@ components:
         - houseNumber
         - zipCode
         - city
+        - id
       properties:
         street:
           type: string
@@ -538,12 +534,17 @@ components:
           type: string
           pattern: "^[A-Z][a-z]*$"
           example: "Musterstadt"
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
     BankDetails:
       type: object
       required:
         - iban
         - bic
         - name
+        - id
       properties:
         iban:
           type: string
@@ -557,6 +558,10 @@ components:
           type: string
           pattern: "^[A-Z][a-z]*$"
           example: "Max Mustermann"
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
     EmployeeReq:
       type: object
       required:
@@ -575,4 +580,10 @@ components:
     EmployeeRes:
       allOf:
         - $ref: "#/components/schemas/EmployeeReq"
-        - $ref: "#/components/schemas/dbIdObj"
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
