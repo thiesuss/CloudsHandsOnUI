@@ -149,7 +149,7 @@ class _NewCustomerState extends State<NewCustomer> {
                               (CustomerReqTitleEnum titleStatus) {
                         return DropdownMenuEntry<CustomerReqTitleEnum>(
                           value: titleStatus,
-                          label: customerService.titleEnumToString(
+                          label: CustomerService.titleEnumToString(
                               titleStatus), // familienstatusenum.ledig
                         );
                       })
@@ -185,7 +185,7 @@ class _NewCustomerState extends State<NewCustomer> {
                             (CustomerReqFamilyStatusEnum familyStatus) {
                       return DropdownMenuEntry<CustomerReqFamilyStatusEnum>(
                         value: familyStatus,
-                        label: customerService.familienStatustoString(
+                        label: CustomerService.familienStatustoString(
                             familyStatus), // familienstatusenum.ledig
                       );
                     }).toList(),

@@ -14,7 +14,12 @@ class CustomerService implements StatefullObj {
 
   late ApiClient client;
   late CustomerApi customerApi;
-  Repo<CustomerRes> repo = Repo<CustomerRes>();
+  Repo<CustomerRes> repo = Repo<CustomerRes>(
+      (json) => CustomerRes.fromJson(json)!,
+      (obj) => {
+            ...obj.getObj().toJson(),
+            "id": obj.getId(),
+          }.toString());
 
   @override
   Future<void> dispose() async {
@@ -91,33 +96,34 @@ class CustomerService implements StatefullObj {
     repo.add(customerRes);
   }
 
-  String familienStatustoString(CustomerReqFamilyStatusEnum familyEnum) {
-    switch(familyEnum){
-      case(CustomerReqFamilyStatusEnum.geschieden):
+  static String familienStatustoString(CustomerReqFamilyStatusEnum familyEnum) {
+    switch (familyEnum) {
+      case (CustomerReqFamilyStatusEnum.geschieden):
         return 'Geschieden';
-      case(CustomerReqFamilyStatusEnum.ledig):
+      case (CustomerReqFamilyStatusEnum.ledig):
         return 'Ledig';
-      case(CustomerReqFamilyStatusEnum.verheiratet):
+      case (CustomerReqFamilyStatusEnum.verheiratet):
         return 'Verheiratet';
-      case(CustomerReqFamilyStatusEnum.verwitwet):
+      case (CustomerReqFamilyStatusEnum.verwitwet):
         return 'Verwitwet';
-      default: 
+      default:
         throw 'Kein Familienstatus verfügbar';
     }
   }
-  String titleEnumToString(CustomerReqTitleEnum? titleEnum){
-    switch(titleEnum){
-      case(CustomerReqTitleEnum.drPeriod):
+
+  static String titleEnumToString(CustomerReqTitleEnum? titleEnum) {
+    switch (titleEnum) {
+      case (CustomerReqTitleEnum.drPeriod):
         return 'Dr.';
-      case(CustomerReqTitleEnum.drPeriodDrPeriod):
+      case (CustomerReqTitleEnum.drPeriodDrPeriod):
         return 'Dr. Dr.';
-      case(CustomerReqTitleEnum.profPeriodDrPeriod):
+      case (CustomerReqTitleEnum.profPeriodDrPeriod):
         return 'Prof. Dr.';
-      case(CustomerReqTitleEnum.profPeriodDrPeriodDr):
+      case (CustomerReqTitleEnum.profPeriodDrPeriodDr):
         return 'Prof. Dr. Dr.';
-      case(null):
+      case (null):
         return '';
-      default: 
+      default:
         throw 'Kein Titel Vorhanden';
     }
   }

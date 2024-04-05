@@ -12,7 +12,12 @@ class ContractService implements StatefullObj {
 
   late ApiClient client;
   late ContractApi contractApi;
-  Repo<ContractRes> repo = Repo<ContractRes>();
+  Repo<ContractRes> repo = Repo<ContractRes>(
+      (json) => ContractRes.fromJson(json)!,
+      (obj) => {
+            ...obj.getObj().toJson(),
+            "id": obj.getId(),
+          }.toString());
 
   @override
   Future<void> dispose() async {

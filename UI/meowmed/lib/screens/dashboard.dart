@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/services/debouncer.dart';
+import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/newcustomer.dart';
@@ -21,17 +24,22 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   late List<CachedObj<CustomerRes>> customers;
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
+  final loggedInState =
+      (LoginStateContext.getInstance().state as LoggedInState);
 
   @override
   void initState() {
     super.initState();
     loadData();
+    refreshTimer = RefreshTimer(loadData);
+    refreshTimer.init();
   }
+
+  late RefreshTimer refreshTimer;
 
   Future<void> loadData() async {
     searchController.clear();
-    final state = (LoginStateContext.getInstance().state as LoggedInState);
-    final customerService = state.customerService;
+    final customerService = loggedInState.customerService;
     final repo = customerService.repo;
     final cached = repo.getAll();
     customers = cached;
@@ -68,6 +76,12 @@ class _DashboardState extends State<Dashboard> {
   TextEditingController searchController = TextEditingController();
 
   @override
+  void dispose() {
+    refreshTimer.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -89,7 +103,9 @@ class _DashboardState extends State<Dashboard> {
                 )
               ],
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Row(
               children: [
                 Container(
@@ -121,7 +137,9 @@ class _DashboardState extends State<Dashboard> {
                     child: Text("Neuer Kunde"))
               ],
             ),
-            SizedBox(height: 30,),
+            SizedBox(
+              height: 30,
+            ),
             Expanded(child: CustomerList(filteredCustomers))
           ],
         ),

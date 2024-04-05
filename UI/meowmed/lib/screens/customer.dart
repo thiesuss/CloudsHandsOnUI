@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
+import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/newcontract.dart';
@@ -30,6 +33,12 @@ class _CustomerState extends State<Customer> {
   TextEditingController bankverbindungcontroller = TextEditingController();
 
   @override
+  void dispose() {
+    refreshTimer.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     vornamecontroller.text = customer.getObj().firstName;
@@ -43,7 +52,16 @@ class _CustomerState extends State<Customer> {
     bankverbindungcontroller.text = customer.getObj().bankDetails.toString();
 
     loadContracts();
+
+    refreshTimer = RefreshTimer(loadContracts);
+    refreshTimer.init();
+
+    // refreshTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    //   await loadContracts();
+    // });
   }
+
+  late RefreshTimer refreshTimer;
 
   Future<void> loadContracts() async {
     final state = (LoginStateContext.getInstance().state as LoggedInState);

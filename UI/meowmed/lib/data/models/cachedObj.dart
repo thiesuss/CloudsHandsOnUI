@@ -1,5 +1,6 @@
 import 'package:meowmed/data/models/service.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CachedObj<T> implements StatefullObj {
   CachedObj(String id, T obj, {bool clean = true}) {
@@ -55,6 +56,6 @@ class CachedObj<T> implements StatefullObj {
 
   @override
   Future<void> init() {
-    throw UnimplementedError();
+    return Future.value();
   }
 }
