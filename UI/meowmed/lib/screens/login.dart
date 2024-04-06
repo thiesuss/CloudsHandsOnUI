@@ -124,41 +124,53 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    switch (backendUrlController.text) {
+    String backendUrl = backendUrlController.text;
+    switch (backendUrl) {
       case 'aws':
-        backendUrlController.text =
+        backendUrl =
             'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
         break;
       case 'azure':
-        backendUrlController.text =
-            'https://meowmedazure-functions.azurewebsites.net/';
+        backendUrl = 'https://meowmedazure-functions.azurewebsites.net';
         break;
       default:
-        backendUrlController.text = "http://mock:8080";
+        backendUrl = "http://mock:8080";
+    }
+
+    backendUrlController.text = backendUrl;
+
+    String filteredURL = backendUrl;
+    if (backendUrl.endsWith("/")) {
+      filteredURL = backendUrl.substring(0, backendUrl.length - 1);
     }
 
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
+
     final username = _usernameController.text;
     final password = _passwordController.text;
-    final backendUrl = backendUrlController.text;
-    final backendUri = Uri.parse(backendUrl);
-    _passwordController.clear();
 
     final loggedOutState =
         LoginStateContext.getInstance().state as LoggedOutState;
 
+    //TODO: remove, this is just there,
+    // so the user can see what url was chosen
     await Future.delayed(Duration(seconds: 1), () {});
+
     try {
+      final backendUri = Uri.parse(filteredURL);
       await loggedOutState.login(username, password, backendUri);
     } on Exception catch (e) {
       setState(() {
         _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
         _isLoading = false;
       });
-      return;
+      _passwordController.clear();
     }
   }
 }
