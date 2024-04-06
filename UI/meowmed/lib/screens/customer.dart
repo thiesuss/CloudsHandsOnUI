@@ -366,6 +366,11 @@ class _CustomerState extends State<Customer> {
                             border: OutlineInputBorder(),
                             hintText: "Suche..."))),
                 IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+                IconButton(
+                    onPressed: () {
+                      loadContracts();
+                    },
+                    icon: Icon(Icons.refresh)),
                 Expanded(child: Container()),
                 TextButton(
                     onPressed: () {

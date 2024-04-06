@@ -1,6 +1,7 @@
 import 'package:date_field/date_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/services/customerservice.dart';
@@ -25,35 +26,56 @@ DateTime birthDate = DateTime.now();
 TextEditingController socialSecurityNumberController = TextEditingController();
 TextEditingController taxIdController = TextEditingController();
 TextEditingController jobStatusController = TextEditingController();
-TextEditingController addressController = TextEditingController();
-TextEditingController bankDetailsController = TextEditingController();
+CustomerReqJobStatusEnum fakejob = CustomerReqJobStatusEnum.arbeitslos;
+//Adresse Controllers
+TextEditingController streetController = TextEditingController();
+TextEditingController houseNumberController = TextEditingController();
+TextEditingController zipCodeController = TextEditingController();
+TextEditingController cityController = TextEditingController();
+TextEditingController addressIdController = TextEditingController();
+//Bankdetails Controllers
+TextEditingController ibanController = TextEditingController();
+TextEditingController bicController = TextEditingController();
+TextEditingController bankNameController = TextEditingController();
+TextEditingController bankIdController = TextEditingController();
 
 TextEditingController customerStatusFamilyContoller =
-      new TextEditingController();
-  TextEditingController customerStatusTitleContoller =
-      new TextEditingController();
-  CustomerReqFamilyStatusEnum selectedFamilyStatus =
-      CustomerReqFamilyStatusEnum.ledig;
-  CustomerReqTitleEnum? selectedTitleEnum = null;
+    new TextEditingController();
+TextEditingController customerStatusTitleContoller =
+    new TextEditingController();
+CustomerReqFamilyStatusEnum selectedFamilyStatus =
+    CustomerReqFamilyStatusEnum.ledig;
+CustomerReqTitleEnum? selectedTitleEnum = null;
 
-// Future<void> save() async {
-//   if(!formKey.currentState!.validate()) {
-//     return;
-//   }
-//   final customerReq = CustomerReq(
-//     email: emailController.text, 
-//     firstName: firstNameController.text, 
-//     lastName: lastNameController.text, 
-//     familyStatus: selectedFamilyStatus, 
-//     birthDate: birthDate, 
-//     socialSecurityNumber: socialSecurityNumberController.text, 
-//     taxId: taxIdController.text, 
-//     jobStatus: jobStatusController.text, 
-//     address: addressController.text, 
-//     bankDetails: bankDetailsController.text,
-//     title: selectedTitleEnum
-//     );
-// }
+Future<void> save() async {
+  if (!formKey.currentState!.validate()) {
+    return;
+  }
+  Address fullAdress = Address(
+      street: streetController.text,
+      houseNumber: houseNumberController.text,
+      zipCode: int.parse(zipCodeController.text),
+      city: cityController.text,
+      id: addressIdController.text);
+  BankDetails fullBankDetails = BankDetails(
+      iban: ibanController.text,
+      bic: bicController.text,
+      name: bankNameController.text,
+      id: bankIdController.text);
+
+  final customerReq = CustomerReq(
+      email: emailController.text,
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      familyStatus: selectedFamilyStatus,
+      birthDate: birthDate,
+      socialSecurityNumber: socialSecurityNumberController.text,
+      taxId: taxIdController.text,
+      jobStatus: fakejob,
+      address: fullAdress,
+      bankDetails: fullBankDetails,
+      title: selectedTitleEnum);
+}
 
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -95,7 +117,14 @@ class _NewCustomerState extends State<NewCustomer> {
                 Container(
                     height: 50,
                     width: 230,
-                    child: TextField(
+                    child: TextFormField(
+                      controller: firstNameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Eingabe darf nicht leer sein';
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                           border: OutlineInputBorder(), labelText: "Vorname"),
                     )),
@@ -105,7 +134,14 @@ class _NewCustomerState extends State<NewCustomer> {
                 Container(
                     height: 50,
                     width: 230,
-                    child: TextField(
+                    child: TextFormField(
+                      controller: lastNameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Eingabe darf nicht leer sein';
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                           border: OutlineInputBorder(), labelText: "Nachname"),
                     )),
@@ -121,7 +157,14 @@ class _NewCustomerState extends State<NewCustomer> {
                 Container(
                     height: 50,
                     width: 230,
-                    child: TextField(
+                    child: TextFormField(
+                      controller: taxIdController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Eingabe darf nicht leer sein';
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                           border: OutlineInputBorder(), labelText: "Steuer-ID"),
                     )),
@@ -195,22 +238,27 @@ class _NewCustomerState extends State<NewCustomer> {
                   width: 100,
                 ),
                 Container(
-                          height: 50,
-                          width: 230,
-                          child: DateTimeFormField(
-                            dateFormat: DateFormat('dd.MM.yyyy'),
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Geburtstag"),
-                            firstDate: DateTime.now()
-                                .subtract(const Duration(days: 9300)),
-                            lastDate:
-                                DateTime.now(),
-                            initialPickerDateTime: DateTime.now(),
-                            onChanged: (DateTime? value) {
-                              birthDate = value!;
-                            },
-                          )),
+                    height: 50,
+                    width: 230,
+                    child: DateTimeFormField(
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Eingabe darf nicht leer sein';
+                        }
+                        return null;
+                      },
+                      dateFormat: DateFormat('dd.MM.yyyy'),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Geburtstag"),
+                      firstDate:
+                          DateTime.now().subtract(const Duration(days: 40000)),
+                      lastDate: DateTime.now(),
+                      initialPickerDateTime: DateTime.now(),
+                      onChanged: (DateTime? value) {
+                        birthDate = value!;
+                      },
+                    )),
                 Expanded(child: Container()),
               ],
             ),
@@ -223,7 +271,14 @@ class _NewCustomerState extends State<NewCustomer> {
                 Container(
                     height: 50,
                     width: 230,
-                    child: TextField(
+                    child: TextFormField(
+                      controller: socialSecurityNumberController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Eingabe darf nicht leer sein';
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                           border: OutlineInputBorder(), labelText: "SV-Nummer"),
                     )),
@@ -233,7 +288,14 @@ class _NewCustomerState extends State<NewCustomer> {
                 Container(
                     height: 50,
                     width: 230,
-                    child: TextField(
+                    child: TextFormField(
+                      controller: emailController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Eingabe darf nicht leer sein';
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                           border: OutlineInputBorder(), labelText: "Email"),
                     )),
@@ -248,30 +310,151 @@ class _NewCustomerState extends State<NewCustomer> {
                 Expanded(child: Container()),
                 Column(
                   children: [
-                    Container(
-                        height: 50,
-                        width: 430,
-                        child: TextField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Adresse"),
-                        )),
+                    Row(
+                      children: [
+                        Container(
+                            height: 50,
+                            width: 300,
+                            child: TextFormField(
+                              controller: streetController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Straße"),
+                            )),
+                        Container(
+                            height: 50,
+                            width: 130,
+                            child: TextFormField(
+                              controller: houseNumberController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Hausnummer"),
+                            )),
+                      ],
+                    ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Container(
                         height: 50,
                         width: 430,
-                        child: TextField(
+                        child: TextFormField(
+                          controller: zipCodeController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
-                              labelText: "Bankverbindung"),
+                              labelText: "Zip-Code"),
+                        )),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                        height: 50,
+                        width: 430,
+                        child: TextFormField(
+                          controller: cityController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(), labelText: "Stadt"),
                         )),
                   ],
                 ),
                 SizedBox(
                   width: 30,
                 ),
+                Column(
+                  children: [
+                    Container(
+                        height: 50,
+                        width: 430,
+                        child: TextFormField(
+                          controller: ibanController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(), labelText: "IBAN"),
+                        )),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                        height: 50,
+                        width: 430,
+                        child: TextFormField(
+                          controller: bicController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(), labelText: "BIC"),
+                        )),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                        height: 50,
+                        width: 430,
+                        child: TextFormField(
+                          controller: bankNameController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Name des Kontoinhabenden"),
+                        )),
+                  ],
+                ),
+                SizedBox(
+                  width: 30,
+                ),
+                Expanded(child: Container()),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Expanded(child: Container()),
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -288,7 +471,7 @@ class _NewCustomerState extends State<NewCustomer> {
                     child: Text("Abbrechen")),
                 Expanded(child: Container()),
               ],
-            )
+            ),
           ],
         ),
       ),

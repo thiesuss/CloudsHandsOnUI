@@ -250,9 +250,6 @@ class _NewContractState extends State<NewContract> {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
                             }
-                            if (value is! String) {
-                              return 'Eingabe muss ein Name sein';
-                            }
                             return null;
                             },
                             controller: catNameController,

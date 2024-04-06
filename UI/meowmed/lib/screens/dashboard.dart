@@ -126,6 +126,11 @@ class _DashboardState extends State<Dashboard> {
                       _searchCustomer(searchController.text);
                     },
                     icon: Icon(Icons.search)),
+                IconButton(
+                    onPressed: () {
+                      loadData();
+                    },
+                    icon: Icon(Icons.refresh)),
                 Expanded(child: Container()),
                 TextButton(
                     onPressed: () {
