@@ -361,16 +361,6 @@ components:
         #   type: number
         #   minimum: 0 # TODO
         #   maximum: 0 # TODO
-        jobStatus:
-          type: string
-          enum:
-            - arbeitslos
-            - Schueler
-            - Student
-            - Vollzeit
-            - Teilzeit
-            - Minijob
-            - Werkstudent
         address:
           $ref: "#/components/schemas/Address"
         bankDetails:
