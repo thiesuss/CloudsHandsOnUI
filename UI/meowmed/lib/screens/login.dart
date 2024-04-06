@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       controller: backendUrlController,
                       decoration: InputDecoration(
-                        hintText: 'aws, azure oder eigene Url',
+                        hintText: 'aws, azure, mock, eigene Url',
                         labelText: 'Backend Url',
                         border: OutlineInputBorder(),
                       ),
@@ -124,11 +124,17 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    if (backendUrlController.text == 'aws') {
-      backendUrlController.text =
-          'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
-    } else if (backendUrlController.text == 'azure') {
-      backendUrlController.text = 'http://localhost:8080';
+    switch (backendUrlController.text) {
+      case 'aws':
+        backendUrlController.text =
+            'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
+        break;
+      case 'azure':
+        backendUrlController.text =
+            'https://meowmedazure-functions.azurewebsites.net/';
+        break;
+      default:
+        backendUrlController.text = "http://mock:8080";
     }
 
     setState(() {
