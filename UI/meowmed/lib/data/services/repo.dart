@@ -46,7 +46,7 @@ class Repo<T> implements StatefullObj {
     _items.clear();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // O(n), kann man optimieren
+    // O(n), kann man optimieren, shared_preferences ist nicht optimal
     await Future.wait(prefs
         .getKeys()
         .where((k) => k.startsWith("${T.runtimeType}."))
@@ -65,6 +65,7 @@ class Repo<T> implements StatefullObj {
 
   Future<void> load() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // TODO: O(n), optimieren ohne shared_preferences
     final loadedItems = prefs
         .getKeys()
         .where((k) => k.startsWith("${T.runtimeType}."))

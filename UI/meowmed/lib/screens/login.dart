@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       controller: backendUrlController,
                       decoration: InputDecoration(
-                        hintText: 'http://localhost:8080',
+                        hintText: 'aws, azure oder eigene Url',
                         labelText: 'Backend Url',
                         border: OutlineInputBorder(),
                       ),
@@ -121,7 +121,15 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     // TODO: remove
-    backendUrlController.text = 'http://localhost:8080';
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    if (backendUrlController.text == 'aws') {
+      backendUrlController.text =
+          'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
+    } else if (backendUrlController.text == 'azure') {
+      backendUrlController.text = 'http://localhost:8080';
+    }
 
     setState(() {
       _isLoading = true;
