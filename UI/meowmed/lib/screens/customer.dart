@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
@@ -29,8 +30,17 @@ class _CustomerState extends State<Customer> {
   TextEditingController svnummercontroller = TextEditingController();
   TextEditingController steueridcontroller = TextEditingController();
   TextEditingController bruttocontroller = TextEditingController();
-  TextEditingController adressecontroller = TextEditingController();
-  TextEditingController bankverbindungcontroller = TextEditingController();
+  //Adresse Controllers
+  TextEditingController streetController = TextEditingController();
+  TextEditingController houseNumberController = TextEditingController();
+  TextEditingController zipCodeController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController addressIdController = TextEditingController();
+  //Bankdetails Controllers
+  TextEditingController ibanController = TextEditingController();
+  TextEditingController bicController = TextEditingController();
+  TextEditingController bankNameController = TextEditingController();
+  TextEditingController bankIdController = TextEditingController();
 
   @override
   void dispose() {
@@ -48,8 +58,16 @@ class _CustomerState extends State<Customer> {
     geburtsdatumcontroller.text = customer.getObj().birthDate.toString();
     svnummercontroller.text = customer.getObj().socialSecurityNumber;
     steueridcontroller.text = customer.getObj().taxId;
-    adressecontroller.text = customer.getObj().address.toString();
-    bankverbindungcontroller.text = customer.getObj().bankDetails.toString();
+    // adressecontroller.text = customer.getObj().address.toString();
+    // bankverbindungcontroller.text = customer.getObj().bankDetails.toString();
+    streetController.text = customer.getObj().address.street;
+    houseNumberController.text = customer.getObj().address.houseNumber;
+    zipCodeController.text = customer.getObj().address.zipCode.toString();
+    cityController.text = customer.getObj().address.city;
+
+    ibanController.text = customer.getObj().bankDetails.iban;
+    bicController.text = customer.getObj().bankDetails.bic;
+    bankNameController.text = customer.getObj().bankDetails.name;
 
     loadContracts();
 
@@ -199,9 +217,6 @@ class _CustomerState extends State<Customer> {
                             labelText: "Titel",
                           ),
                         )),
-                    SizedBox(
-                      height: 20,
-                    ),
                   ],
                 ),
                 SizedBox(
@@ -305,49 +320,144 @@ class _CustomerState extends State<Customer> {
                 ),
                 Column(
                   children: [
-                    Container(
-                        height: 50,
-                        width: 330,
-                        child: TextFormField(
-                          controller: adressecontroller,
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null) {
-                              return "Eingabe darf nicht leer sein";
-                            }
-                            if (value.isEmpty) {
-                              return "Bitte Nachname eingeben";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Adresse",
-                          ),
-                        )),
-                    SizedBox(
-                      height: 20,
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                                height: 50,
+                                width: 300,
+                                child: TextFormField(
+                                  controller: streetController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Eingabe darf nicht leer sein';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Straße"),
+                                )),
+                            Container(
+                                height: 50,
+                                width: 130,
+                                child: TextFormField(
+                                  controller: houseNumberController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Eingabe darf nicht leer sein';
+                                    }
+                                    return null;
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Hausnummer"),
+                                )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            height: 50,
+                            width: 430,
+                            child: TextFormField(
+                              controller: zipCodeController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Zip-Code"),
+                            )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            height: 50,
+                            width: 430,
+                            child: TextFormField(
+                              controller: cityController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Stadt"),
+                            )),
+                      ],
                     ),
-                    Container(
-                        height: 50,
-                        width: 330,
-                        child: TextFormField(
-                          controller: bankverbindungcontroller,
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null) {
-                              return "Eingabe darf nicht leer sein";
-                            }
-                            if (value.isEmpty) {
-                              return "Bitte Bankverbindung eingeben";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Bankverbindung",
-                          ),
-                        )),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                            height: 50,
+                            width: 430,
+                            child: TextFormField(
+                              controller: ibanController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "IBAN"),
+                            )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            height: 50,
+                            width: 430,
+                            child: TextFormField(
+                              controller: bicController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "BIC"),
+                            )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            height: 50,
+                            width: 430,
+                            child: TextFormField(
+                              controller: bankNameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Name des Kontoinhabenden"),
+                            )),
+                      ],
+                    ),
                   ],
                 ),
                 Expanded(child: Container())
