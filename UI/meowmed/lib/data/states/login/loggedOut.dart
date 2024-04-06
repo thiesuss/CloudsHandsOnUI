@@ -41,7 +41,7 @@ class LoggedOutState implements LoginState {
 
     // TODO: remove
     final url = client.basePath;
-    if (url == "http://localhost:8080") {
+    if (url == "http://mock:8080") {
       await MockService().mock(state);
     }
 
