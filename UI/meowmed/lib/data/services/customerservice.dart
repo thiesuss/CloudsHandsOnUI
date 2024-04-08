@@ -127,4 +127,37 @@ class CustomerService implements StatefullObj {
         throw 'Kein Titel Vorhanden';
     }
   }
+
+  static CustomerReqFamilyStatusEnum familyStatusResToReq(
+      CustomerResFamilyStatusEnum familystatus) {
+    switch (familystatus) {
+      case (CustomerResFamilyStatusEnum.geschieden):
+        return CustomerReqFamilyStatusEnum.geschieden;
+      case (CustomerResFamilyStatusEnum.ledig):
+        return CustomerReqFamilyStatusEnum.ledig;
+      case (CustomerResFamilyStatusEnum.verheiratet):
+        return CustomerReqFamilyStatusEnum.verheiratet;
+      case (CustomerResFamilyStatusEnum.verwitwet):
+        return CustomerReqFamilyStatusEnum.verwitwet;
+      default:
+        throw 'Kein Familienstatus vorhanden';
+    }
+  }
+
+  static CustomerReqTitleEnum? titleResToReq(CustomerResTitleEnum? titleEnum) {
+    switch (titleEnum) {
+      case (CustomerResTitleEnum.drPeriod):
+        return CustomerReqTitleEnum.drPeriod;
+      case (CustomerResTitleEnum.drPeriodDrPeriod):
+        return CustomerReqTitleEnum.drPeriodDrPeriod;
+      case (CustomerResTitleEnum.profPeriodDrPeriod):
+        return CustomerReqTitleEnum.profPeriodDrPeriod;
+      case (CustomerResTitleEnum.profPeriodDrPeriodDr):
+        return CustomerReqTitleEnum.profPeriodDrPeriodDr;
+      case (null):
+        return null;
+      default:
+        throw 'Kein Titel vorhanden';
+    }
+  }
 }
