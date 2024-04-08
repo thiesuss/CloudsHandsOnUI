@@ -1,5 +1,6 @@
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/debouncer.dart';
@@ -372,11 +373,9 @@ class _NewContractState extends State<NewContract> {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
                             }
-                            if (value is! num) {
-                              return 'Eingabe muss eine Zahl sein';
-                            }
                             return null;
                             },
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             controller: weightController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),

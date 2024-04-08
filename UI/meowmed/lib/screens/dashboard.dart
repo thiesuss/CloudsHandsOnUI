@@ -13,6 +13,7 @@ import 'package:meowmed/widgets/customerlist.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -80,6 +81,13 @@ class _DashboardState extends State<Dashboard> {
     refreshTimer.dispose();
     super.dispose();
   }
+  // final Uri _rickRoll = Uri.parse('https://youtu.be/dQw4w9WgXcQ');
+
+  // Future<void> _launchRickRoll() async {
+  //   if (!await _launchRickRoll(_rickRoll)) {
+  //     throw Exception('Could not launch $_rickRoll');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +98,7 @@ class _DashboardState extends State<Dashboard> {
           children: [
             Row(
               children: [
-                Header("Mitarbeiter Dashboard", []),
+                Header("Mitarbeiter Dashboard", []), 
                 Expanded(child: Container()),
                 // TODO: Extract Logo
                 Container(

@@ -4,6 +4,7 @@ import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/screens/customer.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:url_launcher/link.dart';
 
 class CustomerList extends StatefulWidget {
   CustomerList(this.customers, {super.key});
@@ -71,11 +72,15 @@ class _CustomerListState extends State<CustomerList> {
                                     builder: (context) => Customer(e)));
                           },
                           icon: Icon(Icons.edit)),
-                      IconButton(
-                          onPressed: () {
-                            UnimplementedError();
-                          },
-                          icon: Icon(Icons.delete)),
+                      Link(
+                        uri: Uri.parse('https://youtu.be/dQw4w9WgXcQ'),
+                        target: LinkTarget.self,
+                        builder: (context, followLink) => IconButton(
+                            onPressed: () {
+                              followLink;
+                            },
+                            icon: Icon(Icons.delete)),
+                      ),
                       IconButton(
                           onPressed: () {}, icon: Icon(Icons.remove_red_eye))
                     ],
