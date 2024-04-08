@@ -6,6 +6,7 @@ import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/services/employeeservice.dart';
 import 'package:meowmed/data/services/mock.dart';
+import 'package:meowmed/data/states/login/azureKeyAuth.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/data/states/login/state.dart';
@@ -30,17 +31,21 @@ class LoggedOutState implements LoginState {
     //         city: "Hannover"));
     //END MOCK
 
-    ApiClient client = ApiClient(basePath: backendUri.toString());
+    ApiClient client = ApiClient(
+        basePath: backendUri.toString(),
+        authentication: AzureKeyAuth("c8d3600efbf74bf0981a157bd412945b"));
+
     final contractService = ContractService(client);
     final customerService = CustomerService(client);
+
     // final employeeService = EmployeeService(client);
 
     // final cachedObj = CachedObj<EmployeeRes>(id, employee);
-    final state = LoggedInState(
-        client, contractService, customerService);
+    final state = LoggedInState(client, contractService, customerService);
 
     // TODO: remove
     final url = client.basePath;
+
     if (url == "http://mock:8080") {
       await MockService().mock(state);
     }

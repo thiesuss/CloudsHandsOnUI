@@ -41,7 +41,7 @@ class _NewContractState extends State<NewContract> {
   TextEditingController zipCodeController = TextEditingController();
 
   Future<void> save() async {
-    if (!formKey.currentState!.validate()) {
+    if (!newContractFormKey.currentState!.validate()) {
       return;
     }
     final oldPrice = priceSubject.value;
@@ -68,7 +68,7 @@ class _NewContractState extends State<NewContract> {
     final contractRes = await contractService.createContract(contractReq);
   }
 
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> newContractFormKey = GlobalKey<FormState>();
 
   BehaviorSubject<double> priceSubject = BehaviorSubject.seeded(0);
 
@@ -100,7 +100,7 @@ class _NewContractState extends State<NewContract> {
             await reloadPrice();
           });
         },
-        key: formKey,
+        key: newContractFormKey,
         child: Container(
           padding: EdgeInsets.all(30),
           child: Column(
@@ -378,12 +378,14 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: TextFormField(
                             validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
+                              if (value == null || value.isEmpty) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              return null;
                             },
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             controller: weightController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),

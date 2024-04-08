@@ -116,7 +116,7 @@ class _CustomerState extends State<Customer> {
       BehaviorSubject.seeded([]);
 
   bool editMode = false;
-  final _FormKey = GlobalKey<FormState>();
+  final customerFormKey = GlobalKey<FormState>();
 
   Future<void> save() async {
     final state = (LoginStateContext.getInstance().state as LoggedInState);
@@ -152,7 +152,7 @@ class _CustomerState extends State<Customer> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Form(
-      key: _FormKey,
+      key: customerFormKey,
       child: Container(
         padding: EdgeInsets.all(30),
         child: Column(
@@ -636,7 +636,7 @@ class _CustomerState extends State<Customer> {
                 LoadingButton(
                     label: "Speichern",
                     onPressed: () async {
-                      if (_FormKey.currentState!.validate()) {
+                      if (customerFormKey.currentState!.validate()) {
                         editMode = false;
                       }
                       await save();
