@@ -104,7 +104,7 @@ class _CustomerState extends State<Customer> {
       BehaviorSubject.seeded([]);
 
   bool editMode = false;
-  final _FormKey = GlobalKey<FormState>();
+  final customerFormKey = GlobalKey<FormState>();
 
   Future<void> save() async {
     final state = (LoginStateContext.getInstance().state as LoggedInState);
@@ -121,26 +121,26 @@ class _CustomerState extends State<Customer> {
         bic: bicController.text,
         name: bankNameController.text,
         id: '');
-    // final customerReq = CustomerReq(
-    //     firstName: vornamecontroller.text,
-    //     lastName: nachnamecontroller.text,
-    //     familyStatus: ,
-    //     title: ,
-    //     birthDate: ,
-    //     socialSecurityNumber: svnummercontroller.text,
-    //     taxId: steueridcontroller.text,
-    //     address: address,
-    //     bankDetails: bankDetails,
-    //     email: '',
-    //     jobStatus: );
-    // await customerService.updateCustomer(customerReq);
+    final customerReq = CustomerReq(
+        firstName: vornamecontroller.text,
+        lastName: nachnamecontroller.text,
+        familyStatus: ,
+        title: ,
+        birthDate: ,
+        socialSecurityNumber: svnummercontroller.text,
+        taxId: steueridcontroller.text,
+        address: address,
+        bankDetails: bankDetails,
+        email: '',
+        jobStatus: );
+    await customerService.updateCustomer(customerReq);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Form(
-      key: _FormKey,
+      key: customerFormKey,
       child: Container(
         padding: EdgeInsets.all(30),
         child: Column(
@@ -547,7 +547,7 @@ class _CustomerState extends State<Customer> {
                 LoadingButton(
                     label: "Speichern",
                     onPressed: () async {
-                      if (_FormKey.currentState!.validate()) {
+                      if (customerFormKey.currentState!.validate()) {
                         editMode = false;
                       }
                       await save();
