@@ -32,7 +32,6 @@ class _NewCustomerState extends State<NewCustomer> {
       TextEditingController();
   TextEditingController taxIdController = TextEditingController();
   TextEditingController jobStatusController = TextEditingController();
-  CustomerReqJobStatusEnum fakejob = CustomerReqJobStatusEnum.arbeitslos;
 //Adresse Controllers
   TextEditingController streetController = TextEditingController();
   TextEditingController houseNumberController = TextEditingController();
@@ -55,17 +54,6 @@ class _NewCustomerState extends State<NewCustomer> {
     if (!formKey.currentState!.validate()) {
       return;
     }
-    Address fullAdress = Address(
-        street: streetController.text,
-        houseNumber: houseNumberController.text,
-        zipCode: int.parse(zipCodeController.text),
-        city: cityController.text,
-        id: addressIdController.text);
-    BankDetails fullBankDetails = BankDetails(
-        iban: ibanController.text,
-        bic: bicController.text,
-        name: bankNameController.text,
-        id: bankIdController.text);
 
     final customerReq = CustomerReq(
         email: emailController.text,
@@ -75,9 +63,18 @@ class _NewCustomerState extends State<NewCustomer> {
         birthDate: birthDate,
         socialSecurityNumber: socialSecurityNumberController.text,
         taxId: taxIdController.text,
-        jobStatus: fakejob,
-        address: fullAdress,
-        bankDetails: fullBankDetails,
+        jobStatus: CustomerReqJobStatusEnum.vollzeit,
+        address: Address(
+            street: streetController.text,
+            houseNumber: houseNumberController.text,
+            zipCode: int.parse(zipCodeController.text),
+            city: cityController.text,
+            id: ''),
+        bankDetails: BankDetails(
+            iban: ibanController.text,
+            bic: bicController.text,
+            name: bankNameController.text,
+            id: ''),
         title: selectedTitleEnum);
 
     final customer = await customerService.createCustomer(customerReq);
@@ -195,7 +192,7 @@ class _NewCustomerState extends State<NewCustomer> {
                         return DropdownMenuEntry<CustomerReqTitleEnum>(
                           value: titleStatus,
                           label: CustomerService.titleEnumToString(
-                              titleStatus), // familienstatusenum.ledig
+                              titleStatus), 
                         );
                       })
                     ],

@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
+import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
@@ -21,13 +24,18 @@ class Customer extends StatefulWidget {
 }
 
 class _CustomerState extends State<Customer> {
+  CustomerService customerService =
+      (LoginStateContext.getInstance().state as LoggedInState).customerService;
   _CustomerState(this.customer) {}
   CachedObj<CustomerRes> customer;
   TextEditingController vornamecontroller = TextEditingController();
   TextEditingController nachnamecontroller = TextEditingController();
-  TextEditingController familienstatuscontroller = TextEditingController();
-  TextEditingController titelcontroller = TextEditingController();
-  TextEditingController geburtsdatumcontroller = TextEditingController();
+  TextEditingController customerStatusFamilyContoller = TextEditingController();
+  CustomerResFamilyStatusEnum selectedFamilyStatus = CustomerResFamilyStatusEnum.ledig;
+  TextEditingController customerStatusTitleContoller = TextEditingController();
+  CustomerResTitleEnum? selectedTitleEnum;
+  TextEditingController birthDateController = TextEditingController();
+  DateTime birthDate = DateTime.now();
   TextEditingController svnummercontroller = TextEditingController();
   TextEditingController steueridcontroller = TextEditingController();
   TextEditingController bruttocontroller = TextEditingController();
@@ -43,6 +51,7 @@ class _CustomerState extends State<Customer> {
   TextEditingController bankNameController = TextEditingController();
   TextEditingController bankIdController = TextEditingController();
 
+
   @override
   void dispose() {
     refreshTimer.dispose();
@@ -56,9 +65,12 @@ class _CustomerState extends State<Customer> {
 
     vornamecontroller.text = obj.firstName;
     nachnamecontroller.text = obj.lastName;
-    familienstatuscontroller.text = obj.familyStatus.toString();
-    titelcontroller.text = obj.title.toString();
-    geburtsdatumcontroller.text = obj.birthDate.toString();
+    customerStatusFamilyContoller.text = obj.familyStatus.toString();
+    selectedFamilyStatus = obj.familyStatus;
+    customerStatusTitleContoller.text = obj.title.toString();
+    selectedTitleEnum = obj.title;
+    birthDate = obj.birthDate;
+    birthDateController.text = obj.birthDate.toString();
     svnummercontroller.text = obj.socialSecurityNumber;
     steueridcontroller.text = obj.taxId;
     // adressecontroller.text = obj.address.toString();
@@ -121,19 +133,19 @@ class _CustomerState extends State<Customer> {
         bic: bicController.text,
         name: bankNameController.text,
         id: '');
-    // final customerReq = CustomerReq(
-    //     firstName: vornamecontroller.text,
-    //     lastName: nachnamecontroller.text,
-    //     familyStatus: ,
-    //     title: ,
-    //     birthDate: ,
-    //     socialSecurityNumber: svnummercontroller.text,
-    //     taxId: steueridcontroller.text,
-    //     address: address,
-    //     bankDetails: bankDetails,
-    //     email: '',
-    //     jobStatus: );
-    // await customerService.updateCustomer(customerReq);
+    final customerReq = CustomerReq(
+        firstName: vornamecontroller.text,
+        lastName: nachnamecontroller.text,
+        familyStatus: CustomerService.familyStatusResToReq(selectedFamilyStatus), 
+        title: CustomerService.titleResToReq(selectedTitleEnum), 
+        birthDate: birthDate,  //replace
+        socialSecurityNumber: svnummercontroller.text,
+        taxId: steueridcontroller.text,
+        address: address,
+        bankDetails: bankDetails,
+        email: '',
+        jobStatus: CustomerReqJobStatusEnum.vollzeit); //Job nicht nötig
+    await customerService.updateCustomer(customerReq);
   }
 
   @override
@@ -227,26 +239,54 @@ class _CustomerState extends State<Customer> {
                     SizedBox(
                       height: 20,
                     ),
+                    // Container(
+                    //     height: 50,
+                    //     width: 230,
+                    //     child: TextFormField(
+                    //       controller: titelcontroller,
+                    //       readOnly: !editMode,
+                    //       validator: (value) {
+                    //         if (value == null) {
+                    //           return "Eingabe darf nicht leer sein";
+                    //         }
+                    //         if (value.isEmpty) {
+                    //           return "Bitte Titel eingeben";
+                    //         }
+                    //         return null;
+                    //       },
+                    //       decoration: InputDecoration(
+                    //         border: OutlineInputBorder(),
+                    //         labelText: "Titel",
+                    //       ),
+                    //     )),
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          controller: titelcontroller,
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null) {
-                              return "Eingabe darf nicht leer sein";
-                            }
-                            if (value.isEmpty) {
-                              return "Bitte Titel eingeben";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Titel",
-                          ),
-                        )),
+                  //dropdown menu für enum
+                  height: 50,
+                  width: 230,
+                  child: DropdownMenu<CustomerResTitleEnum?>(
+                    initialSelection: selectedTitleEnum,
+                    controller: customerStatusTitleContoller,
+                    requestFocusOnTap: true,
+                    label: const Text('Titel'),
+                    onSelected: (CustomerResTitleEnum? titleStatus) {
+                      setState(() {
+                        selectedTitleEnum = titleStatus;
+                      });
+                    },
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(value: null, label: ""),
+                      ...CustomerResTitleEnum.values
+                          .map<DropdownMenuEntry<CustomerResTitleEnum>>(
+                              (CustomerResTitleEnum titleStatus) {
+                        return DropdownMenuEntry<CustomerResTitleEnum>(
+                          value: titleStatus,
+                          label: CustomerService.titleEnumToString(
+                              CustomerService.titleResToReq(titleStatus)), 
+                        );
+                      })
+                    ],
+                  ),
+                ),
                   ],
                 ),
                 SizedBox(
@@ -254,26 +294,49 @@ class _CustomerState extends State<Customer> {
                 ),
                 Column(
                   children: [
+                    // Container(
+                    //     height: 50,
+                    //     width: 230,
+                    //     child: TextFormField(
+                    //       controller: geburtsdatumcontroller,
+                    //       readOnly: !editMode,
+                    //       validator: (value) {
+                    //         if (value == null) {
+                    //           return "Eingabe darf nicht leer sein";
+                    //         }
+                    //         if (value.isEmpty) {
+                    //           return "Bitte Geburtsdatum eingeben";
+                    //         }
+                    //         return null;
+                    //       },
+                    //       decoration: InputDecoration(
+                    //         border: OutlineInputBorder(),
+                    //         labelText: "Geburtsdatum",
+                    //       ),
+                    //     )),
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          controller: geburtsdatumcontroller,
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null) {
-                              return "Eingabe darf nicht leer sein";
-                            }
-                            if (value.isEmpty) {
-                              return "Bitte Geburtsdatum eingeben";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Geburtsdatum",
-                          ),
-                        )),
+                    height: 50,
+                    width: 230,
+                    child: DateTimeFormField(
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Eingabe darf nicht leer sein';
+                        }
+                        return null;
+                      },
+                      dateFormat: DateFormat('dd.MM.yyyy'),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Geburtstag"),
+                      firstDate:
+                          DateTime.now().subtract(const Duration(days: 40000)),
+                      lastDate: DateTime.now(),
+                      initialPickerDateTime: customer.getObj().birthDate,
+                      initialValue: customer.getObj().birthDate,
+                      onChanged: (DateTime? value) {
+                        birthDate = value!;
+                      },
+                    )),
                     SizedBox(
                       height: 20,
                     ),
@@ -323,26 +386,52 @@ class _CustomerState extends State<Customer> {
                     SizedBox(
                       height: 20,
                     ),
+                    // Container(
+                    //     height: 50,
+                    //     width: 230,
+                    //     child: TextFormField(
+                    //       controller: familienstatuscontroller,
+                    //       readOnly: !editMode,
+                    //       validator: (value) {
+                    //         if (value == null) {
+                    //           return "Eingabe darf nicht leer sein";
+                    //         }
+                    //         if (value.isEmpty) {
+                    //           return "Bitte Familienstatus eingeben";
+                    //         }
+                    //         return null;
+                    //       },
+                    //       decoration: InputDecoration(
+                    //         border: OutlineInputBorder(),
+                    //         labelText: "Familienstatus",
+                    //       ),
+                    //     )),
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          controller: familienstatuscontroller,
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null) {
-                              return "Eingabe darf nicht leer sein";
-                            }
-                            if (value.isEmpty) {
-                              return "Bitte Familienstatus eingeben";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Familienstatus",
-                          ),
-                        )),
+                  //dropdown menu für enum
+                  height: 50,
+                  width: 230,
+                  child: DropdownMenu<CustomerResFamilyStatusEnum>(
+                    initialSelection: selectedFamilyStatus,
+                    controller: customerStatusFamilyContoller,
+                    requestFocusOnTap: true,
+                    label: const Text('Familienstatus'),
+                    onSelected: (CustomerResFamilyStatusEnum? familyStatus) {
+                      setState(() {
+                        if (familyStatus == null) return;
+                        selectedFamilyStatus = familyStatus;
+                      });
+                    },
+                    dropdownMenuEntries: CustomerResFamilyStatusEnum.values
+                        .map<DropdownMenuEntry<CustomerResFamilyStatusEnum>>(
+                            (CustomerResFamilyStatusEnum familyStatus) {
+                      return DropdownMenuEntry<CustomerResFamilyStatusEnum>(
+                        value: familyStatus,
+                        label: CustomerService.familienStatustoString(
+                            CustomerService.familyStatusResToReq(familyStatus)), // familienstatusenum.ledig
+                      );
+                    }).toList(),
+                  ),
+                ),
                   ],
                 ),
                 SizedBox(
