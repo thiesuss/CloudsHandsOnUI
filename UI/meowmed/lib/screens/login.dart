@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
             'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
         break;
       case 'azure':
-        backendUrl = 'https://meowmedazure-functions.azurewebsites.net';
+        backendUrl = 'https://meowmedazure-functions.azurewebsites.net/api';
         break;
       default:
         backendUrl = "http://mock:8080";
