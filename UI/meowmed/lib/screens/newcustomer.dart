@@ -8,6 +8,7 @@ import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/widgets/header.dart';
+import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
 
 class NewCustomer extends StatefulWidget {
@@ -17,71 +18,72 @@ class NewCustomer extends StatefulWidget {
   State<NewCustomer> createState() => _NewCustomerState();
 }
 
-TextEditingController emailController = TextEditingController();
-TextEditingController firstNameController = TextEditingController();
-TextEditingController lastNameController = TextEditingController();
-TextEditingController familyStatusController = TextEditingController();
-TextEditingController birthDateController = TextEditingController();
-DateTime birthDate = DateTime.now();
-TextEditingController socialSecurityNumberController = TextEditingController();
-TextEditingController taxIdController = TextEditingController();
-TextEditingController jobStatusController = TextEditingController();
-CustomerReqJobStatusEnum fakejob = CustomerReqJobStatusEnum.arbeitslos;
-//Adresse Controllers
-TextEditingController streetController = TextEditingController();
-TextEditingController houseNumberController = TextEditingController();
-TextEditingController zipCodeController = TextEditingController();
-TextEditingController cityController = TextEditingController();
-TextEditingController addressIdController = TextEditingController();
-//Bankdetails Controllers
-TextEditingController ibanController = TextEditingController();
-TextEditingController bicController = TextEditingController();
-TextEditingController bankNameController = TextEditingController();
-TextEditingController bankIdController = TextEditingController();
-
-TextEditingController customerStatusFamilyContoller =
-    new TextEditingController();
-TextEditingController customerStatusTitleContoller =
-    new TextEditingController();
-CustomerReqFamilyStatusEnum selectedFamilyStatus =
-    CustomerReqFamilyStatusEnum.ledig;
-CustomerReqTitleEnum? selectedTitleEnum = null;
-
-Future<void> save() async {
-  if (!formKey.currentState!.validate()) {
-    return;
-  }
-  Address fullAdress = Address(
-      street: streetController.text,
-      houseNumber: houseNumberController.text,
-      zipCode: int.parse(zipCodeController.text),
-      city: cityController.text,
-      id: addressIdController.text);
-  BankDetails fullBankDetails = BankDetails(
-      iban: ibanController.text,
-      bic: bicController.text,
-      name: bankNameController.text,
-      id: bankIdController.text);
-
-  final customerReq = CustomerReq(
-      email: emailController.text,
-      firstName: firstNameController.text,
-      lastName: lastNameController.text,
-      familyStatus: selectedFamilyStatus,
-      birthDate: birthDate,
-      socialSecurityNumber: socialSecurityNumberController.text,
-      taxId: taxIdController.text,
-      jobStatus: fakejob,
-      address: fullAdress,
-      bankDetails: fullBankDetails,
-      title: selectedTitleEnum);
-}
-
-GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
 class _NewCustomerState extends State<NewCustomer> {
   CustomerService customerService =
       (LoginStateContext.getInstance().state as LoggedInState).customerService;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController familyStatusController = TextEditingController();
+  TextEditingController birthDateController = TextEditingController();
+  DateTime birthDate = DateTime.now();
+  TextEditingController socialSecurityNumberController =
+      TextEditingController();
+  TextEditingController taxIdController = TextEditingController();
+  TextEditingController jobStatusController = TextEditingController();
+  CustomerReqJobStatusEnum fakejob = CustomerReqJobStatusEnum.arbeitslos;
+//Adresse Controllers
+  TextEditingController streetController = TextEditingController();
+  TextEditingController houseNumberController = TextEditingController();
+  TextEditingController zipCodeController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController addressIdController = TextEditingController();
+//Bankdetails Controllers
+  TextEditingController ibanController = TextEditingController();
+  TextEditingController bicController = TextEditingController();
+  TextEditingController bankNameController = TextEditingController();
+  TextEditingController bankIdController = TextEditingController();
+
+  TextEditingController customerStatusFamilyContoller = TextEditingController();
+  TextEditingController customerStatusTitleContoller = TextEditingController();
+  CustomerReqFamilyStatusEnum selectedFamilyStatus =
+      CustomerReqFamilyStatusEnum.ledig;
+  CustomerReqTitleEnum? selectedTitleEnum;
+
+  Future<void> save() async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+    Address fullAdress = Address(
+        street: streetController.text,
+        houseNumber: houseNumberController.text,
+        zipCode: int.parse(zipCodeController.text),
+        city: cityController.text,
+        id: addressIdController.text);
+    BankDetails fullBankDetails = BankDetails(
+        iban: ibanController.text,
+        bic: bicController.text,
+        name: bankNameController.text,
+        id: bankIdController.text);
+
+    final customerReq = CustomerReq(
+        email: emailController.text,
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        familyStatus: selectedFamilyStatus,
+        birthDate: birthDate,
+        socialSecurityNumber: socialSecurityNumberController.text,
+        taxId: taxIdController.text,
+        jobStatus: fakejob,
+        address: fullAdress,
+        bankDetails: fullBankDetails,
+        title: selectedTitleEnum);
+
+    final customer = await customerService.createCustomer(customerReq);
+  }
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -455,12 +457,12 @@ class _NewCustomerState extends State<NewCustomer> {
             Row(
               children: [
                 Expanded(child: Container()),
-                TextButton(
-                    onPressed: () {
+                LoadingButton(
+                    label: "Anlegen",
+                    onPressed: () async {
+                      await save();
                       Navigator.pop(context);
-                      throw UnimplementedError();
-                    },
-                    child: Text("Anlegen")),
+                    }),
                 SizedBox(
                   width: 30,
                 ),
