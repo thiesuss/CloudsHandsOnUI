@@ -9,6 +9,7 @@ import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/newcontract.dart';
 import 'package:meowmed/widgets/contractList.dart';
 import 'package:meowmed/widgets/header.dart';
+import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -51,32 +52,30 @@ class _CustomerState extends State<Customer> {
   @override
   void initState() {
     super.initState();
-    vornamecontroller.text = customer.getObj().firstName;
-    nachnamecontroller.text = customer.getObj().lastName;
-    familienstatuscontroller.text = customer.getObj().familyStatus.toString();
-    titelcontroller.text = customer.getObj().title.toString();
-    geburtsdatumcontroller.text = customer.getObj().birthDate.toString();
-    svnummercontroller.text = customer.getObj().socialSecurityNumber;
-    steueridcontroller.text = customer.getObj().taxId;
-    // adressecontroller.text = customer.getObj().address.toString();
-    // bankverbindungcontroller.text = customer.getObj().bankDetails.toString();
-    streetController.text = customer.getObj().address.street;
-    houseNumberController.text = customer.getObj().address.houseNumber;
-    zipCodeController.text = customer.getObj().address.zipCode.toString();
-    cityController.text = customer.getObj().address.city;
+    final obj = customer.getObj();
 
-    ibanController.text = customer.getObj().bankDetails.iban;
-    bicController.text = customer.getObj().bankDetails.bic;
-    bankNameController.text = customer.getObj().bankDetails.name;
+    vornamecontroller.text = obj.firstName;
+    nachnamecontroller.text = obj.lastName;
+    familienstatuscontroller.text = obj.familyStatus.toString();
+    titelcontroller.text = obj.title.toString();
+    geburtsdatumcontroller.text = obj.birthDate.toString();
+    svnummercontroller.text = obj.socialSecurityNumber;
+    steueridcontroller.text = obj.taxId;
+    // adressecontroller.text = obj.address.toString();
+    // bankverbindungcontroller.text = obj.bankDetails.toString();
+    streetController.text = obj.address.street;
+    houseNumberController.text = obj.address.houseNumber;
+    zipCodeController.text = obj.address.zipCode.toString();
+    cityController.text = obj.address.city;
+
+    ibanController.text = obj.bankDetails.iban;
+    bicController.text = obj.bankDetails.bic;
+    bankNameController.text = obj.bankDetails.name;
 
     loadContracts();
 
     refreshTimer = RefreshTimer(loadContracts);
     refreshTimer.init();
-
-    // refreshTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
-    //   await loadContracts();
-    // });
   }
 
   late RefreshTimer refreshTimer;
@@ -87,7 +86,7 @@ class _CustomerState extends State<Customer> {
     final cached = repo.getAll();
     final cachedContracts = cached.where((element) {
       final obj = element.getObj();
-      return obj.id == customer.getObj().id;
+      return obj.id == obj.id;
     }).toList();
     contractList = cachedContracts;
     filteredContracts.add(cachedContracts);
@@ -106,6 +105,37 @@ class _CustomerState extends State<Customer> {
 
   bool editMode = false;
   final _FormKey = GlobalKey<FormState>();
+
+  Future<void> save() async {
+    final state = (LoginStateContext.getInstance().state as LoggedInState);
+    final customerService = state.customerService;
+    final customerRes = customer.getObj();
+    final address = Address(
+        street: streetController.text,
+        houseNumber: houseNumberController.text,
+        zipCode: int.parse(zipCodeController.text),
+        city: cityController.text,
+        id: '');
+    final bankDetails = BankDetails(
+        iban: ibanController.text,
+        bic: bicController.text,
+        name: bankNameController.text,
+        id: '');
+    // final customerReq = CustomerReq(
+    //     firstName: vornamecontroller.text,
+    //     lastName: nachnamecontroller.text,
+    //     familyStatus: ,
+    //     title: ,
+    //     birthDate: ,
+    //     socialSecurityNumber: svnummercontroller.text,
+    //     taxId: steueridcontroller.text,
+    //     address: address,
+    //     bankDetails: bankDetails,
+    //     email: '',
+    //     jobStatus: );
+    // await customerService.updateCustomer(customerReq);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -514,14 +544,23 @@ class _CustomerState extends State<Customer> {
                       });
                     },
                     child: Text("Bearbeiten")),
-                TextButton(
-                    onPressed: () {
+                LoadingButton(
+                    label: "Speichern",
+                    onPressed: () async {
                       if (_FormKey.currentState!.validate()) {
                         editMode = false;
                       }
-                    },
-                    child: Text("Speichern")),
-                TextButton(onPressed: () {}, child: Text("Löschen")),
+                      await save();
+                    }),
+                LoadingButton(
+                    label: "Löschen",
+                    onPressed: () async {
+                      final state = (LoginStateContext.getInstance().state
+                          as LoggedInState);
+                      final customerService = state.customerService;
+                      await customerService.deleteCustomer(customer.getId());
+                      Navigator.pop(context);
+                    }),
                 Expanded(child: Container())
               ],
             )

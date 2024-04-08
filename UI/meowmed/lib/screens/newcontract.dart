@@ -7,6 +7,7 @@ import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/widgets/header.dart';
+import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -43,6 +44,13 @@ class _NewContractState extends State<NewContract> {
     if (!formKey.currentState!.validate()) {
       return;
     }
+    final oldPrice = priceSubject.value;
+    final price = await reloadPrice();
+
+    if (oldPrice != price) {
+      return;
+    }
+
     final contractReq = ContractReq(
       startDate: startDate,
       endDate: endDate,
@@ -64,7 +72,7 @@ class _NewContractState extends State<NewContract> {
 
   BehaviorSubject<double> priceSubject = BehaviorSubject.seeded(0);
 
-  Future<void> reloadPrice() async {
+  Future<double> reloadPrice() async {
     final rateReq = RateCalculationReq(
         coverage: double.parse(coverageController.text),
         breed: breedController.text,
@@ -78,6 +86,7 @@ class _NewContractState extends State<NewContract> {
     final rateres = await contractService.getRate(rateReq);
     double price = rateres.rate!.toDouble();
     priceSubject.add(price);
+    return price;
   }
 
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
@@ -138,11 +147,11 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: DateTimeFormField(
                             validator: (value) {
-                            if (value == null) {
-                              return "Bitte Startdatum angeben";
-                            }
-                            return null;
-                          },
+                              if (value == null) {
+                                return "Bitte Startdatum angeben";
+                              }
+                              return null;
+                            },
                             dateFormat: DateFormat('dd.MM.yyyy'),
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
@@ -164,11 +173,11 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: DateTimeFormField(
                             validator: (value) {
-                            if (value == null) {
-                              return "Bitte Enddatum angeben";
-                            }
-                            return null;
-                          },
+                              if (value == null) {
+                                return "Bitte Enddatum angeben";
+                              }
+                              return null;
+                            },
                             dateFormat: DateFormat('dd.MM.yyyy'),
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
@@ -189,13 +198,13 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: TextFormField(
                             validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            if (value is! num) {
-                              return 'Eingabe muss eine Zahl sein';
-                            }
-                            return null;
+                              if (value == null || value.isEmpty) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              if (value is! num) {
+                                return 'Eingabe muss eine Zahl sein';
+                              }
+                              return null;
                             },
                             controller: coverageController,
                             decoration: InputDecoration(
@@ -209,13 +218,13 @@ class _NewContractState extends State<NewContract> {
                   ),
                   Column(
                     children: [
-                      TextButton(
-                          onPressed: () async {
-                            final price = await reloadPrice();
-                            await save();
-                            Navigator.pop(context);
-                          },
-                          child: Text("Vertrag Abschließen")),
+                      LoadingButton(
+                        label: "Vertrag Abschließen",
+                        onPressed: () async {
+                          await save();
+                          Navigator.pop(context);
+                        },
+                      ),
                       SizedBox(
                         height: 30,
                       ),
@@ -248,10 +257,10 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: TextFormField(
                             validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
+                              if (value == null || value.isEmpty) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              return null;
                             },
                             controller: catNameController,
                             decoration: InputDecoration(
@@ -266,11 +275,11 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: TextFormField(
                             validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            //check ob Rasse hier?
-                            return null;
+                              if (value == null || value.isEmpty) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              //check ob Rasse hier?
+                              return null;
                             },
                             controller: breedController,
                             decoration: InputDecoration(
@@ -285,11 +294,11 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: TextFormField(
                             validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            //check auf Farbe?
-                            return null;
+                              if (value == null || value.isEmpty) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              //check auf Farbe?
+                              return null;
                             },
                             controller: colorController,
                             decoration: InputDecoration(
@@ -304,10 +313,10 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: DateTimeFormField(
                             validator: (value) {
-                            if (value == null) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
+                              if (value == null) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              return null;
                             },
                             dateFormat: DateFormat('dd.MM.yyyy'),
                             decoration: InputDecoration(
@@ -315,8 +324,7 @@ class _NewContractState extends State<NewContract> {
                                 labelText: "Geburtstag"),
                             firstDate: DateTime.now()
                                 .subtract(const Duration(days: 9300)),
-                            lastDate:
-                                DateTime.now(),
+                            lastDate: DateTime.now(),
                             initialPickerDateTime: DateTime.now(),
                             onChanged: (DateTime? value) {
                               birthDate = value!;
@@ -334,10 +342,10 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: TextFormField(
                             validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
+                              if (value == null || value.isEmpty) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              return null;
                             },
                             controller: personalityController,
                             decoration: InputDecoration(
@@ -352,10 +360,10 @@ class _NewContractState extends State<NewContract> {
                           width: 230,
                           child: TextFormField(
                             validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
+                              if (value == null || value.isEmpty) {
+                                return 'Eingabe darf nicht leer sein';
+                              }
+                              return null;
                             },
                             controller: environmentController,
                             decoration: InputDecoration(
@@ -402,7 +410,9 @@ class _NewContractState extends State<NewContract> {
                               })
                         ],
                       ),
-                      SizedBox(height: 10,)
+                      SizedBox(
+                        height: 10,
+                      )
                     ],
                   ),
                   Expanded(child: Container())
