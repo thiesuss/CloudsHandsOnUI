@@ -1,12 +1,7 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:meowmed/data/exeptions/loginError.dart';
-import 'package:meowmed/data/exeptions/timeout.dart';
-import 'package:meowmed/data/models/cachedObj.dart';
+import 'package:flutter/material.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/customerservice.dart';
-import 'package:meowmed/data/services/employeeservice.dart';
 import 'package:meowmed/data/services/mock.dart';
-import 'package:meowmed/data/states/login/azureKeyAuth.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/data/states/login/state.dart';
@@ -16,8 +11,8 @@ import 'package:openapi/api.dart';
 class LoggedOutState implements LoginState {
   LoggedOutState() {}
 
-  Future<LoginState> login(
-      String username, String password, Uri backendUri) async {
+  Future<LoginState> login(String username, String password, Uri backendUri,
+      Authentication? auth) async {
     //START MOCK
     String id = "ID1234567890";
     // final EmployeeRes employee = EmployeeRes(
@@ -31,9 +26,8 @@ class LoggedOutState implements LoginState {
     //         city: "Hannover"));
     //END MOCK
 
-    ApiClient client = ApiClient(
-        basePath: backendUri.toString(),
-        authentication: AzureKeyAuth("c8d3600efbf74bf0981a157bd412945b"));
+    ApiClient client =
+        ApiClient(basePath: backendUri.toString(), authentication: auth);
 
     final contractService = ContractService(client);
     final customerService = CustomerService(client);

@@ -1,14 +1,14 @@
 import 'package:openapi/api.dart';
 
-class AzureKeyAuth implements Authentication {
-  AzureKeyAuth(this.apiKey);
+class AwsKeyAuth implements Authentication {
+  AwsKeyAuth(this.apiKey);
 
   String apiKey;
 
   @override
   Future<void> applyToParams(
       List<QueryParam> queryParams, Map<String, String> headerParams) {
-    headerParams["Ocp-Apim-Subscription-Key"] = apiKey;
+    headerParams["X-Api-Key"] = apiKey;
     return Future.value();
   }
 }

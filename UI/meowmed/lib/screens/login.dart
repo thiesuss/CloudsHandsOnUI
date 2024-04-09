@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/services/employeeservice.dart';
+import 'package:meowmed/data/states/login/awsKeyAuth.dart';
+import 'package:meowmed/data/states/login/azureKeyAuth.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/data/states/login/loggedOut.dart';
@@ -125,13 +127,19 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     String backendUrl = backendUrlController.text;
+    String authKey;
+    Authentication? auth;
     switch (backendUrl) {
       case 'aws':
         backendUrl =
             'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
+        authKey = "zMvbvu4RjkaOof38EPgYU9RIZuCRDfEi7oGFqcyv";
+        auth = AwsKeyAuth(authKey);
         break;
       case 'azure':
         backendUrl = 'https://meowmedazure-functions.azurewebsites.net/api';
+        authKey = "c8d3600efbf74bf0981a157bd412945b";
+        auth = AzureKeyAuth(authKey);
         break;
       case 'azure1':
         backendUrl = 'https://meowmedazure-apim.azure-api.net/';
@@ -164,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final backendUri = Uri.parse(filteredURL);
-      await loggedOutState.login(username, password, backendUri);
+      await loggedOutState.login(username, password, backendUri, auth);
     } on Exception catch (e) {
       setState(() {
         _errorMessage = e.toString();
