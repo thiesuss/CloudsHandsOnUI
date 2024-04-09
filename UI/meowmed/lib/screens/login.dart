@@ -122,37 +122,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
-    // TODO: remove
     if (!_formKey.currentState!.validate()) {
       return;
-    }
-    String backendUrl = backendUrlController.text;
-    String authKey;
-    Authentication? auth;
-    switch (backendUrl) {
-      case 'aws':
-        backendUrl =
-            'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
-        authKey = "zMvbvu4RjkaOof38EPgYU9RIZuCRDfEi7oGFqcyv";
-        auth = AwsKeyAuth(authKey);
-        break;
-      case 'azure':
-        backendUrl = 'https://meowmedazure-functions.azurewebsites.net/api';
-        authKey = "c8d3600efbf74bf0981a157bd412945b";
-        auth = AzureKeyAuth(authKey);
-        break;
-      case 'azure1':
-        backendUrl = 'https://meowmedazure-apim.azure-api.net/';
-        break;
-      default:
-        backendUrl = "http://mock:8080";
-    }
-
-    backendUrlController.text = backendUrl;
-
-    String filteredURL = backendUrl;
-    if (backendUrl.endsWith("/")) {
-      filteredURL = backendUrl.substring(0, backendUrl.length - 1);
     }
 
     setState(() {
@@ -171,8 +142,7 @@ class _LoginPageState extends State<LoginPage> {
     await Future.delayed(Duration(seconds: 1), () {});
 
     try {
-      final backendUri = Uri.parse(filteredURL);
-      await loggedOutState.login(username, password, backendUri, auth);
+      await loggedOutState.login(username, password, backendUrlController.text);
     } on Exception catch (e) {
       setState(() {
         _errorMessage = e.toString();

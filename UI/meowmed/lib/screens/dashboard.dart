@@ -94,12 +94,12 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.all(30),
-        child: Column(
+        child: ListView(
           children: [
             Row(
               children: [
-                Header("Mitarbeiter Dashboard", []), 
-                Expanded(child: Container()),
+                Header("Mitarbeiter Dashboard", []),
+                // Expanded(child: Container()),
                 // TODO: Extract Logo
                 Container(
                   width: 350,
@@ -139,7 +139,7 @@ class _DashboardState extends State<Dashboard> {
                       loadData();
                     },
                     icon: Icon(Icons.refresh)),
-                Expanded(child: Container()),
+                // Expanded(child: Container()),
                 TextButton(
                     onPressed: () {
                       Navigator.push(

@@ -155,7 +155,7 @@ class _CustomerState extends State<Customer> {
       key: customerFormKey,
       child: Container(
         padding: EdgeInsets.all(30),
-        child: Column(
+        child: ListView(
           children: [
             Row(
               children: [

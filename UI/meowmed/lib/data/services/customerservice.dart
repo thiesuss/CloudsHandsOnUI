@@ -64,8 +64,13 @@ class CustomerService implements StatefullObj {
     throw UnimplementedError("UpdateCustomer hat keine ID?");
   }
 
-  Future<List<CachedObj<CustomerRes>>> getCustomers() async {
-    final customerResList = await customerApi.getCustomers();
+  Future<List<CachedObj<CustomerRes>>> getCustomers(
+      {int? pageSize, int? page}) async {
+    pageSize = pageSize ?? 10;
+    page = page ?? 1;
+
+    final customerResList =
+        await customerApi.getCustomers(pageSize: pageSize, page: page);
     if (customerResList == null) {
       throw ReadFailed("Customer read failed");
     }
