@@ -257,8 +257,7 @@ class _NewCustomerState extends State<NewCustomer> {
                         firstDate: DateTime.now()
                             .subtract(const Duration(days: 40000)),
                         lastDate: DateTime.now(),
-                        initialPickerDateTime: DateTime.now(),
-                        onChanged: (DateTime? value) {
+                        onDateSelected: (DateTime? value) {
                           birthDate = value!;
                         },
                       )),

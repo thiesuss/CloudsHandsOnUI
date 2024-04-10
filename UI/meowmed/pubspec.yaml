@@ -13,11 +13,12 @@ dependencies:
     path: ../openapi
   rxdart:
   logger: ^2.0.2+1
-  date_field: 4.0.0
-  intl: ^0.18.1
+  date_field: ^3.0.3
+  intl: ^0.17.0
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.11
   http: ^1.2.1
+  flutter_azure_b2c: ^0.0.9
   # injectable:
   # get_it:
 

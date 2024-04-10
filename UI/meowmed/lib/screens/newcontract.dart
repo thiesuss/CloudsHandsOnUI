@@ -170,8 +170,8 @@ class _NewContractState extends State<NewContract> {
                                 .subtract(const Duration(days: 365)),
                             lastDate:
                                 DateTime.now().add(const Duration(days: 36500)),
-                            initialPickerDateTime: DateTime.now(),
-                            onChanged: (DateTime? value) {
+                            
+                            onDateSelected: (DateTime? value) {
                               startDate = value!;
                             },
                           )),
@@ -195,8 +195,7 @@ class _NewContractState extends State<NewContract> {
                             firstDate: DateTime.now(),
                             lastDate:
                                 DateTime.now().add(const Duration(days: 36500)),
-                            initialPickerDateTime: DateTime.now(),
-                            onChanged: (DateTime? value) {
+                            onDateSelected: (DateTime? value) {
                               endDate = value!;
                             },
                           )),
@@ -340,8 +339,7 @@ class _NewContractState extends State<NewContract> {
                             firstDate: DateTime.now()
                                 .subtract(const Duration(days: 9300)),
                             lastDate: DateTime.now(),
-                            initialPickerDateTime: DateTime.now(),
-                            onChanged: (DateTime? value) {
+                            onDateSelected: (DateTime? value) {
                               birthDate = value!;
                             },
                           )),
