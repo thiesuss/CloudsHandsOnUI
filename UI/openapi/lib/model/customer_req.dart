@@ -13,6 +13,7 @@ part of openapi.api;
 class CustomerReq {
   /// Returns a new [CustomerReq] instance.
   CustomerReq({
+    required this.id,
     required this.email,
     required this.firstName,
     required this.lastName,
@@ -25,6 +26,8 @@ class CustomerReq {
     required this.address,
     required this.bankDetails,
   });
+
+  String id;
 
   String email;
 
@@ -119,6 +122,7 @@ class CustomerReq {
       }());
 
       return CustomerReq(
+        id: mapValueOfType(json, r'id')!,
         email: mapValueOfType<String>(json, r'email')!,
         firstName: mapValueOfType<String>(json, r'firstName')!,
         lastName: mapValueOfType<String>(json, r'lastName')!,

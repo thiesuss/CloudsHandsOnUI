@@ -136,6 +136,7 @@ class _CustomerState extends State<Customer> {
         name: bankNameController.text,
         id: '');
     final customerReq = CustomerReq(
+        id: idController.text,
         firstName: vornamecontroller.text,
         lastName: nachnamecontroller.text,
         familyStatus:

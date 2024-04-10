@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:intl/date_symbol_data_file.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loginStateWidget.dart';
-// import 'package:intl/intl_standalone.dart' if (dart.library.html) 'package:intl/intl_browser.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 Future <void> main() async{

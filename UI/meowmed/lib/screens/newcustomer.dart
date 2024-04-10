@@ -54,8 +54,19 @@ class _NewCustomerState extends State<NewCustomer> {
     if (!newCustomerFormKey.currentState!.validate()) {
       return;
     }
-
+    final address = Address(
+        street: streetController.text,
+        houseNumber: houseNumberController.text,
+        zipCode: int.parse(zipCodeController.text),
+        city: cityController.text,
+        id: '');
+    final bankDetails = BankDetails(
+        iban: ibanController.text,
+        bic: bicController.text,
+        name: bankNameController.text,
+        id: '');
     final customerReq = CustomerReq(
+        id: '',
         email: emailController.text,
         firstName: firstNameController.text,
         lastName: lastNameController.text,
@@ -64,17 +75,8 @@ class _NewCustomerState extends State<NewCustomer> {
         socialSecurityNumber: socialSecurityNumberController.text,
         taxId: taxIdController.text,
         jobStatus: CustomerReqJobStatusEnum.vollzeit,
-        address: Address(
-            street: streetController.text,
-            houseNumber: houseNumberController.text,
-            zipCode: int.parse(zipCodeController.text),
-            city: cityController.text,
-            id: ''),
-        bankDetails: BankDetails(
-            iban: ibanController.text,
-            bic: bicController.text,
-            name: bankNameController.text,
-            id: ''),
+        address: address,
+        bankDetails: bankDetails,
         title: selectedTitleEnum);
 
     final customer = await customerService.createCustomer(customerReq);

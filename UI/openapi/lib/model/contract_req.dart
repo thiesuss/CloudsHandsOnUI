@@ -35,7 +35,7 @@ class ContractReq {
   num coverage;
 
   String catName;
-
+  
   String breed;
 
   String color;

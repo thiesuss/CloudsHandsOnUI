@@ -59,9 +59,9 @@ class CustomerService implements StatefullObj {
   }
 
   Future<void> updateCustomer(CustomerReq customerReq) async {
-    //TODO: UpdateCustomer hat keine ID?
-    // await customerApi.updateCustomer(customerReq.id, customerReq);
-    throw UnimplementedError("UpdateCustomer hat keine ID?");
+    // hoffentlich kein TODO: UpdateCustomer hat keine ID?
+    await customerApi.updateCustomer(customerReq.id, customerReq);
+    // throw UnimplementedError("UpdateCustomer hat keine ID?");
   }
 
   Future<List<CachedObj<CustomerRes>>> getCustomers(

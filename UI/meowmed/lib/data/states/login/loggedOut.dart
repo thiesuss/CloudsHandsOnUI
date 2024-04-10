@@ -31,13 +31,13 @@ class LoggedOutState implements LoginState {
         break;
       case 'azure':
         backendUrl = 'https://meowmedazure-functions.azurewebsites.net/api';
-        authKey = "c8d3600efbf74bf0981a157bd412945b";
+        authKey = "7b96905b26584158a16826123a9b394f";
         auth = AzureKeyAuth(authKey);
         backendType = BackendType.azure;
         break;
       case 'azure1':
         backendUrl = 'https://meowmedazure-apim.azure-api.net/';
-        authKey = "c8d3600efbf74bf0981a157bd412945b";
+        authKey = "7b96905b26584158a16826123a9b394f";
         auth = AzureKeyAuth(authKey);
         backendType = BackendType.azure;
         break;
