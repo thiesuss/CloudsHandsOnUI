@@ -296,9 +296,8 @@ class _CustomerState extends State<Customer> {
                           firstDate: DateTime.now()
                               .subtract(const Duration(days: 40000)),
                           lastDate: DateTime.now(),
-                          initialPickerDateTime: customer.getObj().birthDate,
                           initialValue: customer.getObj().birthDate,
-                          onChanged: (DateTime? value) {
+                          onDateSelected: (DateTime? value) {
                             birthDate = value!;
                           },
                         )),

@@ -45,10 +45,10 @@ packages:
     dependency: "direct main"
     description:
       name: date_field
-      sha256: "22a85c16f4695c0255d8f45feb386933c8d0a75182e8bee5587f1299099e2802"
+      sha256: "88f54bd36f8dbda7584d86684087020be5d1bd7bc8273dc05e6ba9c9c65e9352"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0"
+    version: "3.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -78,6 +78,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_azure_b2c:
+    dependency: "direct main"
+    description:
+      name: flutter_azure_b2c
+      sha256: b5adae066447967fa422365d8c68514bf48d5a6da1748efb7437b2ec84a45fe5
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.9"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -116,10 +124,18 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
+      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
       url: "https://pub.dev"
     source: hosted
-    version: "0.18.1"
+    version: "0.17.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.7"
   leak_tracker:
     dependency: transitive
     description:
@@ -184,6 +200,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  msal_js:
+    dependency: transitive
+    description:
+      name: msal_js
+      sha256: "9800af5d1d4b389572803e8331bd9e57a55c1b9dd2b6ca83aacf98ef9ed81f44"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.14.0"
   openapi:
     dependency: "direct main"
     description:
