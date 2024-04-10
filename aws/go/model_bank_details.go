@@ -15,8 +15,6 @@ type BankDetails struct {
 	Bic string `json:"bic"`
 
 	Name string `json:"name"`
-
-	Id string `json:"id"`
 }
 
 // AssertBankDetailsRequired checks if the required fields are not zero-ed

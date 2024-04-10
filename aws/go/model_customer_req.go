@@ -26,8 +26,6 @@ type CustomerReq struct {
 
 	TaxId string `json:"taxId"`
 
-	JobStatus string `json:"jobStatus"`
-
 	Address Address `json:"address"`
 
 	BankDetails BankDetails `json:"bankDetails"`
@@ -43,7 +41,6 @@ func AssertCustomerReqRequired(obj CustomerReq) error {
 		"birthDate":            obj.BirthDate,
 		"socialSecurityNumber": obj.SocialSecurityNumber,
 		"taxId":                obj.TaxId,
-		"jobStatus":            obj.JobStatus,
 		"address":              obj.Address,
 		"bankDetails":          obj.BankDetails,
 	}

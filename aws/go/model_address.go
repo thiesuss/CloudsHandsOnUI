@@ -21,8 +21,6 @@ type Address struct {
 	ZipCode float32 `json:"zipCode"`
 
 	City string `json:"city"`
-
-	Id string `json:"id"`
 }
 
 // AssertAddressRequired checks if the required fields are not zero-ed

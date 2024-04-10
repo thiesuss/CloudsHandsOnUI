@@ -113,37 +113,17 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
-	// Insert into Address table
-	addressID := uuid.New().String() // Generate UUID for the address
-	_, err = tx.ExecContext(ctx, `
-			INSERT INTO Address (id, street, houseNumber, zipCode, city)
-			VALUES (?, ?, ?, ?, ?)`,
-		addressID, customerReq.Address.Street, customerReq.Address.HouseNumber, customerReq.Address.ZipCode, customerReq.Address.City)
-	if err != nil {
-		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Address table: %v", err)
-	}
-
-	// Insert into BankDetails table
-	bankDetailsID := uuid.New().String() // Generate UUID for the bank details
-	_, err = tx.ExecContext(ctx, `
-			INSERT INTO BankDetails (id, iban, bic, name)
-			VALUES (?, ?, ?, ?)`,
-		bankDetailsID, customerReq.BankDetails.Iban, customerReq.BankDetails.Bic, customerReq.BankDetails.Name)
-	if err != nil {
-		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into BankDetails table: %v", err)
-	}
-
 	// Generate UUID for the new customer
 	newCustomerID := uuid.New().String()
 
 	// Insert into Customer table
 	_, err = tx.ExecContext(ctx, `
-			INSERT INTO Customer (id, firstName, lastName, title, familyStatus, birthDate, socialSecurityNumber, taxId, jobStatus, addressId, bankDetailsId, email)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			INSERT INTO Customer (id, firstName, lastName, title, familyStatus, birthDate, socialSecurityNumber, taxId, email, street, houseNumber, zipCode, city, iban, bic, name)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		newCustomerID, customerReq.FirstName, customerReq.LastName, customerReq.Title, customerReq.FamilyStatus, customerReq.BirthDate,
-		customerReq.SocialSecurityNumber, customerReq.TaxId, customerReq.JobStatus, addressID, bankDetailsID, customerReq.Email)
+		customerReq.SocialSecurityNumber, customerReq.TaxId, customerReq.Email,
+		customerReq.Address.Street, customerReq.Address.HouseNumber, customerReq.Address.ZipCode, customerReq.Address.City,
+		customerReq.BankDetails.Iban, customerReq.BankDetails.Bic, customerReq.BankDetails.Name)
 	if err != nil {
 		tx.Rollback()
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Customer table: %v", err)
@@ -164,13 +144,19 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 		BirthDate:            customerReq.BirthDate,
 		SocialSecurityNumber: customerReq.SocialSecurityNumber,
 		TaxId:                customerReq.TaxId,
-		JobStatus:            customerReq.JobStatus,
-		Address:              customerReq.Address,
-		BankDetails:          customerReq.BankDetails,
 		Email:                customerReq.Email,
+		Address: Address{
+			Street:      customerReq.Address.Street,
+			HouseNumber: customerReq.Address.HouseNumber,
+			ZipCode:     customerReq.Address.ZipCode,
+			City:        customerReq.Address.City,
+		},
+		BankDetails: BankDetails{
+			Iban: customerReq.BankDetails.Iban,
+			Bic:  customerReq.BankDetails.Bic,
+			Name: customerReq.BankDetails.Name,
+		},
 	}
-	newCustomerRes.Address.Id = addressID
-	newCustomerRes.BankDetails.Id = bankDetailsID
 
 	return Response(http.StatusCreated, newCustomerRes), nil
 }
@@ -190,16 +176,6 @@ func (s *CustomerAPIService) DeleteCustomer(ctx context.Context, customerId stri
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
-	var addressID, bankDetailsID string
-
-	// Save address ID and bank details ID
-	err = tx.QueryRowContext(ctx, `
-        SELECT addressId, bankDetailsId FROM Customer WHERE id = ?`, customerId).Scan(&addressID, &bankDetailsID)
-	if err != nil {
-		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving customer details: %v", err)
-	}
-
 	// Delete associated contracts
 	_, err = tx.ExecContext(ctx, `
         DELETE FROM Contract WHERE customerId = ?`, customerId)
@@ -214,22 +190,6 @@ func (s *CustomerAPIService) DeleteCustomer(ctx context.Context, customerId stri
 	if err != nil {
 		tx.Rollback()
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error deleting customer: %v", err)
-	}
-
-	// Delete customer's address
-	_, err = tx.ExecContext(ctx, `
-        DELETE FROM Address WHERE id = ?`, addressID)
-	if err != nil {
-		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error deleting customer's address: %v", err)
-	}
-
-	// Delete customer's bank details
-	_, err = tx.ExecContext(ctx, `
-        DELETE FROM BankDetails WHERE id = ?`, bankDetailsID)
-	if err != nil {
-		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error deleting customer's bank details: %v", err)
 	}
 
 	// Commit transaction
@@ -256,22 +216,16 @@ func (s *CustomerAPIService) GetCustomer(ctx context.Context, customerId string)
 	// Perform database query
 	err = db.QueryRowContext(ctx, `
         SELECT
-            c.id, c.email, c.firstName, c.lastName, COALESCE(c.title, '') AS title, c.familyStatus, c.birthDate,
-            c.socialSecurityNumber, c.taxId, c.jobStatus,
-            a.id AS addressId, a.street, a.houseNumber, a.zipCode, a.city, 
-            b.id AS bankDetailsId, b.iban, b.bic, b.name AS bankName
+            c.id, c.firstName, c.lastName, COALESCE(c.title, '') AS title, c.familyStatus, c.birthDate,
+            c.socialSecurityNumber, c.taxId, c.email, c.street, c.houseNumber, c.zipCode, c.city, c.iban, c.bic, c.name
         FROM
             Customer AS c
-        JOIN
-            Address AS a ON c.addressId = a.id
-        JOIN
-            BankDetails AS b ON c.bankDetailsId = b.id
         WHERE
             c.id = ?`, customerId).Scan(
-		&customer.Id, &customer.Email, &customer.FirstName, &customer.LastName, &customer.Title, &customer.FamilyStatus, &customer.BirthDate,
-		&customer.SocialSecurityNumber, &customer.TaxId, &customer.JobStatus,
-		&customer.Address.Id, &customer.Address.Street, &customer.Address.HouseNumber, &customer.Address.ZipCode, &customer.Address.City,
-		&customer.BankDetails.Id, &customer.BankDetails.Iban, &customer.BankDetails.Bic, &customer.BankDetails.Name)
+		&customer.Id, &customer.FirstName, &customer.LastName, &customer.Title, &customer.FamilyStatus, &customer.BirthDate,
+		&customer.SocialSecurityNumber, &customer.TaxId, &customer.Email,
+		&customer.Address.Street, &customer.Address.HouseNumber, &customer.Address.ZipCode, &customer.Address.City,
+		&customer.BankDetails.Iban, &customer.BankDetails.Bic, &customer.BankDetails.Name)
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving customer details: %v", err)
 	}
@@ -295,16 +249,10 @@ func (s *CustomerAPIService) GetCustomers(ctx context.Context, page int32, pageS
 	// Query to retrieve paginated customer details
 	rows, err := db.QueryContext(ctx, `
         SELECT
-            c.id, c.email, c.firstName, c.lastName, COALESCE(c.title, '') AS title, c.familyStatus, c.birthDate,
-            c.socialSecurityNumber, c.taxId, c.jobStatus,
-            a.id AS addressId, a.street, a.houseNumber, a.zipCode, a.city, 
-            b.id AS bankDetailsId, b.iban, b.bic, b.name AS bankName
+            c.id, c.firstName, c.lastName, COALESCE(c.title, '') AS title, c.familyStatus, c.birthDate,
+            c.socialSecurityNumber, c.taxId, c.email, c.street, c.houseNumber, c.zipCode, c.city, c.iban, c.bic, c.name
         FROM
             Customer AS c
-        JOIN
-            Address AS a ON c.addressId = a.id
-        JOIN
-            BankDetails AS b ON c.bankDetailsId = b.id
         ORDER BY c.id ASC
         LIMIT ? OFFSET ?`, pageSize, offset)
 	if err != nil {
@@ -319,10 +267,10 @@ func (s *CustomerAPIService) GetCustomers(ctx context.Context, page int32, pageS
 	for rows.Next() {
 		var customer CustomerRes
 		if err := rows.Scan(
-			&customer.Id, &customer.Email, &customer.FirstName, &customer.LastName, &customer.Title, &customer.FamilyStatus, &customer.BirthDate,
-			&customer.SocialSecurityNumber, &customer.TaxId, &customer.JobStatus,
-			&customer.Address.Id, &customer.Address.Street, &customer.Address.HouseNumber, &customer.Address.ZipCode, &customer.Address.City,
-			&customer.BankDetails.Id, &customer.BankDetails.Iban, &customer.BankDetails.Bic, &customer.BankDetails.Name,
+			&customer.Id, &customer.FirstName, &customer.LastName, &customer.Title, &customer.FamilyStatus, &customer.BirthDate,
+			&customer.SocialSecurityNumber, &customer.TaxId, &customer.Email,
+			&customer.Address.Street, &customer.Address.HouseNumber, &customer.Address.ZipCode, &customer.Address.City,
+			&customer.BankDetails.Iban, &customer.BankDetails.Bic, &customer.BankDetails.Name,
 		); err != nil {
 			return Response(http.StatusInternalServerError, nil), fmt.Errorf("error scanning customer details: %v", err)
 		}
@@ -355,16 +303,10 @@ func (s *CustomerAPIService) SearchCustomers(ctx context.Context, text string, p
 	// Query to search for customers based on the provided text
 	rows, err := db.QueryContext(ctx, `
         SELECT
-            c.id, c.email, c.firstName, c.lastName, COALESCE(c.title, '') AS title, c.familyStatus, c.birthDate,
-            c.socialSecurityNumber, c.taxId, c.jobStatus,
-            a.id AS addressId, a.street, a.houseNumber, a.zipCode, a.city, 
-            b.id AS bankDetailsId, b.iban, b.bic, b.name AS bankName
+            c.id, c.firstName, c.lastName, COALESCE(c.title, '') AS title, c.familyStatus, c.birthDate,
+            c.socialSecurityNumber, c.taxId, c.email, c.street, c.houseNumber, c.zipCode, c.city, c.iban, c.bic, c.name
         FROM
             Customer AS c
-        JOIN
-            Address AS a ON c.addressId = a.id
-        JOIN
-            BankDetails AS b ON c.bankDetailsId = b.id
         WHERE
             c.firstName LIKE ? OR
             c.lastName LIKE ? OR
@@ -383,10 +325,10 @@ func (s *CustomerAPIService) SearchCustomers(ctx context.Context, text string, p
 	for rows.Next() {
 		var customer CustomerRes
 		if err := rows.Scan(
-			&customer.Id, &customer.Email, &customer.FirstName, &customer.LastName, &customer.Title, &customer.FamilyStatus, &customer.BirthDate,
-			&customer.SocialSecurityNumber, &customer.TaxId, &customer.JobStatus,
-			&customer.Address.Id, &customer.Address.Street, &customer.Address.HouseNumber, &customer.Address.ZipCode, &customer.Address.City,
-			&customer.BankDetails.Id, &customer.BankDetails.Iban, &customer.BankDetails.Bic, &customer.BankDetails.Name,
+			&customer.Id, &customer.FirstName, &customer.LastName, &customer.Title, &customer.FamilyStatus, &customer.BirthDate,
+			&customer.SocialSecurityNumber, &customer.TaxId, &customer.Email,
+			&customer.Address.Street, &customer.Address.HouseNumber, &customer.Address.ZipCode, &customer.Address.City,
+			&customer.BankDetails.Iban, &customer.BankDetails.Bic, &customer.BankDetails.Name,
 		); err != nil {
 			return Response(http.StatusInternalServerError, nil), fmt.Errorf("error scanning customer details: %v", err)
 		}
@@ -431,49 +373,24 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
             birthDate = ?,
             socialSecurityNumber = ?,
             taxId = ?,
-            jobStatus = ?,
-            email = ?
+            email = ?,
+			street = ?,
+            houseNumber = ?,
+            zipCode = ?,
+            city = ?,
+			iban = ?,
+            bic = ?,
+            name = ?
         WHERE
             id = ?`,
 		customerReq.FirstName, customerReq.LastName, customerReq.Title, customerReq.FamilyStatus,
-		customerReq.BirthDate, customerReq.SocialSecurityNumber, customerReq.TaxId, customerReq.JobStatus,
-		customerReq.Email, customerId)
-	if err != nil {
-		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error updating customer details: %v", err)
-	}
-
-	// Update Address table if provided
-	_, err = tx.ExecContext(ctx, `
-            UPDATE Address
-            SET
-                street = ?,
-                houseNumber = ?,
-                zipCode = ?,
-                city = ?
-            WHERE
-                id = (SELECT addressId FROM Customer WHERE id = ?)`,
-		customerReq.Address.Street, customerReq.Address.HouseNumber,
-		customerReq.Address.ZipCode, customerReq.Address.City, customerId)
-	if err != nil {
-		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error updating address details: %v", err)
-	}
-
-	// Update BankDetails table if provided
-	_, err = tx.ExecContext(ctx, `
-            UPDATE BankDetails
-            SET
-                iban = ?,
-                bic = ?,
-                name = ?
-            WHERE
-                id = (SELECT bankDetailsId FROM Customer WHERE id = ?)`,
-		customerReq.BankDetails.Iban, customerReq.BankDetails.Bic,
+		customerReq.BirthDate, customerReq.SocialSecurityNumber, customerReq.TaxId,
+		customerReq.Email, customerReq.Address.Street, customerReq.Address.HouseNumber,
+		customerReq.Address.ZipCode, customerReq.Address.City, customerReq.BankDetails.Iban, customerReq.BankDetails.Bic,
 		customerReq.BankDetails.Name, customerId)
 	if err != nil {
 		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error updating bank details: %v", err)
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error updating customer details: %v", err)
 	}
 
 	// Commit transaction
