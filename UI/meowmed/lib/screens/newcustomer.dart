@@ -66,7 +66,6 @@ class _NewCustomerState extends State<NewCustomer> {
         name: bankNameController.text,
         id: '');
     final customerReq = CustomerReq(
-        id: '',
         email: emailController.text,
         firstName: firstNameController.text,
         lastName: lastNameController.text,

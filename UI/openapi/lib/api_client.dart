@@ -63,39 +63,39 @@ class ApiClient {
 
     try {
       // Special case for uploading a single file which isn't a 'multipart/form-data'.
-      // if (body is MultipartFile &&
-      //     (contentType == null ||
-      //         !contentType.toLowerCase().startsWith('multipart/form-data'))) {
-      //   final request = StreamedRequest(method, uri);
-      //   request.headers.addAll(headerParams);
-      //   request.contentLength = body.length;
-      //   body.finalize().listen(
-      //         request.sink.add,
-      //         onDone: request.sink.close,
-      //         // ignore: avoid_types_on_closure_parameters
-      //         onError: (Object error, StackTrace trace) => request.sink.close(),
-      //         cancelOnError: true,
-      //       );
-      //   final response = await _client.send(request);
-      //   return Response.fromStream(response);
-      // }
+      if (body is MultipartFile &&
+          (contentType == null ||
+              !contentType.toLowerCase().startsWith('multipart/form-data'))) {
+        final request = StreamedRequest(method, uri);
+        request.headers.addAll(headerParams);
+        request.contentLength = body.length;
+        body.finalize().listen(
+              request.sink.add,
+              onDone: request.sink.close,
+              // ignore: avoid_types_on_closure_parameters
+              onError: (Object error, StackTrace trace) => request.sink.close(),
+              cancelOnError: true,
+            );
+        final response = await _client.send(request);
+        return Response.fromStream(response);
+      }
 
-      // if (body is MultipartRequest) {
-      //   final request = MultipartRequest(method, uri);
-      //   request.fields.addAll(body.fields);
-      //   request.files.addAll(body.files);
-      //   request.headers.addAll(body.headers);
-      //   request.headers.addAll(headerParams);
-      //   final response = await _client.send(request);
-      //   return Response.fromStream(response);
-      // }
+      if (body is MultipartRequest) {
+        final request = MultipartRequest(method, uri);
+        request.fields.addAll(body.fields);
+        request.files.addAll(body.files);
+        request.headers.addAll(body.headers);
+        request.headers.addAll(headerParams);
+        final response = await _client.send(request);
+        return Response.fromStream(response);
+      }
 
       final msgBody = await serializeAsync(body);
       final nullableHeaderParams = headerParams.isEmpty ? null : headerParams;
 
       print(
           'Request: $method $uri\nHeaders: $nullableHeaderParams\nBody: $msgBody');
-      ;
+
       switch (method) {
         case 'POST':
           return await http.post(

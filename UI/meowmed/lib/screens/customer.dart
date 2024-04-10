@@ -136,7 +136,6 @@ class _CustomerState extends State<Customer> {
         name: bankNameController.text,
         id: '');
     final customerReq = CustomerReq(
-        id: idController.text,
         firstName: vornamecontroller.text,
         lastName: nachnamecontroller.text,
         familyStatus:
@@ -149,7 +148,8 @@ class _CustomerState extends State<Customer> {
         bankDetails: bankDetails,
         email: '',
         jobStatus: CustomerReqJobStatusEnum.vollzeit); //Job nicht nötig
-    await customerService.updateCustomer(customerReq);
+    final id = customer.getId();
+    await customerService.updateCustomer(id, customerReq);
   }
 
   @override

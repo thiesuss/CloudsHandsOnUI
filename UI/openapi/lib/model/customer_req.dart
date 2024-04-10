@@ -13,7 +13,6 @@ part of openapi.api;
 class CustomerReq {
   /// Returns a new [CustomerReq] instance.
   CustomerReq({
-    required this.id,
     required this.email,
     required this.firstName,
     required this.lastName,
@@ -26,8 +25,6 @@ class CustomerReq {
     required this.address,
     required this.bankDetails,
   });
-
-  String id;
 
   String email;
 
@@ -52,54 +49,57 @@ class CustomerReq {
   BankDetails bankDetails;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is CustomerReq &&
-    other.email == email &&
-    other.firstName == firstName &&
-    other.lastName == lastName &&
-    other.title == title &&
-    other.familyStatus == familyStatus &&
-    other.birthDate == birthDate &&
-    other.socialSecurityNumber == socialSecurityNumber &&
-    other.taxId == taxId &&
-    other.jobStatus == jobStatus &&
-    other.address == address &&
-    other.bankDetails == bankDetails;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomerReq &&
+          other.email == email &&
+          other.firstName == firstName &&
+          other.lastName == lastName &&
+          other.title == title &&
+          other.familyStatus == familyStatus &&
+          other.birthDate == birthDate &&
+          other.socialSecurityNumber == socialSecurityNumber &&
+          other.taxId == taxId &&
+          other.jobStatus == jobStatus &&
+          other.address == address &&
+          other.bankDetails == bankDetails;
 
   @override
   int get hashCode =>
-    // ignore: unnecessary_parenthesis
-    (email.hashCode) +
-    (firstName.hashCode) +
-    (lastName.hashCode) +
-    (title == null ? 0 : title!.hashCode) +
-    (familyStatus.hashCode) +
-    (birthDate.hashCode) +
-    (socialSecurityNumber.hashCode) +
-    (taxId.hashCode) +
-    (jobStatus.hashCode) +
-    (address.hashCode) +
-    (bankDetails.hashCode);
+      // ignore: unnecessary_parenthesis
+      (email.hashCode) +
+      (firstName.hashCode) +
+      (lastName.hashCode) +
+      (title == null ? 0 : title!.hashCode) +
+      (familyStatus.hashCode) +
+      (birthDate.hashCode) +
+      (socialSecurityNumber.hashCode) +
+      (taxId.hashCode) +
+      (jobStatus.hashCode) +
+      (address.hashCode) +
+      (bankDetails.hashCode);
 
   @override
-  String toString() => 'CustomerReq[email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails]';
+  String toString() =>
+      'CustomerReq[email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-      json[r'email'] = this.email;
-      json[r'firstName'] = this.firstName;
-      json[r'lastName'] = this.lastName;
+    json[r'email'] = this.email;
+    json[r'firstName'] = this.firstName;
+    json[r'lastName'] = this.lastName;
     if (this.title != null) {
       json[r'title'] = this.title;
     } else {
       json[r'title'] = null;
     }
-      json[r'familyStatus'] = this.familyStatus;
-      json[r'birthDate'] = _dateFormatter.format(this.birthDate.toUtc());
-      json[r'socialSecurityNumber'] = this.socialSecurityNumber;
-      json[r'taxId'] = this.taxId;
-      json[r'jobStatus'] = this.jobStatus;
-      json[r'address'] = this.address;
-      json[r'bankDetails'] = this.bankDetails;
+    json[r'familyStatus'] = this.familyStatus;
+    json[r'birthDate'] = _dateFormatter.format(this.birthDate.toUtc());
+    json[r'socialSecurityNumber'] = this.socialSecurityNumber;
+    json[r'taxId'] = this.taxId;
+    json[r'jobStatus'] = this.jobStatus;
+    json[r'address'] = this.address;
+    json[r'bankDetails'] = this.bankDetails;
     return json;
   }
 
@@ -115,21 +115,24 @@ class CustomerReq {
       // Note 2: this code is stripped in release mode!
       assert(() {
         requiredKeys.forEach((key) {
-          assert(json.containsKey(key), 'Required key "CustomerReq[$key]" is missing from JSON.');
-          assert(json[key] != null, 'Required key "CustomerReq[$key]" has a null value in JSON.');
+          assert(json.containsKey(key),
+              'Required key "CustomerReq[$key]" is missing from JSON.');
+          assert(json[key] != null,
+              'Required key "CustomerReq[$key]" has a null value in JSON.');
         });
         return true;
       }());
 
       return CustomerReq(
-        id: mapValueOfType(json, r'id')!,
         email: mapValueOfType<String>(json, r'email')!,
         firstName: mapValueOfType<String>(json, r'firstName')!,
         lastName: mapValueOfType<String>(json, r'lastName')!,
         title: CustomerReqTitleEnum.fromJson(json[r'title']),
-        familyStatus: CustomerReqFamilyStatusEnum.fromJson(json[r'familyStatus'])!,
+        familyStatus:
+            CustomerReqFamilyStatusEnum.fromJson(json[r'familyStatus'])!,
         birthDate: mapDateTime(json, r'birthDate', r'')!,
-        socialSecurityNumber: mapValueOfType<String>(json, r'socialSecurityNumber')!,
+        socialSecurityNumber:
+            mapValueOfType<String>(json, r'socialSecurityNumber')!,
         taxId: mapValueOfType<String>(json, r'taxId')!,
         jobStatus: CustomerReqJobStatusEnum.fromJson(json[r'jobStatus'])!,
         address: Address.fromJson(json[r'address'])!,
@@ -139,7 +142,10 @@ class CustomerReq {
     return null;
   }
 
-  static List<CustomerReq> listFromJson(dynamic json, {bool growable = false,}) {
+  static List<CustomerReq> listFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final result = <CustomerReq>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -167,13 +173,19 @@ class CustomerReq {
   }
 
   // maps a json object with a list of CustomerReq-objects as value to a dart map
-  static Map<String, List<CustomerReq>> mapListFromJson(dynamic json, {bool growable = false,}) {
+  static Map<String, List<CustomerReq>> mapListFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final map = <String, List<CustomerReq>>{};
     if (json is Map && json.isNotEmpty) {
       // ignore: parameter_assignments
       json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        map[entry.key] = CustomerReq.listFromJson(entry.value, growable: growable,);
+        map[entry.key] = CustomerReq.listFromJson(
+          entry.value,
+          growable: growable,
+        );
       }
     }
     return map;
@@ -193,7 +205,6 @@ class CustomerReq {
     'bankDetails',
   };
 }
-
 
 class CustomerReqTitleEnum {
   /// Instantiate a new enum with the provided [value].
@@ -220,9 +231,13 @@ class CustomerReqTitleEnum {
     profPeriodDrPeriodDr,
   ];
 
-  static CustomerReqTitleEnum? fromJson(dynamic value) => CustomerReqTitleEnumTypeTransformer().decode(value);
+  static CustomerReqTitleEnum? fromJson(dynamic value) =>
+      CustomerReqTitleEnumTypeTransformer().decode(value);
 
-  static List<CustomerReqTitleEnum> listFromJson(dynamic json, {bool growable = false,}) {
+  static List<CustomerReqTitleEnum> listFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final result = <CustomerReqTitleEnum>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -239,7 +254,8 @@ class CustomerReqTitleEnum {
 /// Transformation class that can [encode] an instance of [CustomerReqTitleEnum] to String,
 /// and [decode] dynamic data back to [CustomerReqTitleEnum].
 class CustomerReqTitleEnumTypeTransformer {
-  factory CustomerReqTitleEnumTypeTransformer() => _instance ??= const CustomerReqTitleEnumTypeTransformer._();
+  factory CustomerReqTitleEnumTypeTransformer() =>
+      _instance ??= const CustomerReqTitleEnumTypeTransformer._();
 
   const CustomerReqTitleEnumTypeTransformer._();
 
@@ -256,10 +272,14 @@ class CustomerReqTitleEnumTypeTransformer {
   CustomerReqTitleEnum? decode(dynamic data, {bool allowNull = true}) {
     if (data != null) {
       switch (data) {
-        case r'Dr.': return CustomerReqTitleEnum.drPeriod;
-        case r'Prof. Dr.': return CustomerReqTitleEnum.profPeriodDrPeriod;
-        case r'Dr. Dr.': return CustomerReqTitleEnum.drPeriodDrPeriod;
-        case r'Prof. Dr. Dr': return CustomerReqTitleEnum.profPeriodDrPeriodDr;
+        case r'Dr.':
+          return CustomerReqTitleEnum.drPeriod;
+        case r'Prof. Dr.':
+          return CustomerReqTitleEnum.profPeriodDrPeriod;
+        case r'Dr. Dr.':
+          return CustomerReqTitleEnum.drPeriodDrPeriod;
+        case r'Prof. Dr. Dr':
+          return CustomerReqTitleEnum.profPeriodDrPeriodDr;
         default:
           if (!allowNull) {
             throw ArgumentError('Unknown enum value to decode: $data');
@@ -272,8 +292,6 @@ class CustomerReqTitleEnumTypeTransformer {
   /// Singleton [CustomerReqTitleEnumTypeTransformer] instance.
   static CustomerReqTitleEnumTypeTransformer? _instance;
 }
-
-
 
 class CustomerReqFamilyStatusEnum {
   /// Instantiate a new enum with the provided [value].
@@ -300,9 +318,13 @@ class CustomerReqFamilyStatusEnum {
     verwitwet,
   ];
 
-  static CustomerReqFamilyStatusEnum? fromJson(dynamic value) => CustomerReqFamilyStatusEnumTypeTransformer().decode(value);
+  static CustomerReqFamilyStatusEnum? fromJson(dynamic value) =>
+      CustomerReqFamilyStatusEnumTypeTransformer().decode(value);
 
-  static List<CustomerReqFamilyStatusEnum> listFromJson(dynamic json, {bool growable = false,}) {
+  static List<CustomerReqFamilyStatusEnum> listFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final result = <CustomerReqFamilyStatusEnum>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -319,7 +341,8 @@ class CustomerReqFamilyStatusEnum {
 /// Transformation class that can [encode] an instance of [CustomerReqFamilyStatusEnum] to String,
 /// and [decode] dynamic data back to [CustomerReqFamilyStatusEnum].
 class CustomerReqFamilyStatusEnumTypeTransformer {
-  factory CustomerReqFamilyStatusEnumTypeTransformer() => _instance ??= const CustomerReqFamilyStatusEnumTypeTransformer._();
+  factory CustomerReqFamilyStatusEnumTypeTransformer() =>
+      _instance ??= const CustomerReqFamilyStatusEnumTypeTransformer._();
 
   const CustomerReqFamilyStatusEnumTypeTransformer._();
 
@@ -336,10 +359,14 @@ class CustomerReqFamilyStatusEnumTypeTransformer {
   CustomerReqFamilyStatusEnum? decode(dynamic data, {bool allowNull = true}) {
     if (data != null) {
       switch (data) {
-        case r'ledig': return CustomerReqFamilyStatusEnum.ledig;
-        case r'verheiratet': return CustomerReqFamilyStatusEnum.verheiratet;
-        case r'geschieden': return CustomerReqFamilyStatusEnum.geschieden;
-        case r'verwitwet': return CustomerReqFamilyStatusEnum.verwitwet;
+        case r'ledig':
+          return CustomerReqFamilyStatusEnum.ledig;
+        case r'verheiratet':
+          return CustomerReqFamilyStatusEnum.verheiratet;
+        case r'geschieden':
+          return CustomerReqFamilyStatusEnum.geschieden;
+        case r'verwitwet':
+          return CustomerReqFamilyStatusEnum.verwitwet;
         default:
           if (!allowNull) {
             throw ArgumentError('Unknown enum value to decode: $data');
@@ -352,8 +379,6 @@ class CustomerReqFamilyStatusEnumTypeTransformer {
   /// Singleton [CustomerReqFamilyStatusEnumTypeTransformer] instance.
   static CustomerReqFamilyStatusEnumTypeTransformer? _instance;
 }
-
-
 
 class CustomerReqJobStatusEnum {
   /// Instantiate a new enum with the provided [value].
@@ -386,9 +411,13 @@ class CustomerReqJobStatusEnum {
     werkstudent,
   ];
 
-  static CustomerReqJobStatusEnum? fromJson(dynamic value) => CustomerReqJobStatusEnumTypeTransformer().decode(value);
+  static CustomerReqJobStatusEnum? fromJson(dynamic value) =>
+      CustomerReqJobStatusEnumTypeTransformer().decode(value);
 
-  static List<CustomerReqJobStatusEnum> listFromJson(dynamic json, {bool growable = false,}) {
+  static List<CustomerReqJobStatusEnum> listFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final result = <CustomerReqJobStatusEnum>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -405,7 +434,8 @@ class CustomerReqJobStatusEnum {
 /// Transformation class that can [encode] an instance of [CustomerReqJobStatusEnum] to String,
 /// and [decode] dynamic data back to [CustomerReqJobStatusEnum].
 class CustomerReqJobStatusEnumTypeTransformer {
-  factory CustomerReqJobStatusEnumTypeTransformer() => _instance ??= const CustomerReqJobStatusEnumTypeTransformer._();
+  factory CustomerReqJobStatusEnumTypeTransformer() =>
+      _instance ??= const CustomerReqJobStatusEnumTypeTransformer._();
 
   const CustomerReqJobStatusEnumTypeTransformer._();
 
@@ -422,13 +452,20 @@ class CustomerReqJobStatusEnumTypeTransformer {
   CustomerReqJobStatusEnum? decode(dynamic data, {bool allowNull = true}) {
     if (data != null) {
       switch (data) {
-        case r'arbeitslos': return CustomerReqJobStatusEnum.arbeitslos;
-        case r'Schueler': return CustomerReqJobStatusEnum.schueler;
-        case r'Student': return CustomerReqJobStatusEnum.student;
-        case r'Vollzeit': return CustomerReqJobStatusEnum.vollzeit;
-        case r'Teilzeit': return CustomerReqJobStatusEnum.teilzeit;
-        case r'Minijob': return CustomerReqJobStatusEnum.minijob;
-        case r'Werkstudent': return CustomerReqJobStatusEnum.werkstudent;
+        case r'arbeitslos':
+          return CustomerReqJobStatusEnum.arbeitslos;
+        case r'Schueler':
+          return CustomerReqJobStatusEnum.schueler;
+        case r'Student':
+          return CustomerReqJobStatusEnum.student;
+        case r'Vollzeit':
+          return CustomerReqJobStatusEnum.vollzeit;
+        case r'Teilzeit':
+          return CustomerReqJobStatusEnum.teilzeit;
+        case r'Minijob':
+          return CustomerReqJobStatusEnum.minijob;
+        case r'Werkstudent':
+          return CustomerReqJobStatusEnum.werkstudent;
         default:
           if (!allowNull) {
             throw ArgumentError('Unknown enum value to decode: $data');
@@ -441,5 +478,3 @@ class CustomerReqJobStatusEnumTypeTransformer {
   /// Singleton [CustomerReqJobStatusEnumTypeTransformer] instance.
   static CustomerReqJobStatusEnumTypeTransformer? _instance;
 }
-
-

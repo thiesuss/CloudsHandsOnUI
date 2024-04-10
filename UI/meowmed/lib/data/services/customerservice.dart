@@ -58,9 +58,9 @@ class CustomerService implements StatefullObj {
     await repo.delete(customerId);
   }
 
-  Future<void> updateCustomer(CustomerReq customerReq) async {
+  Future<void> updateCustomer(String id, CustomerReq customerReq) async {
     // hoffentlich kein TODO: UpdateCustomer hat keine ID?
-    await customerApi.updateCustomer(customerReq.id, customerReq);
+    await customerApi.updateCustomer(id, customerReq);
     // throw UnimplementedError("UpdateCustomer hat keine ID?");
   }
 
