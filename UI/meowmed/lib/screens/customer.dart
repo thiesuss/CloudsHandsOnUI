@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/customerservice.dart';
@@ -28,6 +29,7 @@ class _CustomerState extends State<Customer> {
       (LoginStateContext.getInstance().state as LoggedInState).customerService;
   _CustomerState(this.customer) {}
   CachedObj<CustomerRes> customer;
+  TextEditingController idController = TextEditingController();
   TextEditingController vornamecontroller = TextEditingController();
   TextEditingController nachnamecontroller = TextEditingController();
   TextEditingController customerStatusFamilyContoller = TextEditingController();
@@ -62,7 +64,7 @@ class _CustomerState extends State<Customer> {
   void initState() {
     super.initState();
     final obj = customer.getObj();
-
+    idController.text = obj.id;
     vornamecontroller.text = obj.firstName;
     nachnamecontroller.text = obj.lastName;
     customerStatusFamilyContoller.text = obj.familyStatus.toString();
@@ -184,7 +186,8 @@ class _CustomerState extends State<Customer> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: !editMode,
+                          readOnly: true,
+                          controller: idController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "ID",
@@ -239,26 +242,6 @@ class _CustomerState extends State<Customer> {
                     SizedBox(
                       height: 20,
                     ),
-                    // Container(
-                    //     height: 50,
-                    //     width: 230,
-                    //     child: TextFormField(
-                    //       controller: titelcontroller,
-                    //       readOnly: !editMode,
-                    //       validator: (value) {
-                    //         if (value == null) {
-                    //           return "Eingabe darf nicht leer sein";
-                    //         }
-                    //         if (value.isEmpty) {
-                    //           return "Bitte Titel eingeben";
-                    //         }
-                    //         return null;
-                    //       },
-                    //       decoration: InputDecoration(
-                    //         border: OutlineInputBorder(),
-                    //         labelText: "Titel",
-                    //       ),
-                    //     )),
                     Container(
                   //dropdown menu für enum
                   height: 50,
@@ -294,26 +277,6 @@ class _CustomerState extends State<Customer> {
                 ),
                 Column(
                   children: [
-                    // Container(
-                    //     height: 50,
-                    //     width: 230,
-                    //     child: TextFormField(
-                    //       controller: geburtsdatumcontroller,
-                    //       readOnly: !editMode,
-                    //       validator: (value) {
-                    //         if (value == null) {
-                    //           return "Eingabe darf nicht leer sein";
-                    //         }
-                    //         if (value.isEmpty) {
-                    //           return "Bitte Geburtsdatum eingeben";
-                    //         }
-                    //         return null;
-                    //       },
-                    //       decoration: InputDecoration(
-                    //         border: OutlineInputBorder(),
-                    //         labelText: "Geburtsdatum",
-                    //       ),
-                    //     )),
                     Container(
                     height: 50,
                     width: 230,
