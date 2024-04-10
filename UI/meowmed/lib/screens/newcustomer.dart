@@ -73,7 +73,6 @@ class _NewCustomerState extends State<NewCustomer> {
         birthDate: birthDate,
         socialSecurityNumber: socialSecurityNumberController.text,
         taxId: taxIdController.text,
-        jobStatus: CustomerReqJobStatusEnum.vollzeit,
         address: address,
         bankDetails: bankDetails,
         title: selectedTitleEnum);

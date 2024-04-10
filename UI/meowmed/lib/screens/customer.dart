@@ -136,8 +136,7 @@ class _CustomerState extends State<Customer> {
         taxId: steueridcontroller.text,
         address: address,
         bankDetails: bankDetails,
-        email: emailController.text,
-        jobStatus: CustomerReqJobStatusEnum.vollzeit); //Job nicht nötig
+        email: emailController.text); //Job nicht nötig
     final id = customer.getId();
     await customerService.updateCustomer(id, customerReq);
   }
