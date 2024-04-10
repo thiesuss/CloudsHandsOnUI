@@ -33,7 +33,8 @@ class _CustomerState extends State<Customer> {
   TextEditingController vornamecontroller = TextEditingController();
   TextEditingController nachnamecontroller = TextEditingController();
   TextEditingController customerStatusFamilyContoller = TextEditingController();
-  CustomerResFamilyStatusEnum selectedFamilyStatus = CustomerResFamilyStatusEnum.ledig;
+  CustomerResFamilyStatusEnum selectedFamilyStatus =
+      CustomerResFamilyStatusEnum.ledig;
   TextEditingController customerStatusTitleContoller = TextEditingController();
   CustomerResTitleEnum? selectedTitleEnum;
   TextEditingController birthDateController = TextEditingController();
@@ -52,7 +53,6 @@ class _CustomerState extends State<Customer> {
   TextEditingController bicController = TextEditingController();
   TextEditingController bankNameController = TextEditingController();
   TextEditingController bankIdController = TextEditingController();
-
 
   @override
   void dispose() {
@@ -138,9 +138,10 @@ class _CustomerState extends State<Customer> {
     final customerReq = CustomerReq(
         firstName: vornamecontroller.text,
         lastName: nachnamecontroller.text,
-        familyStatus: CustomerService.familyStatusResToReq(selectedFamilyStatus), 
-        title: CustomerService.titleResToReq(selectedTitleEnum), 
-        birthDate: birthDate,  //replace
+        familyStatus:
+            CustomerService.familyStatusResToReq(selectedFamilyStatus),
+        title: CustomerService.titleResToReq(selectedTitleEnum),
+        birthDate: birthDate, //replace
         socialSecurityNumber: svnummercontroller.text,
         taxId: steueridcontroller.text,
         address: address,
@@ -243,33 +244,33 @@ class _CustomerState extends State<Customer> {
                       height: 20,
                     ),
                     Container(
-                  //dropdown menu für enum
-                  height: 50,
-                  width: 230,
-                  child: DropdownMenu<CustomerResTitleEnum?>(
-                    initialSelection: selectedTitleEnum,
-                    controller: customerStatusTitleContoller,
-                    requestFocusOnTap: true,
-                    label: const Text('Titel'),
-                    onSelected: (CustomerResTitleEnum? titleStatus) {
-                      setState(() {
-                        selectedTitleEnum = titleStatus;
-                      });
-                    },
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(value: null, label: ""),
-                      ...CustomerResTitleEnum.values
-                          .map<DropdownMenuEntry<CustomerResTitleEnum>>(
-                              (CustomerResTitleEnum titleStatus) {
-                        return DropdownMenuEntry<CustomerResTitleEnum>(
-                          value: titleStatus,
-                          label: CustomerService.titleEnumToString(
-                              CustomerService.titleResToReq(titleStatus)), 
-                        );
-                      })
-                    ],
-                  ),
-                ),
+                      //dropdown menu für enum
+                      height: 50,
+                      width: 230,
+                      child: DropdownMenu<CustomerResTitleEnum?>(
+                        initialSelection: selectedTitleEnum,
+                        controller: customerStatusTitleContoller,
+                        requestFocusOnTap: true,
+                        label: const Text('Titel'),
+                        onSelected: (CustomerResTitleEnum? titleStatus) {
+                          setState(() {
+                            selectedTitleEnum = titleStatus;
+                          });
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: null, label: ""),
+                          ...CustomerResTitleEnum.values
+                              .map<DropdownMenuEntry<CustomerResTitleEnum>>(
+                                  (CustomerResTitleEnum titleStatus) {
+                            return DropdownMenuEntry<CustomerResTitleEnum>(
+                              value: titleStatus,
+                              label: CustomerService.titleEnumToString(
+                                  CustomerService.titleResToReq(titleStatus)),
+                            );
+                          })
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -278,28 +279,28 @@ class _CustomerState extends State<Customer> {
                 Column(
                   children: [
                     Container(
-                    height: 50,
-                    width: 230,
-                    child: DateTimeFormField(
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Eingabe darf nicht leer sein';
-                        }
-                        return null;
-                      },
-                      dateFormat: DateFormat('dd.MM.yyyy'),
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Geburtstag"),
-                      firstDate:
-                          DateTime.now().subtract(const Duration(days: 40000)),
-                      lastDate: DateTime.now(),
-                      initialPickerDateTime: customer.getObj().birthDate,
-                      initialValue: customer.getObj().birthDate,
-                      onChanged: (DateTime? value) {
-                        birthDate = value!;
-                      },
-                    )),
+                        height: 50,
+                        width: 230,
+                        child: DateTimeFormField(
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            return null;
+                          },
+                          dateFormat: DateFormat('dd.MM.yyyy'),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Geburtstag"),
+                          firstDate: DateTime.now()
+                              .subtract(const Duration(days: 40000)),
+                          lastDate: DateTime.now(),
+                          initialPickerDateTime: customer.getObj().birthDate,
+                          initialValue: customer.getObj().birthDate,
+                          onChanged: (DateTime? value) {
+                            birthDate = value!;
+                          },
+                        )),
                     SizedBox(
                       height: 20,
                     ),
@@ -370,31 +371,35 @@ class _CustomerState extends State<Customer> {
                     //       ),
                     //     )),
                     Container(
-                  //dropdown menu für enum
-                  height: 50,
-                  width: 230,
-                  child: DropdownMenu<CustomerResFamilyStatusEnum>(
-                    initialSelection: selectedFamilyStatus,
-                    controller: customerStatusFamilyContoller,
-                    requestFocusOnTap: true,
-                    label: const Text('Familienstatus'),
-                    onSelected: (CustomerResFamilyStatusEnum? familyStatus) {
-                      setState(() {
-                        if (familyStatus == null) return;
-                        selectedFamilyStatus = familyStatus;
-                      });
-                    },
-                    dropdownMenuEntries: CustomerResFamilyStatusEnum.values
-                        .map<DropdownMenuEntry<CustomerResFamilyStatusEnum>>(
-                            (CustomerResFamilyStatusEnum familyStatus) {
-                      return DropdownMenuEntry<CustomerResFamilyStatusEnum>(
-                        value: familyStatus,
-                        label: CustomerService.familienStatustoString(
-                            CustomerService.familyStatusResToReq(familyStatus)), // familienstatusenum.ledig
-                      );
-                    }).toList(),
-                  ),
-                ),
+                      //dropdown menu für enum
+                      height: 50,
+                      width: 230,
+                      child: DropdownMenu<CustomerResFamilyStatusEnum>(
+                        initialSelection: selectedFamilyStatus,
+                        controller: customerStatusFamilyContoller,
+                        requestFocusOnTap: true,
+                        label: const Text('Familienstatus'),
+                        onSelected:
+                            (CustomerResFamilyStatusEnum? familyStatus) {
+                          setState(() {
+                            if (familyStatus == null) return;
+                            selectedFamilyStatus = familyStatus;
+                          });
+                        },
+                        dropdownMenuEntries: CustomerResFamilyStatusEnum.values
+                            .map<
+                                    DropdownMenuEntry<
+                                        CustomerResFamilyStatusEnum>>(
+                                (CustomerResFamilyStatusEnum familyStatus) {
+                          return DropdownMenuEntry<CustomerResFamilyStatusEnum>(
+                            value: familyStatus,
+                            label: CustomerService.familienStatustoString(
+                                CustomerService.familyStatusResToReq(
+                                    familyStatus)), // familienstatusenum.ledig
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -569,7 +574,7 @@ class _CustomerState extends State<Customer> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NewContract()));
+                              builder: (context) => NewContract(customer)));
                     },
                     child: Text("Neuer Vertrag"))
               ],

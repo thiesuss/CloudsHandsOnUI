@@ -2,6 +2,7 @@ import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/states/login/context.dart';
@@ -12,8 +13,8 @@ import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NewContract extends StatefulWidget {
-  const NewContract({super.key});
-
+  NewContract(this.customerRes);
+  CachedObj<CustomerRes> customerRes;
   @override
   State<NewContract> createState() => _NewContractState();
 }
@@ -37,24 +38,24 @@ class _NewContractState extends State<NewContract> {
   TextEditingController personalityController = TextEditingController();
   TextEditingController environmentController = TextEditingController();
   TextEditingController weightController = TextEditingController();
-  TextEditingController customerIdController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
 
-  Future<void> save() async {
+  Future<bool> save() async {
     if (!newContractFormKey.currentState!.validate()) {
-      return;
+      return false;
     }
     final oldPrice = priceSubject.value;
     final price = await reloadPrice();
 
     if (oldPrice != price) {
-      return;
+      return false;
     }
-
+    final coverage = int.parse(coverageController.text);
+    final weight = double.parse(weightController.text);
     final contractReq = ContractReq(
       startDate: startDate,
       endDate: endDate,
-      coverage: double.parse(coverageController.text),
+      coverage: coverage,
       catName: catNameController.text,
       breed: breedController.text,
       color: colorController.text,
@@ -62,10 +63,12 @@ class _NewContractState extends State<NewContract> {
       neutered: isNeutered, //checkbox setState
       personality: personalityController.text,
       environment: environmentController.text,
-      weight: double.parse(weightController.text),
-      customerId: customerIdController.text,
+      weight: weight,
+      customerId: widget.customerRes.getId(),
     );
     final contractRes = await contractService.createContract(contractReq);
+    print("Created contract: ${contractRes.getId()}");
+    return true;
   }
 
   GlobalKey<FormState> newContractFormKey = GlobalKey<FormState>();
@@ -73,18 +76,21 @@ class _NewContractState extends State<NewContract> {
   BehaviorSubject<double> priceSubject = BehaviorSubject.seeded(0);
 
   Future<double> reloadPrice() async {
+    final coverage = int.parse(coverageController.text);
+    final weight = double.parse(weightController.text);
+    final zipCode = 99999;
     final rateReq = RateCalculationReq(
-        coverage: double.parse(coverageController.text),
+        coverage: coverage,
         breed: breedController.text,
         color: colorController.text,
         birthDate: birthDate,
         neutered: isNeutered,
         personality: personalityController.text,
         environment: environmentController.text,
-        weight: double.parse(weightController.text),
-        zipCode: int.parse(zipCodeController.text));
-    final rateres = await contractService.getRate(rateReq);
-    double price = rateres.rate!.toDouble();
+        weight: weight,
+        zipCode: zipCode);
+    final rateRes = await contractService.getRate(rateReq);
+    double price = rateRes.rate!.toDouble();
     priceSubject.add(price);
     return price;
   }
@@ -95,15 +101,15 @@ class _NewContractState extends State<NewContract> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        onChanged: () {
-          debouncer.run(() async {
-            try {
-              await reloadPrice();
-            } catch (e) {
-              print("Reloaded price failed: $e");
-            }
-          });
-        },
+        // onChanged: () {
+        //   debouncer.run(() async {
+        //     try {
+        //       await reloadPrice();
+        //     } catch (e) {
+        //       print("Reloaded price failed: $e");
+        //     }
+        //   });
+        // },
         key: newContractFormKey,
         child: Container(
           padding: EdgeInsets.all(30),
@@ -205,11 +211,16 @@ class _NewContractState extends State<NewContract> {
                               if (value == null || value.isEmpty) {
                                 return 'Eingabe darf nicht leer sein';
                               }
-                              if (value is! num) {
-                                return 'Eingabe muss eine Zahl sein';
+                              try {
+                                int.parse(value);
+                              } catch (e) {
+                                return 'Ungültige Eingabe';
                               }
                               return null;
                             },
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             controller: coverageController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
@@ -225,8 +236,8 @@ class _NewContractState extends State<NewContract> {
                       LoadingButton(
                         label: "Vertrag Abschließen",
                         onPressed: () async {
-                          await save();
-                          Navigator.pop(context);
+                          final result = await save();
+                          if (result) Navigator.pop(context);
                         },
                       ),
                       SizedBox(
@@ -421,7 +432,12 @@ class _NewContractState extends State<NewContract> {
                       )
                     ],
                   ),
-                  Expanded(child: Container())
+                  Expanded(child: Container()),
+                  TextButton(
+                      onPressed: () async {
+                        await reloadPrice();
+                      },
+                      child: Text("Reload Rate"))
                 ],
               ),
             ],
