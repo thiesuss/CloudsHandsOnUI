@@ -97,7 +97,11 @@ class _NewContractState extends State<NewContract> {
       body: Form(
         onChanged: () {
           debouncer.run(() async {
-            await reloadPrice();
+            try {
+              await reloadPrice();
+            } catch (e) {
+              print("Reloaded price failed: $e");
+            }
           });
         },
         key: newContractFormKey,

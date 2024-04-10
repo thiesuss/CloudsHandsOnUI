@@ -1,6 +1,7 @@
 import 'package:logger/logger.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/models/service.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Repo<T> implements StatefullObj {
@@ -12,6 +13,10 @@ class Repo<T> implements StatefullObj {
   Future<void> dispose() async {
     await clean();
   }
+
+  // TODO: dont use BehaviorSubject
+  final Subject<void> _onUpdate = BehaviorSubject<void>();
+  Stream<void> get stream => _onUpdate.stream;
 
   Future<CachedObj<T>> get(String id) async {
     return _items[id]!;
@@ -30,6 +35,7 @@ class Repo<T> implements StatefullObj {
     } else {
       _items[id] = item;
     }
+    _onUpdate.add(null);
   }
 
   Future<void> delete(String id) async {
@@ -39,19 +45,17 @@ class Repo<T> implements StatefullObj {
       await cachedObj.dispose();
       _items.remove(id);
     }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("${T.runtimeType}.$id");
+
+    _onUpdate.add(null);
   }
 
   Future<void> clean() async {
     await Future.wait(_items.values.map((e) => e.dispose()).toList());
-    _items.clear();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // O(n), kann man optimieren, shared_preferences ist nicht optimal
-    await Future.wait(prefs
-        .getKeys()
-        .where((k) => k.startsWith("${T.runtimeType}."))
-        .map((k) => prefs.remove(k))
-        .toList());
+    for (var item in _items.values) {
+      await delete(item.getId());
+    }
   }
 
   Future<void> persist() async {

@@ -68,7 +68,6 @@ class CustomerService implements StatefullObj {
       {int? pageSize, int? page}) async {
     pageSize = pageSize ?? 10;
     page = page ?? 1;
-
     final customerResList =
         await customerApi.getCustomers(pageSize: pageSize, page: page);
     if (customerResList == null) {
@@ -83,8 +82,15 @@ class CustomerService implements StatefullObj {
     return cachedObjList;
   }
 
-  Future<List<CachedObj<CustomerRes>>> searchCustomers(String text) async {
-    final customerResList = await customerApi.searchCustomers(text);
+  Future<List<CachedObj<CustomerRes>>> searchCustomers(
+    String text, {
+    int? pageSize,
+    int? page,
+  }) async {
+    pageSize = pageSize ?? 10;
+    page = page ?? 1;
+    final customerResList =
+        await customerApi.searchCustomers(text, pageSize: pageSize, page: page);
     if (customerResList == null) {
       throw ReadFailed("Customer search failed");
     }

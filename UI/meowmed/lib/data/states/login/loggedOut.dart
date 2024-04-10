@@ -24,7 +24,7 @@ class LoggedOutState implements LoginState {
     switch (backendUrl) {
       case 'aws':
         backendUrl =
-            'https://m1yubp2lxf.execute-api.eu-central-1.amazonaws.com/Stage1';
+            'http://ec2-18-159-254-31.eu-central-1.compute.amazonaws.com:8081/v1';
         authKey = "zMvbvu4RjkaOof38EPgYU9RIZuCRDfEi7oGFqcyv";
         auth = AwsKeyAuth(authKey);
         backendType = BackendType.aws;
@@ -57,10 +57,6 @@ class LoggedOutState implements LoginState {
     final client =
         ApiClient(basePath: backendUri.toString(), authentication: auth);
 
-    if (backendType == BackendType.aws) {
-      client.addDefaultHeader(
-          "Host", "m1yubp2lxf.execute-api.eu-central-1.amazonaws.com");
-    }
 
     return client;
   }

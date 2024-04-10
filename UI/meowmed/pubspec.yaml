@@ -17,6 +17,7 @@ dependencies:
   intl: ^0.18.1
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.11
+  http: ^1.2.1
   # injectable:
   # get_it:
 
