@@ -205,11 +205,9 @@ class _NewContractState extends State<NewContract> {
                               if (value == null || value.isEmpty) {
                                 return 'Eingabe darf nicht leer sein';
                               }
-                              if (value is! num) {
-                                return 'Eingabe muss eine Zahl sein';
-                              }
                               return null;
                             },
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             controller: coverageController,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
@@ -226,7 +224,7 @@ class _NewContractState extends State<NewContract> {
                         label: "Vertrag Abschließen",
                         onPressed: () async {
                           await save();
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
                         },
                       ),
                       SizedBox(
