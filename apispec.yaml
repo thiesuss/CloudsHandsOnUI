@@ -316,7 +316,6 @@ components:
         - socialSecurityNumber
         - taxId
         - grossIncome
-        - jobStatus
         - address
         - bankDetails
         - email
