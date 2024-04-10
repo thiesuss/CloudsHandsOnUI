@@ -17,7 +17,6 @@ class Address {
     required this.houseNumber,
     required this.zipCode,
     required this.city,
-    required this.id,
   });
 
   String street;
@@ -30,35 +29,33 @@ class Address {
 
   String city;
 
-  String id;
-
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Address &&
-    other.street == street &&
-    other.houseNumber == houseNumber &&
-    other.zipCode == zipCode &&
-    other.city == city &&
-    other.id == id;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Address &&
+          other.street == street &&
+          other.houseNumber == houseNumber &&
+          other.zipCode == zipCode &&
+          other.city == city;
 
   @override
   int get hashCode =>
-    // ignore: unnecessary_parenthesis
-    (street.hashCode) +
-    (houseNumber.hashCode) +
-    (zipCode.hashCode) +
-    (city.hashCode) +
-    (id.hashCode);
+      // ignore: unnecessary_parenthesis
+      (street.hashCode) +
+      (houseNumber.hashCode) +
+      (zipCode.hashCode) +
+      (city.hashCode);
 
   @override
-  String toString() => 'Address[street=$street, houseNumber=$houseNumber, zipCode=$zipCode, city=$city, id=$id]';
+  String toString() =>
+      'Address[street=$street, houseNumber=$houseNumber, zipCode=$zipCode, city=$city]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-      json[r'street'] = this.street;
-      json[r'houseNumber'] = this.houseNumber;
-      json[r'zipCode'] = this.zipCode;
-      json[r'city'] = this.city;
-      json[r'id'] = this.id;
+    json[r'street'] = this.street;
+    json[r'houseNumber'] = this.houseNumber;
+    json[r'zipCode'] = this.zipCode;
+    json[r'city'] = this.city;
     return json;
   }
 
@@ -74,8 +71,10 @@ class Address {
       // Note 2: this code is stripped in release mode!
       assert(() {
         requiredKeys.forEach((key) {
-          assert(json.containsKey(key), 'Required key "Address[$key]" is missing from JSON.');
-          assert(json[key] != null, 'Required key "Address[$key]" has a null value in JSON.');
+          assert(json.containsKey(key),
+              'Required key "Address[$key]" is missing from JSON.');
+          assert(json[key] != null,
+              'Required key "Address[$key]" has a null value in JSON.');
         });
         return true;
       }());
@@ -85,13 +84,15 @@ class Address {
         houseNumber: mapValueOfType<String>(json, r'houseNumber')!,
         zipCode: num.parse('${json[r'zipCode']}'),
         city: mapValueOfType<String>(json, r'city')!,
-        id: mapValueOfType<String>(json, r'id')!,
       );
     }
     return null;
   }
 
-  static List<Address> listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Address> listFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final result = <Address>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -119,13 +120,19 @@ class Address {
   }
 
   // maps a json object with a list of Address-objects as value to a dart map
-  static Map<String, List<Address>> mapListFromJson(dynamic json, {bool growable = false,}) {
+  static Map<String, List<Address>> mapListFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final map = <String, List<Address>>{};
     if (json is Map && json.isNotEmpty) {
       // ignore: parameter_assignments
       json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        map[entry.key] = Address.listFromJson(entry.value, growable: growable,);
+        map[entry.key] = Address.listFromJson(
+          entry.value,
+          growable: growable,
+        );
       }
     }
     return map;
@@ -137,7 +144,5 @@ class Address {
     'houseNumber',
     'zipCode',
     'city',
-    'id',
   };
 }
-

@@ -16,7 +16,6 @@ class BankDetails {
     required this.iban,
     required this.bic,
     required this.name,
-    required this.id,
   });
 
   String iban;
@@ -25,32 +24,27 @@ class BankDetails {
 
   String name;
 
-  String id;
-
   @override
-  bool operator ==(Object other) => identical(this, other) || other is BankDetails &&
-    other.iban == iban &&
-    other.bic == bic &&
-    other.name == name &&
-    other.id == id;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BankDetails &&
+          other.iban == iban &&
+          other.bic == bic &&
+          other.name == name;
 
   @override
   int get hashCode =>
-    // ignore: unnecessary_parenthesis
-    (iban.hashCode) +
-    (bic.hashCode) +
-    (name.hashCode) +
-    (id.hashCode);
+      // ignore: unnecessary_parenthesis
+      (iban.hashCode) + (bic.hashCode) + (name.hashCode);
 
   @override
-  String toString() => 'BankDetails[iban=$iban, bic=$bic, name=$name, id=$id]';
+  String toString() => 'BankDetails[iban=$iban, bic=$bic, name=$name]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-      json[r'iban'] = this.iban;
-      json[r'bic'] = this.bic;
-      json[r'name'] = this.name;
-      json[r'id'] = this.id;
+    json[r'iban'] = this.iban;
+    json[r'bic'] = this.bic;
+    json[r'name'] = this.name;
     return json;
   }
 
@@ -66,8 +60,10 @@ class BankDetails {
       // Note 2: this code is stripped in release mode!
       assert(() {
         requiredKeys.forEach((key) {
-          assert(json.containsKey(key), 'Required key "BankDetails[$key]" is missing from JSON.');
-          assert(json[key] != null, 'Required key "BankDetails[$key]" has a null value in JSON.');
+          assert(json.containsKey(key),
+              'Required key "BankDetails[$key]" is missing from JSON.');
+          assert(json[key] != null,
+              'Required key "BankDetails[$key]" has a null value in JSON.');
         });
         return true;
       }());
@@ -76,13 +72,15 @@ class BankDetails {
         iban: mapValueOfType<String>(json, r'iban')!,
         bic: mapValueOfType<String>(json, r'bic')!,
         name: mapValueOfType<String>(json, r'name')!,
-        id: mapValueOfType<String>(json, r'id')!,
       );
     }
     return null;
   }
 
-  static List<BankDetails> listFromJson(dynamic json, {bool growable = false,}) {
+  static List<BankDetails> listFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final result = <BankDetails>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -110,13 +108,19 @@ class BankDetails {
   }
 
   // maps a json object with a list of BankDetails-objects as value to a dart map
-  static Map<String, List<BankDetails>> mapListFromJson(dynamic json, {bool growable = false,}) {
+  static Map<String, List<BankDetails>> mapListFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final map = <String, List<BankDetails>>{};
     if (json is Map && json.isNotEmpty) {
       // ignore: parameter_assignments
       json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        map[entry.key] = BankDetails.listFromJson(entry.value, growable: growable,);
+        map[entry.key] = BankDetails.listFromJson(
+          entry.value,
+          growable: growable,
+        );
       }
     }
     return map;
@@ -127,7 +131,5 @@ class BankDetails {
     'iban',
     'bic',
     'name',
-    'id',
   };
 }
-

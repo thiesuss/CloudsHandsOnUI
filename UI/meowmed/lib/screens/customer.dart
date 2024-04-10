@@ -11,7 +11,6 @@ import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/newcontract.dart';
-import 'package:meowmed/widgets/contractList.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
@@ -96,21 +95,12 @@ class _CustomerState extends State<Customer> {
 
   late RefreshTimer refreshTimer;
 
+  final contractService =
+      (LoginStateContext.getInstance().state as LoggedInState).contractService;
+
   Future<void> loadContracts() async {
-    final state = (LoginStateContext.getInstance().state as LoggedInState);
-    final repo = state.contractService.repo;
-    final cached = repo.getAll();
-    final cachedContracts = cached.where((element) {
-      final obj = element.getObj();
-      return obj.id == obj.id;
-    }).toList();
-    contractList = cachedContracts;
-    filteredContracts.add(cachedContracts);
-
-    // TODO: teil oben kann weg, sobald api geht
-
     final contractResList =
-        await state.contractService.getContractsForCustomer(customer.getId());
+        await contractService.getContractsForCustomer(customer.getId());
     contractList = contractResList;
     filteredContracts.add(contractResList);
   }
@@ -130,13 +120,11 @@ class _CustomerState extends State<Customer> {
         street: streetController.text,
         houseNumber: houseNumberController.text,
         zipCode: int.parse(zipCodeController.text),
-        city: cityController.text,
-        id: '');
+        city: cityController.text);
     final bankDetails = BankDetails(
         iban: ibanController.text,
         bic: bicController.text,
-        name: bankNameController.text,
-        id: '');
+        name: bankNameController.text);
     final customerReq = CustomerReq(
         firstName: vornamecontroller.text,
         lastName: nachnamecontroller.text,
@@ -582,14 +570,6 @@ class _CustomerState extends State<Customer> {
             ),
             Row(
               children: [
-                Container(
-                    height: 50,
-                    width: 230,
-                    child: TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Suche..."))),
-                IconButton(onPressed: () {}, icon: Icon(Icons.search)),
                 IconButton(
                     onPressed: () {
                       loadContracts();
@@ -609,7 +589,64 @@ class _CustomerState extends State<Customer> {
             SizedBox(
               height: 20,
             ),
-            ContractList(filteredContracts),
+            StreamBuilder<List<CachedObj<ContractRes>>>(
+              stream: filteredContracts.stream,
+              initialData: [],
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
+                if (!snapshot.hasData) {
+                  return Text("Not correctly initialized");
+                }
+
+                // if (snapshot.data!.isEmpty) {
+                //   return Text("Keine Kunden vorhanden");
+                // }
+
+                return DataTable(
+                    headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
+                    border: TableBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        top: BorderSide(),
+                        horizontalInside: BorderSide(),
+                        verticalInside: BorderSide(),
+                        bottom: BorderSide(),
+                        left: BorderSide(),
+                        right: BorderSide()),
+                    columns: [
+                      DataColumn(label: Text("ID")),
+                      DataColumn(label: Text("Katze")),
+                      DataColumn(label: Text("Beginn")),
+                      DataColumn(label: Text("Ende")),
+                      DataColumn(label: Text("Deckung")),
+                      DataColumn(label: Text("Aktionen"))
+                    ],
+                    rows: [
+                      ...snapshot.data!.map((e) {
+                        final obj = e.getObj();
+                        final adr = obj.coverage;
+                        return DataRow(cells: [
+                          DataCell(Text(obj.id.toString())),
+                          DataCell(Text(obj.catName.toString())),
+                          DataCell(Text(obj.startDate.toString())),
+                          DataCell(Text(obj.endDate.toString())),
+                          DataCell(Text(obj.coverage.toString())),
+                          DataCell(Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {},
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ))
+                        ]);
+                      }),
+                    ]);
+              },
+            ),
             SizedBox(
               height: 30,
             ),

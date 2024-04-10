@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
-import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
@@ -14,7 +13,6 @@ import 'package:meowmed/widgets/header.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/link.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -57,21 +55,7 @@ class _DashboardState extends State<Dashboard> {
       BehaviorSubject.seeded([]);
 
   Future<void> _searchCustomer(String search) async {
-    final searchLower = search.toLowerCase();
-    final result = customers.where((element) {
-      final obj = element.getObj();
-      return obj.firstName.toLowerCase().contains(searchLower) ||
-          obj.lastName.toLowerCase().contains(searchLower);
-    }).toList();
-    filteredCustomers.add(result);
-
-    // TODO: teil oben kann weg, sobald api geht
-
-    final state = (LoginStateContext.getInstance().state as LoggedInState);
-    final customerService = state.customerService;
-    final data = await customerService.searchCustomers(search);
-    customers = data;
-    filteredCustomers.add(data);
+    filteredCustomers.add(await customerService.searchCustomers(search));
   }
 
   TextEditingController searchController = TextEditingController();
@@ -156,7 +140,7 @@ class _DashboardState extends State<Dashboard> {
             Expanded(
                 child: SingleChildScrollView(
                     child: StreamBuilder<void>(
-              stream: customerService.repo.stream,
+              stream: filteredCustomers.stream,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 return Column(
                   children: [

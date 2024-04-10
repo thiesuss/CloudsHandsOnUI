@@ -55,16 +55,16 @@ class _NewCustomerState extends State<NewCustomer> {
       return;
     }
     final address = Address(
-        street: streetController.text,
-        houseNumber: houseNumberController.text,
-        zipCode: int.parse(zipCodeController.text),
-        city: cityController.text,
-        id: '');
+      street: streetController.text,
+      houseNumber: houseNumberController.text,
+      zipCode: int.parse(zipCodeController.text),
+      city: cityController.text,
+    );
     final bankDetails = BankDetails(
-        iban: ibanController.text,
-        bic: bicController.text,
-        name: bankNameController.text,
-        id: '');
+      iban: ibanController.text,
+      bic: bicController.text,
+      name: bankNameController.text,
+    );
     final customerReq = CustomerReq(
         email: emailController.text,
         firstName: firstNameController.text,

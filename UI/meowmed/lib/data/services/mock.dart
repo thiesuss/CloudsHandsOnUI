@@ -14,7 +14,6 @@ class MockService {
           firstName: "John",
           lastName: "Doe",
           address: Address(
-              id: "4",
               street: "Limmerstr",
               houseNumber: "1",
               zipCode: 30519,
@@ -24,7 +23,6 @@ class MockService {
           firstName: "Jane",
           lastName: "Doe",
           address: Address(
-              id: "4",
               street: "Limmerstr",
               houseNumber: "1",
               zipCode: 30519,
@@ -34,7 +32,6 @@ class MockService {
           firstName: "Max",
           lastName: "Mustermann",
           address: Address(
-              id: "4",
               street: "Limmerstr",
               houseNumber: "1",
               zipCode: 30519,
@@ -50,11 +47,10 @@ class MockService {
         socialSecurityNumber: "1234567890",
         taxId: "1234567890",
         jobStatus: CustomerResJobStatusEnum.arbeitslos,
-        bankDetails: BankDetails(id: "5", iban: "asd", bic: "ad", name: "asd"),
+        bankDetails: BankDetails(iban: "asd", bic: "ad", name: "asd"),
         firstName: "Max",
         lastName: "Mustermann",
         address: Address(
-            id: "asd",
             city: "Musterstadt",
             houseNumber: "1",
             street: "Musterstraße",
@@ -68,11 +64,10 @@ class MockService {
         socialSecurityNumber: "1234567890",
         taxId: "1234567890",
         jobStatus: CustomerResJobStatusEnum.arbeitslos,
-        bankDetails: BankDetails(id: "1", iban: "asd", bic: "ad", name: "asd"),
+        bankDetails: BankDetails(iban: "asd", bic: "ad", name: "asd"),
         firstName: "Till",
         lastName: "Lindemann",
         address: Address(
-            id: "2",
             city: "Musterstadt",
             houseNumber: "1",
             street: "Musterstraße",
@@ -85,12 +80,11 @@ class MockService {
         socialSecurityNumber: "1234567890",
         taxId: "1234567890",
         jobStatus: CustomerResJobStatusEnum.arbeitslos,
-        bankDetails: BankDetails(id: "1", iban: "asd", bic: "ad", name: "asd"),
+        bankDetails: BankDetails(iban: "asd", bic: "ad", name: "asd"),
         firstName: "Katy",
         lastName: "Perry",
         email: "abc@gmail.com",
         address: Address(
-            id: "1",
             city: "Musterstadt",
             houseNumber: "1",
             street: "Musterstraße",

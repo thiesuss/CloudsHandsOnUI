@@ -100,6 +100,7 @@ class CustomerService implements StatefullObj {
       cachedObjList.add(cachedObj);
       repo.add(cachedObj);
     }
+    
     return cachedObjList;
   }
 
