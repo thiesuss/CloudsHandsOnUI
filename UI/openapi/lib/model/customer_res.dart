@@ -22,7 +22,6 @@ class CustomerRes {
     required this.birthDate,
     required this.socialSecurityNumber,
     required this.taxId,
-    required this.jobStatus,
     required this.address,
     required this.bankDetails,
   });
@@ -45,8 +44,6 @@ class CustomerRes {
 
   String taxId;
 
-  CustomerResJobStatusEnum jobStatus;
-
   Address address;
 
   BankDetails bankDetails;
@@ -62,7 +59,6 @@ class CustomerRes {
     other.birthDate == birthDate &&
     other.socialSecurityNumber == socialSecurityNumber &&
     other.taxId == taxId &&
-    other.jobStatus == jobStatus &&
     other.address == address &&
     other.bankDetails == bankDetails;
 
@@ -78,12 +74,11 @@ class CustomerRes {
     (birthDate.hashCode) +
     (socialSecurityNumber.hashCode) +
     (taxId.hashCode) +
-    (jobStatus.hashCode) +
     (address.hashCode) +
     (bankDetails.hashCode);
 
   @override
-  String toString() => 'CustomerRes[id=$id, email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails]';
+  String toString() => 'CustomerRes[id=$id, email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, address=$address, bankDetails=$bankDetails]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
@@ -100,7 +95,6 @@ class CustomerRes {
       json[r'birthDate'] = _dateFormatter.format(this.birthDate.toUtc());
       json[r'socialSecurityNumber'] = this.socialSecurityNumber;
       json[r'taxId'] = this.taxId;
-      json[r'jobStatus'] = this.jobStatus;
       json[r'address'] = this.address;
       json[r'bankDetails'] = this.bankDetails;
     return json;
@@ -134,7 +128,6 @@ class CustomerRes {
         birthDate: mapDateTime(json, r'birthDate', r'')!,
         socialSecurityNumber: mapValueOfType<String>(json, r'socialSecurityNumber')!,
         taxId: mapValueOfType<String>(json, r'taxId')!,
-        jobStatus: CustomerResJobStatusEnum.fromJson(json[r'jobStatus'])!,
         address: Address.fromJson(json[r'address'])!,
         bankDetails: BankDetails.fromJson(json[r'bankDetails'])!,
       );
@@ -192,7 +185,6 @@ class CustomerRes {
     'birthDate',
     'socialSecurityNumber',
     'taxId',
-    'jobStatus',
     'address',
     'bankDetails',
   };
@@ -355,95 +347,6 @@ class CustomerResFamilyStatusEnumTypeTransformer {
 
   /// Singleton [CustomerResFamilyStatusEnumTypeTransformer] instance.
   static CustomerResFamilyStatusEnumTypeTransformer? _instance;
-}
-
-
-
-class CustomerResJobStatusEnum {
-  /// Instantiate a new enum with the provided [value].
-  const CustomerResJobStatusEnum._(this.value);
-
-  /// The underlying value of this enum member.
-  final String value;
-
-  @override
-  String toString() => value;
-
-  String toJson() => value;
-
-  static const arbeitslos = CustomerResJobStatusEnum._(r'arbeitslos');
-  static const schueler = CustomerResJobStatusEnum._(r'Schueler');
-  static const student = CustomerResJobStatusEnum._(r'Student');
-  static const vollzeit = CustomerResJobStatusEnum._(r'Vollzeit');
-  static const teilzeit = CustomerResJobStatusEnum._(r'Teilzeit');
-  static const minijob = CustomerResJobStatusEnum._(r'Minijob');
-  static const werkstudent = CustomerResJobStatusEnum._(r'Werkstudent');
-
-  /// List of all possible values in this [enum][CustomerResJobStatusEnum].
-  static const values = <CustomerResJobStatusEnum>[
-    arbeitslos,
-    schueler,
-    student,
-    vollzeit,
-    teilzeit,
-    minijob,
-    werkstudent,
-  ];
-
-  static CustomerResJobStatusEnum? fromJson(dynamic value) => CustomerResJobStatusEnumTypeTransformer().decode(value);
-
-  static List<CustomerResJobStatusEnum> listFromJson(dynamic json, {bool growable = false,}) {
-    final result = <CustomerResJobStatusEnum>[];
-    if (json is List && json.isNotEmpty) {
-      for (final row in json) {
-        final value = CustomerResJobStatusEnum.fromJson(row);
-        if (value != null) {
-          result.add(value);
-        }
-      }
-    }
-    return result.toList(growable: growable);
-  }
-}
-
-/// Transformation class that can [encode] an instance of [CustomerResJobStatusEnum] to String,
-/// and [decode] dynamic data back to [CustomerResJobStatusEnum].
-class CustomerResJobStatusEnumTypeTransformer {
-  factory CustomerResJobStatusEnumTypeTransformer() => _instance ??= const CustomerResJobStatusEnumTypeTransformer._();
-
-  const CustomerResJobStatusEnumTypeTransformer._();
-
-  String encode(CustomerResJobStatusEnum data) => data.value;
-
-  /// Decodes a [dynamic value][data] to a CustomerResJobStatusEnum.
-  ///
-  /// If [allowNull] is true and the [dynamic value][data] cannot be decoded successfully,
-  /// then null is returned. However, if [allowNull] is false and the [dynamic value][data]
-  /// cannot be decoded successfully, then an [UnimplementedError] is thrown.
-  ///
-  /// The [allowNull] is very handy when an API changes and a new enum value is added or removed,
-  /// and users are still using an old app with the old code.
-  CustomerResJobStatusEnum? decode(dynamic data, {bool allowNull = true}) {
-    if (data != null) {
-      switch (data) {
-        case r'arbeitslos': return CustomerResJobStatusEnum.arbeitslos;
-        case r'Schueler': return CustomerResJobStatusEnum.schueler;
-        case r'Student': return CustomerResJobStatusEnum.student;
-        case r'Vollzeit': return CustomerResJobStatusEnum.vollzeit;
-        case r'Teilzeit': return CustomerResJobStatusEnum.teilzeit;
-        case r'Minijob': return CustomerResJobStatusEnum.minijob;
-        case r'Werkstudent': return CustomerResJobStatusEnum.werkstudent;
-        default:
-          if (!allowNull) {
-            throw ArgumentError('Unknown enum value to decode: $data');
-          }
-      }
-    }
-    return null;
-  }
-
-  /// Singleton [CustomerResJobStatusEnumTypeTransformer] instance.
-  static CustomerResJobStatusEnumTypeTransformer? _instance;
 }
 
 

@@ -21,7 +21,6 @@ class CustomerReq {
     required this.birthDate,
     required this.socialSecurityNumber,
     required this.taxId,
-    required this.jobStatus,
     required this.address,
     required this.bankDetails,
   });
@@ -42,8 +41,6 @@ class CustomerReq {
 
   String taxId;
 
-  CustomerReqJobStatusEnum jobStatus;
-
   Address address;
 
   BankDetails bankDetails;
@@ -60,7 +57,6 @@ class CustomerReq {
           other.birthDate == birthDate &&
           other.socialSecurityNumber == socialSecurityNumber &&
           other.taxId == taxId &&
-          other.jobStatus == jobStatus &&
           other.address == address &&
           other.bankDetails == bankDetails;
 
@@ -75,13 +71,12 @@ class CustomerReq {
       (birthDate.hashCode) +
       (socialSecurityNumber.hashCode) +
       (taxId.hashCode) +
-      (jobStatus.hashCode) +
       (address.hashCode) +
       (bankDetails.hashCode);
 
   @override
   String toString() =>
-      'CustomerReq[email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, jobStatus=$jobStatus, address=$address, bankDetails=$bankDetails]';
+      'CustomerReq[email=$email, firstName=$firstName, lastName=$lastName, title=$title, familyStatus=$familyStatus, birthDate=$birthDate, socialSecurityNumber=$socialSecurityNumber, taxId=$taxId, address=$address, bankDetails=$bankDetails]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
@@ -97,7 +92,6 @@ class CustomerReq {
     json[r'birthDate'] = _dateFormatter.format(this.birthDate.toUtc());
     json[r'socialSecurityNumber'] = this.socialSecurityNumber;
     json[r'taxId'] = this.taxId;
-    json[r'jobStatus'] = this.jobStatus;
     json[r'address'] = this.address;
     json[r'bankDetails'] = this.bankDetails;
     return json;
@@ -134,7 +128,6 @@ class CustomerReq {
         socialSecurityNumber:
             mapValueOfType<String>(json, r'socialSecurityNumber')!,
         taxId: mapValueOfType<String>(json, r'taxId')!,
-        jobStatus: CustomerReqJobStatusEnum.fromJson(json[r'jobStatus'])!,
         address: Address.fromJson(json[r'address'])!,
         bankDetails: BankDetails.fromJson(json[r'bankDetails'])!,
       );
@@ -200,7 +193,6 @@ class CustomerReq {
     'birthDate',
     'socialSecurityNumber',
     'taxId',
-    'jobStatus',
     'address',
     'bankDetails',
   };
@@ -378,103 +370,4 @@ class CustomerReqFamilyStatusEnumTypeTransformer {
 
   /// Singleton [CustomerReqFamilyStatusEnumTypeTransformer] instance.
   static CustomerReqFamilyStatusEnumTypeTransformer? _instance;
-}
-
-class CustomerReqJobStatusEnum {
-  /// Instantiate a new enum with the provided [value].
-  const CustomerReqJobStatusEnum._(this.value);
-
-  /// The underlying value of this enum member.
-  final String value;
-
-  @override
-  String toString() => value;
-
-  String toJson() => value;
-
-  static const arbeitslos = CustomerReqJobStatusEnum._(r'arbeitslos');
-  static const schueler = CustomerReqJobStatusEnum._(r'Schueler');
-  static const student = CustomerReqJobStatusEnum._(r'Student');
-  static const vollzeit = CustomerReqJobStatusEnum._(r'Vollzeit');
-  static const teilzeit = CustomerReqJobStatusEnum._(r'Teilzeit');
-  static const minijob = CustomerReqJobStatusEnum._(r'Minijob');
-  static const werkstudent = CustomerReqJobStatusEnum._(r'Werkstudent');
-
-  /// List of all possible values in this [enum][CustomerReqJobStatusEnum].
-  static const values = <CustomerReqJobStatusEnum>[
-    arbeitslos,
-    schueler,
-    student,
-    vollzeit,
-    teilzeit,
-    minijob,
-    werkstudent,
-  ];
-
-  static CustomerReqJobStatusEnum? fromJson(dynamic value) =>
-      CustomerReqJobStatusEnumTypeTransformer().decode(value);
-
-  static List<CustomerReqJobStatusEnum> listFromJson(
-    dynamic json, {
-    bool growable = false,
-  }) {
-    final result = <CustomerReqJobStatusEnum>[];
-    if (json is List && json.isNotEmpty) {
-      for (final row in json) {
-        final value = CustomerReqJobStatusEnum.fromJson(row);
-        if (value != null) {
-          result.add(value);
-        }
-      }
-    }
-    return result.toList(growable: growable);
-  }
-}
-
-/// Transformation class that can [encode] an instance of [CustomerReqJobStatusEnum] to String,
-/// and [decode] dynamic data back to [CustomerReqJobStatusEnum].
-class CustomerReqJobStatusEnumTypeTransformer {
-  factory CustomerReqJobStatusEnumTypeTransformer() =>
-      _instance ??= const CustomerReqJobStatusEnumTypeTransformer._();
-
-  const CustomerReqJobStatusEnumTypeTransformer._();
-
-  String encode(CustomerReqJobStatusEnum data) => data.value;
-
-  /// Decodes a [dynamic value][data] to a CustomerReqJobStatusEnum.
-  ///
-  /// If [allowNull] is true and the [dynamic value][data] cannot be decoded successfully,
-  /// then null is returned. However, if [allowNull] is false and the [dynamic value][data]
-  /// cannot be decoded successfully, then an [UnimplementedError] is thrown.
-  ///
-  /// The [allowNull] is very handy when an API changes and a new enum value is added or removed,
-  /// and users are still using an old app with the old code.
-  CustomerReqJobStatusEnum? decode(dynamic data, {bool allowNull = true}) {
-    if (data != null) {
-      switch (data) {
-        case r'arbeitslos':
-          return CustomerReqJobStatusEnum.arbeitslos;
-        case r'Schueler':
-          return CustomerReqJobStatusEnum.schueler;
-        case r'Student':
-          return CustomerReqJobStatusEnum.student;
-        case r'Vollzeit':
-          return CustomerReqJobStatusEnum.vollzeit;
-        case r'Teilzeit':
-          return CustomerReqJobStatusEnum.teilzeit;
-        case r'Minijob':
-          return CustomerReqJobStatusEnum.minijob;
-        case r'Werkstudent':
-          return CustomerReqJobStatusEnum.werkstudent;
-        default:
-          if (!allowNull) {
-            throw ArgumentError('Unknown enum value to decode: $data');
-          }
-      }
-    }
-    return null;
-  }
-
-  /// Singleton [CustomerReqJobStatusEnumTypeTransformer] instance.
-  static CustomerReqJobStatusEnumTypeTransformer? _instance;
 }
