@@ -53,6 +53,7 @@ class _CustomerState extends State<Customer> {
   TextEditingController bicController = TextEditingController();
   TextEditingController bankNameController = TextEditingController();
   TextEditingController bankIdController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   @override
   void dispose() {
@@ -85,6 +86,7 @@ class _CustomerState extends State<Customer> {
     ibanController.text = obj.bankDetails.iban;
     bicController.text = obj.bankDetails.bic;
     bankNameController.text = obj.bankDetails.name;
+    emailController.text = obj.email;
 
     loadContracts();
 
@@ -146,7 +148,7 @@ class _CustomerState extends State<Customer> {
         taxId: steueridcontroller.text,
         address: address,
         bankDetails: bankDetails,
-        email: '',
+        email: emailController.text,
         jobStatus: CustomerReqJobStatusEnum.vollzeit); //Job nicht nötig
     final id = customer.getId();
     await customerService.updateCustomer(id, customerReq);
@@ -272,6 +274,30 @@ class _CustomerState extends State<Customer> {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 50,
+                      width: 230,
+                      child: TextFormField(
+                        controller: emailController,
+                        readOnly: !editMode,
+                        validator: (value) {
+                          if (value == null) {
+                            return "Eingabe darf nicht leer sein";
+                          }
+                          if (value.isEmpty) {
+                            return "Bitte Email eingeben";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Email",
+                        ),
+                      ),
+                    )
                   ],
                 ),
                 SizedBox(
