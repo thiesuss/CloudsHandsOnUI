@@ -505,7 +505,6 @@ components:
         - houseNumber
         - zipCode
         - city
-        - id
       properties:
         street:
           type: string
@@ -524,17 +523,12 @@ components:
           type: string
           pattern: "^[A-Z][a-z]*$"
           example: "Musterstadt"
-        id:
-          type: string
-          format: uuid
-          example: "123e4567-e89b-12d3-a456-426614174000"
     BankDetails:
       type: object
       required:
         - iban
         - bic
         - name
-        - id
       properties:
         iban:
           type: string
@@ -548,10 +542,6 @@ components:
           type: string
           pattern: "^[A-Z][a-z]*$"
           example: "Max Mustermann"
-        id:
-          type: string
-          format: uuid
-          example: "123e4567-e89b-12d3-a456-426614174000"
     EmployeeReq:
       type: object
       required:
