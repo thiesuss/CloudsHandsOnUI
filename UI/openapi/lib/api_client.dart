@@ -291,6 +291,7 @@ class ApiClient {
         trace,
       );
     }
+    print('Could not find deserialzer for $targetType');
     throw ApiException(
       HttpStatus.internalServerError,
       'Could not find a suitable class for deserialization',
