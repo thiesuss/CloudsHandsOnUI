@@ -30,8 +30,14 @@ class ContractService implements StatefullObj {
   }
 
   Future<List<CachedObj<ContractRes>>> getContractsForCustomer(
-      String customerID) async {
-    final contractRes = await contractApi.getCustomerContracts(customerID);
+    String customerID, {
+    int? page,
+    int? pageSize,
+  }) async {
+    pageSize = pageSize ?? 10;
+    page = page ?? 1;
+    final contractRes = await contractApi.getCustomerContracts(customerID,
+        page: page, pageSize: pageSize);
     if (contractRes == null) {
       throw ReadFailed("Contract read failed");
     }

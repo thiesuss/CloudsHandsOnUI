@@ -8,11 +8,12 @@ import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
+import 'package:meowmed/screens/customer.dart';
 import 'package:meowmed/screens/newcustomer.dart';
-import 'package:meowmed/widgets/customerlist.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Dashboard extends StatefulWidget {
@@ -25,22 +26,21 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   late List<CachedObj<CustomerRes>> customers;
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
-  final loggedInState =
-      (LoginStateContext.getInstance().state as LoggedInState);
+  final customerService =
+      (LoginStateContext.getInstance().state as LoggedInState).customerService;
 
   @override
   void initState() {
     super.initState();
-    loadData();
-    refreshTimer = RefreshTimer(loadData);
+    getCustomers();
+    refreshTimer = RefreshTimer(getCustomers);
     refreshTimer.init();
   }
 
   late RefreshTimer refreshTimer;
 
-  Future<void> loadData() async {
+  Future<void> getCustomers() async {
     searchController.clear();
-    final customerService = loggedInState.customerService;
     final repo = customerService.repo;
     final cached = repo.getAll();
     customers = cached;
@@ -94,7 +94,7 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.all(30),
-        child: ListView(
+        child: Column(
           children: [
             Row(
               children: [
@@ -136,7 +136,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icon(Icons.search)),
                 IconButton(
                     onPressed: () {
-                      loadData();
+                      getCustomers();
                     },
                     icon: Icon(Icons.refresh)),
                 // Expanded(child: Container()),
@@ -153,7 +153,81 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(
               height: 30,
             ),
-            Expanded(child: CustomerList(filteredCustomers))
+            Expanded(
+                child: SingleChildScrollView(
+                    child: StreamBuilder<void>(
+              stream: customerService.repo.stream,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return Column(
+                  children: [
+                    DataTable(
+                        headingTextStyle:
+                            TextStyle(fontWeight: FontWeight.bold),
+                        border: TableBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            top: BorderSide(),
+                            horizontalInside: BorderSide(),
+                            verticalInside: BorderSide(),
+                            bottom: BorderSide(),
+                            left: BorderSide(),
+                            right: BorderSide()),
+                        columns: const [
+                          DataColumn(label: Text("ID")),
+                          DataColumn(label: Text("Nachname")),
+                          DataColumn(label: Text("Vorname")),
+                          DataColumn(label: Text("Adresse")),
+                          DataColumn(label: Text("Aktionen"))
+                        ],
+                        rows: [
+                          ...customerService.repo.getAll().map((e) {
+                            final obj = e.getObj();
+                            final adr = obj.address;
+                            return DataRow(cells: [
+                              DataCell(Text(obj.id.toString())),
+                              DataCell(Text(obj.lastName)),
+                              DataCell(Text(obj.firstName)),
+                              DataCell(Text(adr.street +
+                                  " " +
+                                  adr.houseNumber +
+                                  ", " +
+                                  adr.city)),
+                              DataCell(Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Customer(e)));
+                                      },
+                                      icon: Icon(Icons.edit)),
+                                  Link(
+                                    uri: Uri.parse(
+                                        'https://youtu.be/dQw4w9WgXcQ'),
+                                    target: LinkTarget.self,
+                                    builder: (context, followLink) =>
+                                        IconButton(
+                                            onPressed: () {
+                                              followLink;
+                                            },
+                                            icon: Icon(Icons.delete)),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(Icons.remove_red_eye))
+                                ],
+                              ))
+                            ]);
+                          }),
+                        ]),
+                    IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.expand_circle_down_outlined))
+                  ],
+                );
+              },
+            )))
           ],
         ),
       ),

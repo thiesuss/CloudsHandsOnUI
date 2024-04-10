@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meowmed/data/services/employeeservice.dart';
@@ -9,6 +11,7 @@ import 'package:meowmed/data/states/login/loggedOut.dart';
 import 'package:meowmed/data/states/login/state.dart';
 import 'package:meowmed/screens/dashboard.dart';
 import 'package:openapi/api.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   LoginPage();
@@ -41,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             Expanded(child: Container()),
             Card(
               child: Container(
-                width: 400,
+                width: 350,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black, width: 2),
                   borderRadius: BorderRadius.circular(10),
