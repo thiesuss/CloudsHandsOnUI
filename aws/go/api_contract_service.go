@@ -11,9 +11,9 @@ package openapi
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -29,15 +29,129 @@ func NewContractAPIService() ContractAPIServicer {
 	return &ContractAPIService{}
 }
 
+// Maximale jahresdeckung 50,000
+// Grundkosten: Jahresdeckung * Promille -> Normal 1.5 Schwarz 2.0 (Promille = 1/1000)
+// Prozentzuschlag = Grundkosten * (P1 + P2 + P3)
+// P1 = Risikozuschlag für Postleitzahl
+// P2 = Zuschlag für Freigängerkatzen
+// P3 = Aufschlag nach Alter
+// Monatliche Versicherungskosten = Grundkosten + Prozentzuschlag +
+// Kastriert-Zuschlag + Gewichtszuschlag + Krankheitswahrscheinlichkeitszuschlag
+// Letztes Quartiel von Durschnittsalter +20%
+// unter 2 dann	+10%
+// Draußen/Freigänger +10%
+// Persönlichkeit "besonders verspielt" NICHT VERSICHERT
+// Postleitzahl 0, 1 +5%
+// Pauschal 1-10 Krankheiten Wert in Euro (1-10 Euro)
+// nicht Kastriert +5
+// Gewicht außerhalb von Intervall -> Jedes kilo 5 Euro
+
 // CalculateRate - Calculate rate
 func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationReq RateCalculationReq) (ImplResponse, error) {
-	// TODO - update CalculateRate with the required logic for this service method.
-	// Add api_contract_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+	// Retrieve database credentials
+	db, err := connectToDB()
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error connecting to database: %v", err)
+	}
+	defer db.Close()
 
-	// TODO: Uncomment the next line to return response Response(200, RateRes{}) or use other options such as http.Ok ...
-	// return Response(200, RateRes{}), nil
+	if rateCalculationReq.Coverage > 50000 {
+		return Response(http.StatusBadRequest, nil), fmt.Errorf("Maximale Jahresdeckung beträgt 50,000: %v", err)
+	}
 
-	return Response(http.StatusNotImplemented, nil), errors.New("CalculateRate method not implemented")
+	// Grundkosten
+	var promille float32
+	if rateCalculationReq.Breed == "schwarz" {
+		promille = 0.002
+	} else {
+		promille = 0.0015
+	}
+	grundkosten := float32(rateCalculationReq.Coverage) * promille
+
+	// Prozentzuschlag
+	var prozentzuschlag float32
+
+	if rateCalculationReq.ZipCode <= 19999 {
+		prozentzuschlag = grundkosten * 0.05
+	}
+	if rateCalculationReq.Environment == "Draußen" {
+		prozentzuschlag += grundkosten * 0.1
+	}
+
+	var lastQuartile float32
+	var min, max int
+	var averageAge float32
+
+	err = db.QueryRowContext(ctx, `
+		SELECT Durchschnittsalter_min, Durchschnittsalter_max
+		FROM Rate
+		WHERE Rasse = ?
+	`, rateCalculationReq.Breed).Scan(&min, &max)
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving average age details: %v", err)
+	}
+
+	averageAge = float32((min + max) / 2)
+	lastQuartile = averageAge - (averageAge * 0.25)
+
+	// Konvertiere den Geburtsdatum-String in ein time.Time Objekt
+	geburtsdatum, err := time.Parse("2006-01-02", rateCalculationReq.BirthDate)
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error parsing birthdate: %v", err)
+	}
+
+	// Berechne das Alter der Katze in Jahren
+	heute := time.Now()
+	alter := heute.Year() - geburtsdatum.Year()
+
+	// Überprüfe, ob die Katze jünger als 2 Jahre ist
+	if alter < 2 {
+		prozentzuschlag += grundkosten * 0.1
+		//TODO: Außerhalb von Intervall
+	} else if float32(alter) > lastQuartile {
+		prozentzuschlag += grundkosten * 0.2
+	}
+
+	// Monatliche Versicherungskosten
+	monatlicheVersicherungskosten := grundkosten + prozentzuschlag
+
+	// Pauschalzuschlag
+	// Kastriert-Zuschlag
+
+	if !rateCalculationReq.Neutered {
+		monatlicheVersicherungskosten += 5
+	}
+
+	// Gewichtszuschlag
+	// GEWICHT IN GRAMM ANGEGEBEN!!!
+	err = db.QueryRowContext(ctx, `
+		SELECT Durchschnittsgewicht_min, Durchschnittsgewicht_max
+		FROM Rate 
+		WHERE Rasse = ?
+	`, rateCalculationReq.Breed).Scan(&min, &max)
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving weight intervall details: %v", err)
+	}
+	if int(rateCalculationReq.Weight) < min { //TODO: Intervall
+		monatlicheVersicherungskosten += float32(min - int(rateCalculationReq.Weight)*5)
+	} else if int(rateCalculationReq.Weight) > max {
+		monatlicheVersicherungskosten += float32(int(rateCalculationReq.Weight) - max*5)
+	}
+
+	// Krankheitswahrscheinlichkeitszuschlag
+	var illRate int
+	err = db.QueryRowContext(ctx, `
+	SELECT Anfälligkeit_für_Krankheiten
+		FROM Rate 
+		WHERE Rasse = ?
+	`, rateCalculationReq.Breed).Scan(&illRate)
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving illRate details: %v", err)
+	}
+	monatlicheVersicherungskosten += float32(illRate)
+
+	// Return success response with the rate details
+	return Response(http.StatusOK, monatlicheVersicherungskosten), nil
 }
 
 // CreateContract - Create a new contract
