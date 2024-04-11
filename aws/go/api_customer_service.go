@@ -10,8 +10,6 @@
 package openapi
 
 import (
-	"regexp"
-	"time"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -117,8 +115,8 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 	// Generate UUID for the new customer
 	newCustomerID := uuid.New().String()
  
-	boolean isValid = validateCustomer(customerReq);
-	if(!isValid) {
+	isValid := validateCustomer(customerReq)
+	if !isValid {
 		tx.Rollback()
         return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
 	}
@@ -365,8 +363,8 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
-	boolean isValid = validateCustomer(customerReq);
-	if(!isValid) {
+	isValid := validateCustomer(customerReq)
+	if !isValid {
 		tx.Rollback()
         return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
 	}

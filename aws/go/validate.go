@@ -1,3 +1,5 @@
+package openapi
+
 import (
     "regexp"  // Für Regular Expressions
     "time"    // Für Zeit- und Datumsfunktionen
