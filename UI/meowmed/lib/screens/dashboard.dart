@@ -32,10 +32,10 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     getCustomers();
     refreshTimer = RefreshTimer(getCustomers);
-    refreshTimer.init();
+    refreshTimer!.init();
   }
 
-  late RefreshTimer refreshTimer;
+  RefreshTimer? refreshTimer;
 
   Future<void> getCustomers() async {
     searchController.clear();
@@ -62,7 +62,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void dispose() {
-    refreshTimer.dispose();
+    refreshTimer?.dispose();
     super.dispose();
   }
   // final Uri _rickRoll = Uri.parse('https://youtu.be/dQw4w9WgXcQ');

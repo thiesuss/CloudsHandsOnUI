@@ -56,7 +56,7 @@ class _CustomerState extends State<Customer> {
 
   @override
   void dispose() {
-    refreshTimer.dispose();
+    refreshTimer?.dispose();
     super.dispose();
   }
 
@@ -90,10 +90,10 @@ class _CustomerState extends State<Customer> {
     loadContracts();
 
     refreshTimer = RefreshTimer(loadContracts);
-    refreshTimer.init();
+    refreshTimer!.init();
   }
 
-  late RefreshTimer refreshTimer;
+  RefreshTimer? refreshTimer;
 
   final contractService =
       (LoginStateContext.getInstance().state as LoggedInState).contractService;
