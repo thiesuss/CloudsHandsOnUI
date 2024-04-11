@@ -117,23 +117,11 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 	// Generate UUID for the new customer
 	newCustomerID := uuid.New().String()
  
-	// Validate email address
-	if !isValidEmailRegex(customerReq.Email) {
+	boolean isValid = validateCustomer(customerReq);
+	if(!isValid) {
 		tx.Rollback()
-		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid email address: %s", customerReq.Email)
+        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
 	}
-
-    // Validate first name and last name
-    if !isValidName(customerReq.FirstName) || !isValidName(customerReq.LastName) {
-        tx.Rollback()
-        return Response(http.StatusBadRequest, nil), fmt.Errorf("first name or last name contains invalid characters")
-    }
-
-    // Validate birth date
-    if err := isValidBirthDate(customerReq.BirthDate); err != nil {
-        tx.Rollback()
-        return Response(http.StatusBadRequest, nil), err
-    }
 
 	// Insert into Customer table
 	_, err = tx.ExecContext(ctx, `
@@ -377,23 +365,11 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
-    // Validate email address
-    if !isValidEmailRegex(customerReq.Email) {
-        tx.Rollback()
-        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid email address: %s", customerReq.Email)
-    }
-
-    // Validate first name and last name
-    if !isValidName(customerReq.FirstName) || !isValidName(customerReq.LastName) {
-        tx.Rollback()
-        return Response(http.StatusBadRequest, nil), fmt.Errorf("first name or last name contains invalid characters")
-    }
-
-    // Validate birth date
-    if err := isValidBirthDate(customerReq.BirthDate); err != nil {
-        tx.Rollback()
-        return Response(http.StatusBadRequest, nil), err
-    }
+	boolean isValid = validateCustomer(customerReq);
+	if(!isValid) {
+		tx.Rollback()
+        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
+	}
 	
 	// Update Customer table
 	_, err = tx.ExecContext(ctx, `
@@ -433,31 +409,4 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 
 	// Return success response
 	return Response(http.StatusOK, "Customer updated"), nil
-}
-
-func isValidEmailRegex(email string) bool {
-    emailRegex := regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}$`)
-    return emailRegex.MatchString(email)
-}
-
-func isValidName(name string) bool {
-    nameRegex := regexp.MustCompile(`^[a-zA-Z]+$`)
-    return nameRegex.MatchString(name)
-}
-
-func isValidBirthDate(birthDate string) error {
-    parsedBirthDate, err := time.Parse("2006-01-02", birthDate)
-    if err != nil {
-        return fmt.Errorf("invalid birth date format: %v", err)
-    }
-
-    if parsedBirthDate.After(time.Now().AddDate(0, 0, -1)) {
-        return fmt.Errorf("birth date cannot be in the future")
-    }
-
-    if parsedBirthDate.Before(time.Now().AddDate(-110, 0, 0)) {
-        return fmt.Errorf("customer cannot be older than 110 years")
-    }
-
-    return nil
 }
