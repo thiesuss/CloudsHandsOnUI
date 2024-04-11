@@ -10,6 +10,7 @@
 package openapi
 
 import (
+	"net/mail"
 	"context"
 	"database/sql"
 	"encoding/json"
