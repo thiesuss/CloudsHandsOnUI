@@ -174,6 +174,12 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
+    // Validate cat weight
+    if err := isValidCatWeight(contractReq.Weight); err != nil {
+        tx.Rollback()
+        return Response(http.StatusBadRequest, nil), err
+    }
+
 	// Insert into Contract table
 	newContractID := uuid.New().String()
 	_, err = tx.ExecContext(context.Background(), `
@@ -291,4 +297,12 @@ func (s *ContractAPIService) GetCustomerContracts(ctx context.Context, customerI
 
 	// Return success response with the customer details
 	return Response(http.StatusOK, contracts), nil
+}
+
+// Validate cat weight
+func isValidCatWeight(weight float64) error {
+    if weight < 0 || weight > 30 {
+        return fmt.Errorf("invalid cat weight: %f (kg)", weight)
+    }
+    return nil
 }

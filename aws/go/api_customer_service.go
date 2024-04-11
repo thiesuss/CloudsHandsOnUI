@@ -445,7 +445,6 @@ func isValidName(name string) bool {
     return nameRegex.MatchString(name)
 }
 
-
 func isValidBirthDate(birthDate string) error {
     parsedBirthDate, err := time.Parse("2006-01-02", birthDate)
     if err != nil {
