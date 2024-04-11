@@ -59,6 +59,8 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 		return Response(http.StatusBadRequest, nil), fmt.Errorf("Maximale Jahresdeckung beträgt 50,000: %v", err)
 	}
 
+	var rate RateRes
+
 	// Grundkosten
 	var promille float32
 	if rateCalculationReq.Breed == "schwarz" {
@@ -150,8 +152,10 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	}
 	monatlicheVersicherungskosten += float32(illRate)
 
+	rate.Rate = monatlicheVersicherungskosten
+
 	// Return success response with the rate details
-	return Response(http.StatusOK, monatlicheVersicherungskosten), nil
+	return Response(http.StatusOK, rate), nil
 }
 
 // CreateContract - Create a new contract
