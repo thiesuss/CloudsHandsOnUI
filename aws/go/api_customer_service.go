@@ -10,7 +10,7 @@
 package openapi
 
 import (
-	"net/mail"
+	"regexp"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -117,7 +117,7 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 	newCustomerID := uuid.New().String()
  
 	// Validate email address
-	if !isValidEmail(customerReq.Email) {
+	if !isValidEmailRegex(customerReq.Email) {
 		tx.Rollback()
 		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid email address: %s", customerReq.Email)
 	}
@@ -364,6 +364,12 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
+    // Validate email address
+    if !isValidEmailRegex(customerReq.Email) {
+        tx.Rollback()
+        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid email address: %s", customerReq.Email)
+    }
+	
 	// Update Customer table
 	_, err = tx.ExecContext(ctx, `
         UPDATE Customer
@@ -403,8 +409,8 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 	// Return success response
 	return Response(http.StatusOK, "Customer updated"), nil
 }
- 
-func isValidEmail(email string) bool {
-	_, err := mail.ParseAddress(email)
-	return err == nil
+
+func isValidEmailRegex(email string) bool {
+    emailRegex := regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}$`)
+    return emailRegex.MatchString(email)
 }
