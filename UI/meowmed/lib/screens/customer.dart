@@ -10,6 +10,7 @@ import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
+import 'package:meowmed/screens/contract.dart';
 import 'package:meowmed/screens/newcontract.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
@@ -632,7 +633,13 @@ class _CustomerState extends State<Customer> {
                             children: [
                               IconButton(
                                 icon: Icon(Icons.edit),
-                                onPressed: () {},
+                                onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Contract(e)));
+                                      },
                               ),
                               IconButton(
                                 icon: Icon(Icons.delete),
