@@ -97,59 +97,61 @@ func NewCustomerAPIService() CustomerAPIServicer {
 	return &CustomerAPIService{}
 }
 
-// CreateCustomer - Create a new customer
+// CreateCustomer - Create a new customer 
 func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq CustomerReq) (ImplResponse, error) {
 	// Retrieve database credentials
-
 	db, err := connectToDB()
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error connecting to database: %v", err)
 	}
 	defer db.Close()
-
+ 
 	// Begin transaction
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
-
+ 
 	// Generate UUID for the new customer
 	newCustomerID := uuid.New().String()
-
+ 
+	// Validate email address
+	if !isValidEmail(customerReq.Email) {
+		tx.Rollback()
+		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid email address: %s", customerReq.Email)
+	}
+ 
 	// Insert into Customer table
 	_, err = tx.ExecContext(ctx, `
-			INSERT INTO Customer (id, firstName, lastName, title, familyStatus, birthDate, socialSecurityNumber, taxId, email, street, houseNumber, zipCode, city, iban, bic, name)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		newCustomerID, customerReq.FirstName, customerReq.LastName, customerReq.Title, customerReq.FamilyStatus, customerReq.BirthDate,
-		customerReq.SocialSecurityNumber, customerReq.TaxId, customerReq.Email,
-		customerReq.Address.Street, customerReq.Address.HouseNumber, customerReq.Address.ZipCode, customerReq.Address.City,
-		customerReq.BankDetails.Iban, customerReq.BankDetails.Bic, customerReq.BankDetails.Name)
+		INSERT INTO Customer (id, firstName, lastName, title, familyStatus, birthDate, socialSecurityNumber, taxId, email, street, houseNumber, zipCode, city, iban, bic, name)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		newCustomerID, customerReq.FirstName, customerReq.LastName, customerReq.Title, customerReq.FamilyStatus, customerReq.BirthDate, customerReq.SocialSecurityNumber, customerReq.TaxId, customerReq.Email, customerReq.Address.Street, customerReq.Address.HouseNumber, customerReq.Address.ZipCode, customerReq.Address.City, customerReq.BankDetails.Iban, customerReq.BankDetails.Bic, customerReq.BankDetails.Name)
 	if err != nil {
 		tx.Rollback()
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Customer table: %v", err)
 	}
-
+ 
 	// Commit transaction
 	if err := tx.Commit(); err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error committing transaction: %v", err)
 	}
-
+ 
 	// Respond with the new customer details
 	newCustomerRes := CustomerRes{
-		Id:                   newCustomerID,
-		FirstName:            customerReq.FirstName,
-		LastName:             customerReq.LastName,
-		Title:                customerReq.Title,
-		FamilyStatus:         customerReq.FamilyStatus,
-		BirthDate:            customerReq.BirthDate,
+		Id:                  newCustomerID,
+		FirstName:           customerReq.FirstName,
+		LastName:            customerReq.LastName,
+		Title:               customerReq.Title,
+		FamilyStatus:        customerReq.FamilyStatus,
+		BirthDate:           customerReq.BirthDate,
 		SocialSecurityNumber: customerReq.SocialSecurityNumber,
-		TaxId:                customerReq.TaxId,
-		Email:                customerReq.Email,
+		TaxId:               customerReq.TaxId,
+		Email:               customerReq.Email,
 		Address: Address{
-			Street:      customerReq.Address.Street,
+			Street:     customerReq.Address.Street,
 			HouseNumber: customerReq.Address.HouseNumber,
-			ZipCode:     customerReq.Address.ZipCode,
-			City:        customerReq.Address.City,
+			ZipCode:    customerReq.Address.ZipCode,
+			City:       customerReq.Address.City,
 		},
 		BankDetails: BankDetails{
 			Iban: customerReq.BankDetails.Iban,
@@ -157,7 +159,6 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 			Name: customerReq.BankDetails.Name,
 		},
 	}
-
 	return Response(http.StatusCreated, newCustomerRes), nil
 }
 
@@ -400,4 +401,9 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 
 	// Return success response
 	return Response(http.StatusOK, "Customer updated"), nil
+}
+ 
+func isValidEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
