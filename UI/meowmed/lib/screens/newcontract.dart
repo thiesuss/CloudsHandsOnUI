@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
+import 'package:meowmed/data/services/catinfoservice.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/states/login/context.dart';
@@ -39,6 +40,11 @@ class _NewContractState extends State<NewContract> {
   TextEditingController environmentController = TextEditingController();
   TextEditingController weightController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
+
+  CatBreedEnum selectedBreed = CatBreedEnum.bengal;
+  CatColorEnum selectedColor = CatColorEnum.braun;
+  CatEnvironmentEnum selectedEnvironment = CatEnvironmentEnum.drinnen;
+  CatPersonalityEnum selectedPersonality = CatPersonalityEnum.anhaenglich;
 
   Future<bool> save() async {
     if (!newContractFormKey.currentState!.validate()) {
@@ -170,7 +176,6 @@ class _NewContractState extends State<NewContract> {
                                 .subtract(const Duration(days: 365)),
                             lastDate:
                                 DateTime.now().add(const Duration(days: 36500)),
-                            
                             onDateSelected: (DateTime? value) {
                               startDate = value!;
                             },
@@ -284,22 +289,48 @@ class _NewContractState extends State<NewContract> {
                       SizedBox(
                         height: 20,
                       ),
+                      // Container(
+                      //     height: 50,
+                      //     width: 230,
+                      //     child: TextFormField(
+                      //       validator: (value) {
+                      //         if (value == null || value.isEmpty) {
+                      //           return 'Eingabe darf nicht leer sein';
+                      //         }
+                      //         //check ob Rasse hier?
+                      //         return null;
+                      //       },
+                      //       controller: breedController,
+                      //       decoration: InputDecoration(
+                      //           border: OutlineInputBorder(),
+                      //           labelText: "Rasse"),
+                      //     )),
                       Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Eingabe darf nicht leer sein';
-                              }
-                              //check ob Rasse hier?
-                              return null;
-                            },
-                            controller: breedController,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Rasse"),
-                          )),
+                        //dropdown menu für enum
+                        height: 50,
+                        width: 230,
+                        child: DropdownMenu<CatBreedEnum>(
+                          initialSelection: selectedBreed,
+                          controller: breedController,
+                          requestFocusOnTap: true,
+                          label: const Text('Rasse'),
+                          onSelected: (CatBreedEnum? breed) {
+                            setState(() {
+                              if (breed == null) return;
+                              selectedBreed = breed;
+                            });
+                          },
+                          dropdownMenuEntries: CatBreedEnum.values
+                              .map<DropdownMenuEntry<CatBreedEnum>>(
+                                  (CatBreedEnum breed) {
+                            return DropdownMenuEntry<CatBreedEnum>(
+                              value: breed,
+                              label: CatBreedEnum.breedToString(
+                                  breed), // familienstatusenum.ledig
+                            );
+                          }).toList(),
+                        ),
+                      ),
                       SizedBox(
                         height: 20,
                       ),
