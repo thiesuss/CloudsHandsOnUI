@@ -311,7 +311,7 @@ func (s *CustomerAPIService) SearchCustomers(ctx context.Context, text string, p
         WHERE
             c.firstName LIKE ? OR
             c.lastName LIKE ? OR
-            a.street LIKE ?
+            c.street LIKE ?
         ORDER BY c.id ASC
         LIMIT ? OFFSET ?`, "%"+text+"%", "%"+text+"%", "%"+text+"%", pageSize, offset)
 	if err != nil {
