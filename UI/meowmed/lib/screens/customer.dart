@@ -63,7 +63,7 @@ class _CustomerState extends State<Customer> {
     super.dispose();
   }
 
-  Future? contractFuture;
+  Future<List<CachedObj<ContractRes>>>? contractFuture;
 
   @override
   void initState() {
@@ -105,11 +105,12 @@ class _CustomerState extends State<Customer> {
   final contractService =
       (LoginStateContext.getInstance().state as LoggedInState).contractService;
 
-  Future<void> loadContracts() async {
+  Future<List<CachedObj<ContractRes>>> loadContracts() async {
     final contractResList =
         await contractService.getContractsForCustomer(customer.getId());
     contractList = contractResList;
     filteredContracts.add(contractResList);
+    return contractResList;
   }
 
   List<CachedObj<ContractRes>> contractList = [];
@@ -596,9 +597,10 @@ class _CustomerState extends State<Customer> {
                 if (!snapshot.hasData) {
                   return Text("Not correctly initialized");
                 }
-                return FutureBuilder(
+                return FutureBuilder<List<CachedObj<ContractRes>>>(
                   future: contractFuture,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return DataTableSchimmer(
                           columns: [
@@ -633,12 +635,11 @@ class _CustomerState extends State<Customer> {
                           rows: [
                             ...snapshot.data!.map((e) {
                               final obj = e.getObj();
-                              final adr = obj.coverage;
                               return DataRow(cells: [
                                 DataCell(Text(obj.id.toString())),
                                 DataCell(Text(obj.catName.toString())),
-                                DataCell(Text(obj.startDate.toString())),
-                                DataCell(Text(obj.endDate.toString())),
+                                DataCell(Text(dateTimeToString(obj.startDate))),
+                                DataCell(Text(dateTimeToString(obj.endDate))),
                                 DataCell(Text(obj.coverage.toString())),
                                 DataCell(Row(
                                   children: [

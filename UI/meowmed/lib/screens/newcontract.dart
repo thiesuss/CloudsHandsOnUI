@@ -14,6 +14,8 @@ import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
+enum PriceReloadingState { idle, loading, done }
+
 class NewContract extends StatefulWidget {
   NewContract(this.customerRes);
   CachedObj<CustomerRes> customerRes;
@@ -51,7 +53,7 @@ class _NewContractState extends State<NewContract> {
     if (!newContractFormKey.currentState!.validate()) {
       return false;
     }
-    final oldPrice = priceSubject.value;
+    final oldPrice = this.price;
     final price = await reloadPrice();
 
     if (oldPrice != price) {
@@ -80,9 +82,12 @@ class _NewContractState extends State<NewContract> {
 
   GlobalKey<FormState> newContractFormKey = GlobalKey<FormState>();
 
-  BehaviorSubject<double> priceSubject = BehaviorSubject.seeded(0);
+  double price = 0;
+  BehaviorSubject<PriceReloadingState> priceReloadingState =
+      BehaviorSubject.seeded(PriceReloadingState.idle);
 
   Future<double> reloadPrice() async {
+    priceReloadingState.add(PriceReloadingState.loading);
     final coverage = int.parse(coverageController.text);
     final weight = double.parse(weightController.text);
     final zipCode = 99999;
@@ -98,7 +103,8 @@ class _NewContractState extends State<NewContract> {
         zipCode: zipCode);
     final rateRes = await contractService.getRate(rateReq);
     double price = rateRes.rate!.toDouble();
-    priceSubject.add(price);
+    this.price = price;
+    priceReloadingState.add(PriceReloadingState.done);
     return price;
   }
 
@@ -109,16 +115,15 @@ class _NewContractState extends State<NewContract> {
     return Scaffold(
       body: Form(
         autovalidateMode: AutovalidateMode.onUserInteraction,
-
-        // onChanged: () {
-        //   debouncer.run(() async {
-        //     try {
-        //       await reloadPrice();
-        //     } catch (e) {
-        //       print("Reloaded price failed: $e");
-        //     }
-        //   });
-        // },
+        onChanged: () {
+          debouncer.run(() async {
+            try {
+              await reloadPrice();
+            } catch (e) {
+              print("Reloaded price failed: $e");
+            }
+          });
+        },
         key: newContractFormKey,
         child: Container(
           padding: EdgeInsets.all(30),
@@ -138,13 +143,15 @@ class _NewContractState extends State<NewContract> {
                 children: [
                   Expanded(child: Container()),
                   Container(
-                      color: Colors.grey,
                       padding: EdgeInsets.all(10),
-                      child: StreamBuilder<double>(
-                          stream: priceSubject,
+                      child: StreamBuilder<PriceReloadingState>(
+                          stream: priceReloadingState,
                           builder: (context, snapshot) {
+                            if (snapshot.data == PriceReloadingState.loading) {
+                              return CircularProgressIndicator();
+                            }
                             return Text(
-                              snapshot.data!.toString(),
+                              "$price€",
                               style: TextStyle(
                                   fontSize: 30, fontWeight: FontWeight.bold),
                             );

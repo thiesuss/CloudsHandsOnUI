@@ -29,21 +29,21 @@ class _DashboardState extends State<Dashboard> {
   final customerService =
       (LoginStateContext.getInstance().state as LoggedInState).customerService;
 
-  late Future initialLoad;
+  late Future<List<CachedObj<CustomerRes>>> customerFuture;
 
   @override
   void initState() {
     super.initState();
-    initialLoad = loadCustomers();
+    customerFuture = loadCustomers();
     refreshTimer = RefreshTimer(() {
-      initialLoad = loadCustomers();
+      customerFuture = loadCustomers();
     });
     refreshTimer!.init();
   }
 
   RefreshTimer? refreshTimer;
 
-  Future<void> loadCustomers() async {
+  Future<List<CachedObj<CustomerRes>>> loadCustomers() async {
     searchController.clear();
     final repo = customerService.repo;
     final cached = repo.getAll();
@@ -55,6 +55,7 @@ class _DashboardState extends State<Dashboard> {
     final customerResList = await customerService.getCustomers();
     customers = customerResList;
     filteredCustomers.add(customers);
+    return customers;
   }
 
   late BehaviorSubject<List<CachedObj<CustomerRes>>> filteredCustomers =
@@ -118,7 +119,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icon(Icons.search)),
                 IconButton(
                     onPressed: () {
-                      initialLoad = loadCustomers();
+                      customerFuture = loadCustomers();
                     },
                     icon: Icon(Icons.refresh)),
                 Expanded(child: Container()),
@@ -143,7 +144,7 @@ class _DashboardState extends State<Dashboard> {
                 return Column(
                   children: [
                     FutureBuilder(
-                      future: initialLoad,
+                      future: customerFuture,
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {

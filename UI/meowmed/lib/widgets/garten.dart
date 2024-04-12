@@ -26,3 +26,7 @@ final logo = Container(
     image: AssetImage('assets/images/MeowcroservicesLogoNew.png'),
   ),
 );
+
+String dateTimeToString(DateTime dateTime) {
+  return "${dateTime.day}.${dateTime.month}.${dateTime.year}";
+}
