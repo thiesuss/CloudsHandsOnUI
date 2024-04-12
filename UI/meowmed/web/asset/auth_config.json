@@ -1,0 +1,20 @@
+{
+    "client_id" : "6caacece-1092-4719-b448-df3a9aaf1701",
+    "redirect_uri" : "<your app domain>",
+    "cache_location": "<localStorage|sessionStorage>",
+    "interaction_mode": "redirect",
+    "authorities": [
+        {
+            "type": "B2C",
+            "authority_url": "https://azuremeowmed.b2clogin.com/azuremeowmed.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_azuremeowmedsigninonly&client_id=6caacece-1092-4719-b448-df3a9aaf1701&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fgoogle.de&scope=openid&response_type=id_token&prompt=login/",
+            "default": true
+        },
+        {
+            "type": "B2C",
+            "authority_url": "https://azuremeowmed.b2clogin.com/azuremeowmed.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_password_reset&client_id=6caacece-1092-4719-b448-df3a9aaf1701&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fgoogle.de&scope=openid&response_type=id_token&prompt=login/"
+        }
+    ],
+    "default_scopes": [
+        "https://<youractivedirectoryname>.onmicrosoft.com/<application (server) id>/<API name>"
+    ]
+}
