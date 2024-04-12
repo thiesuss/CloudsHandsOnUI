@@ -174,6 +174,12 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
+	isValid := validateCat(contractReq)
+	if !isValid {
+		tx.Rollback()
+        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
+	}
+
 	// Insert into Contract table
 	newContractID := uuid.New().String()
 	_, err = tx.ExecContext(context.Background(), `
