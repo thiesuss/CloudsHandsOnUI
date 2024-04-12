@@ -12,6 +12,8 @@ import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/contract.dart';
 import 'package:meowmed/screens/newcontract.dart';
+import 'package:meowmed/widgets/dataTableShimmer.dart';
+import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
@@ -61,6 +63,8 @@ class _CustomerState extends State<Customer> {
     super.dispose();
   }
 
+  Future? contractFuture;
+
   @override
   void initState() {
     super.initState();
@@ -88,9 +92,11 @@ class _CustomerState extends State<Customer> {
     bankNameController.text = obj.bankDetails.name;
     emailController.text = obj.email;
 
-    loadContracts();
+    contractFuture = loadContracts();
 
-    refreshTimer = RefreshTimer(loadContracts);
+    refreshTimer = RefreshTimer(() async {
+      contractFuture = loadContracts();
+    });
     refreshTimer!.init();
   }
 
@@ -571,7 +577,7 @@ class _CustomerState extends State<Customer> {
               children: [
                 IconButton(
                     onPressed: () {
-                      loadContracts();
+                      contractFuture = loadContracts();
                     },
                     icon: Icon(Icons.refresh)),
                 Expanded(child: Container()),
@@ -596,60 +602,77 @@ class _CustomerState extends State<Customer> {
                 if (!snapshot.hasData) {
                   return Text("Not correctly initialized");
                 }
+                return FutureBuilder(
+                  future: contractFuture,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return DataTableSchimmer(
+                          columns: [
+                            "ID",
+                            "Katze",
+                            "Beginn",
+                            "Ende",
+                            "Deckung",
+                            "Aktionen"
+                          ],
+                          itemsToSchimmer: 1,
+                          width: double.infinity,
+                          height: 100);
+                    }
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Text("Error: ${snapshot.error}");
+                    }
 
-                // if (snapshot.data!.isEmpty) {
-                //   return Text("Keine Kunden vorhanden");
-                // }
-
-                return DataTable(
-                    headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
-                    border: TableBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        top: BorderSide(),
-                        horizontalInside: BorderSide(),
-                        verticalInside: BorderSide(),
-                        bottom: BorderSide(),
-                        left: BorderSide(),
-                        right: BorderSide()),
-                    columns: [
-                      DataColumn(label: Text("ID")),
-                      DataColumn(label: Text("Katze")),
-                      DataColumn(label: Text("Beginn")),
-                      DataColumn(label: Text("Ende")),
-                      DataColumn(label: Text("Deckung")),
-                      DataColumn(label: Text("Aktionen"))
-                    ],
-                    rows: [
-                      ...snapshot.data!.map((e) {
-                        final obj = e.getObj();
-                        final adr = obj.coverage;
-                        return DataRow(cells: [
-                          DataCell(Text(obj.id.toString())),
-                          DataCell(Text(obj.catName.toString())),
-                          DataCell(Text(obj.startDate.toString())),
-                          DataCell(Text(obj.endDate.toString())),
-                          DataCell(Text(obj.coverage.toString())),
-                          DataCell(Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: DataTable(
+                          headingTextStyle: dataTableHeading,
+                          border: dataTableBorder,
+                          columns: [
+                            DataColumn(label: Text("ID")),
+                            DataColumn(label: Text("Katze")),
+                            DataColumn(label: Text("Beginn")),
+                            DataColumn(label: Text("Ende")),
+                            DataColumn(label: Text("Deckung")),
+                            DataColumn(label: Text("Aktionen"))
+                          ],
+                          rows: [
+                            ...snapshot.data!.map((e) {
+                              final obj = e.getObj();
+                              final adr = obj.coverage;
+                              return DataRow(cells: [
+                                DataCell(Text(obj.id.toString())),
+                                DataCell(Text(obj.catName.toString())),
+                                DataCell(Text(obj.startDate.toString())),
+                                DataCell(Text(obj.endDate.toString())),
+                                DataCell(Text(obj.coverage.toString())),
+                                DataCell(Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     Contract(e)));
                                       },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () {},
-                              ),
-                            ],
-                          ))
-                        ]);
-                      }),
-                    ]);
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {},
+                                    ),
+                                  ],
+                                ))
+                              ]);
+                            }),
+                          ]),
+                    );
+                  },
+                );
+                // if (snapshot.data!.isEmpty) {
+                //   return Text("Keine Kunden vorhanden");
+                // }
               },
             ),
             SizedBox(

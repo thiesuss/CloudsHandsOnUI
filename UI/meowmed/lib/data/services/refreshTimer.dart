@@ -27,6 +27,7 @@ class RefreshTimer implements StatefullObj {
         refreshFunction();
       });
     }
+    
   }
 
   Future<void> dispose() async {

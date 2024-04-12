@@ -1,0 +1,20 @@
+import 'package:flutter/material.dart';
+
+Size textSize(String text, TextStyle style) {
+  final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr)
+    ..layout(minWidth: 0, maxWidth: double.infinity);
+  return textPainter.size;
+}
+
+final dataTableHeading = TextStyle(fontWeight: FontWeight.bold);
+final dataTableBorder = TableBorder(
+    borderRadius: BorderRadius.circular(10),
+    top: BorderSide(),
+    horizontalInside: BorderSide(),
+    verticalInside: BorderSide(),
+    bottom: BorderSide(),
+    left: BorderSide(),
+    right: BorderSide());

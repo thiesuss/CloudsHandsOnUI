@@ -21,6 +21,7 @@ dependencies:
   flutter_azure_b2c: ^0.0.9
   # injectable:
   # get_it:
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

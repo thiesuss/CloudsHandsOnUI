@@ -9,6 +9,8 @@ import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/screens/customer.dart';
 import 'package:meowmed/screens/newcustomer.dart';
+import 'package:meowmed/widgets/dataTableShimmer.dart';
+import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
@@ -27,17 +29,21 @@ class _DashboardState extends State<Dashboard> {
   final customerService =
       (LoginStateContext.getInstance().state as LoggedInState).customerService;
 
+  late Future initialLoad;
+
   @override
   void initState() {
     super.initState();
-    getCustomers();
-    refreshTimer = RefreshTimer(getCustomers);
+    initialLoad = loadCustomers();
+    refreshTimer = RefreshTimer(() {
+      initialLoad = loadCustomers();
+    });
     refreshTimer!.init();
   }
 
   RefreshTimer? refreshTimer;
 
-  Future<void> getCustomers() async {
+  Future<void> loadCustomers() async {
     searchController.clear();
     final repo = customerService.repo;
     final cached = repo.getAll();
@@ -120,7 +126,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icon(Icons.search)),
                 IconButton(
                     onPressed: () {
-                      getCustomers();
+                      initialLoad = loadCustomers();
                     },
                     icon: Icon(Icons.refresh)),
                 // Expanded(child: Container()),
@@ -144,67 +150,84 @@ class _DashboardState extends State<Dashboard> {
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 return Column(
                   children: [
-                    DataTable(
-                        headingTextStyle:
-                            TextStyle(fontWeight: FontWeight.bold),
-                        border: TableBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            top: BorderSide(),
-                            horizontalInside: BorderSide(),
-                            verticalInside: BorderSide(),
-                            bottom: BorderSide(),
-                            left: BorderSide(),
-                            right: BorderSide()),
-                        columns: const [
-                          DataColumn(label: Text("ID")),
-                          DataColumn(label: Text("Nachname")),
-                          DataColumn(label: Text("Vorname")),
-                          DataColumn(label: Text("Adresse")),
-                          DataColumn(label: Text("Aktionen"))
-                        ],
-                        rows: [
-                          ...customerService.repo.getAll().map((e) {
-                            final obj = e.getObj();
-                            final adr = obj.address;
-                            return DataRow(cells: [
-                              DataCell(Text(obj.id.toString())),
-                              DataCell(Text(obj.lastName)),
-                              DataCell(Text(obj.firstName)),
-                              DataCell(Text(adr.street +
-                                  " " +
-                                  adr.houseNumber +
-                                  ", " +
-                                  adr.city)),
-                              DataCell(Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Customer(e)));
-                                      },
-                                      icon: Icon(Icons.edit)),
-                                  Link(
-                                    uri: Uri.parse(
-                                        'https://youtu.be/dQw4w9WgXcQ'),
-                                    target: LinkTarget.self,
-                                    builder: (context, followLink) =>
+                    FutureBuilder(
+                      future: initialLoad,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return DataTableSchimmer(
+                              columns: [
+                                "ID",
+                                "Nachname",
+                                "Vorname",
+                                "Adresse",
+                                "Aktionen",
+                              ],
+                              itemsToSchimmer: 1,
+                              width: double.infinity,
+                              height: 100);
+                        }
+                        if (snapshot.hasError) {
+                          return Text("Error: ${snapshot.error}");
+                        }
+                        return SizedBox(
+                          width: double.infinity,
+                          child: DataTable(
+                              headingTextStyle: dataTableHeading,
+                              border: dataTableBorder,
+                              columns: const [
+                                DataColumn(label: Text("ID")),
+                                DataColumn(label: Text("Nachname")),
+                                DataColumn(label: Text("Vorname")),
+                                DataColumn(label: Text("Adresse")),
+                                DataColumn(label: Text("Aktionen"))
+                              ],
+                              rows: [
+                                ...customerService.repo.getAll().map((e) {
+                                  final obj = e.getObj();
+                                  final adr = obj.address;
+                                  return DataRow(cells: [
+                                    DataCell(Text(obj.id.toString())),
+                                    DataCell(Text(obj.lastName)),
+                                    DataCell(Text(obj.firstName)),
+                                    DataCell(Text(adr.street +
+                                        " " +
+                                        adr.houseNumber +
+                                        ", " +
+                                        adr.city)),
+                                    DataCell(Row(
+                                      children: [
                                         IconButton(
                                             onPressed: () {
-                                              followLink;
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Customer(e)));
                                             },
-                                            icon: Icon(Icons.delete)),
-                                  ),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.remove_red_eye))
-                                ],
-                              ))
-                            ]);
-                          }),
-                        ]),
+                                            icon: Icon(Icons.edit)),
+                                        Link(
+                                          uri: Uri.parse(
+                                              'https://youtu.be/dQw4w9WgXcQ'),
+                                          target: LinkTarget.self,
+                                          builder: (context, followLink) =>
+                                              IconButton(
+                                                  onPressed: () {
+                                                    followLink;
+                                                  },
+                                                  icon: Icon(Icons.delete)),
+                                        ),
+                                        IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(Icons.remove_red_eye))
+                                      ],
+                                    ))
+                                  ]);
+                                }),
+                              ]),
+                        );
+                      },
+                    ),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.expand_circle_down_outlined))
