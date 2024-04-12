@@ -89,16 +89,8 @@ class _DashboardState extends State<Dashboard> {
             Row(
               children: [
                 Header("Mitarbeiter Dashboard", []),
-                // Expanded(child: Container()),
-                // TODO: Extract Logo
-                Container(
-                  width: 350,
-                  height: 50,
-                  child: Image(
-                    image:
-                        AssetImage('assets/images/MeowcroservicesLogoNew.png'),
-                  ),
-                )
+                Expanded(child: Container()),
+                logo
               ],
             ),
             SizedBox(

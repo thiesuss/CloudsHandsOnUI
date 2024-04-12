@@ -2,16 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meowmed/data/services/employeeservice.dart';
-import 'package:meowmed/data/states/login/awsKeyAuth.dart';
-import 'package:meowmed/data/states/login/azureKeyAuth.dart';
 import 'package:meowmed/data/states/login/context.dart';
-import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/data/states/login/loggedOut.dart';
-import 'package:meowmed/data/states/login/state.dart';
-import 'package:meowmed/screens/dashboard.dart';
-import 'package:openapi/api.dart';
-import 'package:http/http.dart' as http;
+import 'package:meowmed/widgets/garten.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage();
@@ -42,79 +35,70 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: [
             Expanded(child: Container()),
-            Card(
-              child: Container(
-                width: 350,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    // TODO: Extract Logo
-                    Container(
-                      width: 350,
-                      height: 50,
-                      child: Image(
-                        image: AssetImage(
-                            'assets/images/MeowcroservicesLogoNew.png'),
-                      ),
+            Container(
+              width: 350,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // TODO: Extract Logo
+                  logo,
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      hintText: 'user',
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
                     ),
-                    TextFormField(
-                      controller: _usernameController,
-                      decoration: InputDecoration(
-                        hintText: 'user',
-                        labelText: 'Username',
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: 'pass',
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
                     ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: 'pass',
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Url bitte eingeben';
+                      }
+                      try {
+                        Uri.parse(value);
+                      } catch (e) {
+                        return 'Ungültige Url';
+                      }
+                      return null;
+                    },
+                    controller: backendUrlController,
+                    decoration: InputDecoration(
+                      hintText: 'aws, azure, mock, eigene Url',
+                      labelText: 'Backend Url',
+                      border: OutlineInputBorder(),
                     ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Url bitte eingeben';
-                        }
-                        try {
-                          Uri.parse(value);
-                        } catch (e) {
-                          return 'Ungültige Url';
-                        }
-                        return null;
-                      },
-                      controller: backendUrlController,
-                      decoration: InputDecoration(
-                        hintText: 'aws, azure, mock, eigene Url',
-                        labelText: 'Backend Url',
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  SizedBox(height: 20),
+                  if (_errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Text(_errorMessage,
+                          style: TextStyle(color: Colors.red)),
                     ),
-                    SizedBox(height: 20),
-                    if (_errorMessage.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(_errorMessage,
-                            style: TextStyle(color: Colors.red)),
-                      ),
-                    _isLoading
-                        ? CircularProgressIndicator()
-                        : ElevatedButton(
-                            onPressed: _login,
-                            child: Text('Login'),
-                          ),
-                  ],
-                ),
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : TextButton(
+                          onPressed: _login,
+                          child: Text('Login'),
+                        ),
+                ],
               ),
             ),
             Expanded(child: Container()),

@@ -18,3 +18,11 @@ final dataTableBorder = TableBorder(
     bottom: BorderSide(),
     left: BorderSide(),
     right: BorderSide());
+
+final logo = Container(
+  width: 350,
+  height: 50,
+  child: Image(
+    image: AssetImage('assets/images/MeowcroservicesLogoNew.png'),
+  ),
+);

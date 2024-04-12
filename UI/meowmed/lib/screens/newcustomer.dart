@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
+import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
@@ -86,6 +87,7 @@ class _NewCustomerState extends State<NewCustomer> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         key: newCustomerFormKey,
         child: Container(
           padding: EdgeInsets.all(30),
@@ -98,14 +100,7 @@ class _NewCustomerState extends State<NewCustomer> {
                     [],
                   ),
                   Expanded(child: Container()),
-                  Container(
-                    width: 350,
-                    height: 50,
-                    child: Image(
-                      image: AssetImage(
-                          'assets/images/MeowcroservicesLogoNew.png'),
-                    ),
-                  )
+                  logo
                 ],
               ),
               SizedBox(

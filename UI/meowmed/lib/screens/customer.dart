@@ -152,6 +152,7 @@ class _CustomerState extends State<Customer> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Form(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       key: customerFormKey,
       child: Container(
         padding: EdgeInsets.all(30),
@@ -162,14 +163,7 @@ class _CustomerState extends State<Customer> {
                 Header("Kundendetails", []),
                 Expanded(child: Container()),
                 // TODO: Extract Logo
-                Container(
-                  width: 350,
-                  height: 50,
-                  child: Image(
-                    image:
-                        AssetImage('assets/images/MeowcroservicesLogoNew.png'),
-                  ),
-                )
+                logo
               ],
             ),
             SizedBox(
