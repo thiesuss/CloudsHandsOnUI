@@ -236,8 +236,10 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 
 		pageParam = param
 	} else {
+		pageParam = 1
 	}
-	var pageSizeParam int32
+
+	var pageSizeParam int32 
 	if query.Has("pageSize") {
 		param, err := parseNumericParameter[int32](
 			query.Get("pageSize"),
@@ -252,6 +254,7 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 
 		pageSizeParam = param
 	} else {
+		pageSizeParam = 100
 	}
 	result, err := c.service.SearchCustomers(r.Context(), textParam, pageParam, pageSizeParam)
 	// If an error occurred, encode the error with the status code
@@ -259,6 +262,13 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 		c.errorHandler(w, r, err, &result)
 		return
 	}
+
+	// Check if the result is empty and handle accordingly
+	if len(result.Body) == 0 {
+		EncodeJSONResponse([]string{}, &result.Code, w) // Encode an empty list if no customers are found
+		return
+	}
+
 	// If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
 }
