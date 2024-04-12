@@ -121,7 +121,7 @@ class _DashboardState extends State<Dashboard> {
                       initialLoad = loadCustomers();
                     },
                     icon: Icon(Icons.refresh)),
-                // Expanded(child: Container()),
+                Expanded(child: Container()),
                 TextButton(
                     onPressed: () {
                       Navigator.push(
