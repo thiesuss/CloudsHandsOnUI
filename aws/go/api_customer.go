@@ -263,9 +263,10 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// Check if the result is empty and handle accordingly
-	if len(result.Body) == 0 {
-		EncodeJSONResponse([]string{}, &result.Code, w) // Encode an empty list if no customers are found
+	// Perform a type assertion to slice of whatever type you expect, e.g., []Customer
+	customers, ok := result.Body.([]CustomerRes) // Adjust the type Customer to whatever type you expect
+	if ok && len(customers) == 0 {
+		EncodeJSONResponse([]CustomerRes{}, &result.Code, w) // Adjust the type Customer if necessary
 		return
 	}
 
