@@ -15,7 +15,7 @@ import (
 
 // Response return a ImplResponse struct filled
 func Response(code int, body interface{}) ImplResponse {
-	return ImplResponse {
+	return ImplResponse{
 		Code: code,
 		Body: body,
 	}
@@ -23,7 +23,15 @@ func Response(code int, body interface{}) ImplResponse {
 
 // IsZeroValue checks if the val is the zero-ed value.
 func IsZeroValue(val interface{}) bool {
-	return val == nil || reflect.DeepEqual(val, reflect.Zero(reflect.TypeOf(val)).Interface())
+	if val == nil {
+		return true
+	}
+	t := reflect.TypeOf(val)
+	// Überprüfen, ob der Typ bool ist und der Wert false
+	if t.Kind() == reflect.Bool && val == false {
+		return false
+	}
+	return reflect.DeepEqual(val, reflect.Zero(t).Interface())
 }
 
 // AssertRecurseInterfaceRequired recursively checks each struct in a slice against the callback.
