@@ -4,7 +4,7 @@ import 'package:meowmed/data/models/service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RefreshTimer implements StatefullObj {
-  late Timer refreshTimer;
+  Timer? refreshTimer;
 
   final Function() refreshFunction;
 
@@ -30,6 +30,6 @@ class RefreshTimer implements StatefullObj {
   }
 
   Future<void> dispose() async {
-    refreshTimer.cancel();
+    refreshTimer?.cancel();
   }
 }
