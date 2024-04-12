@@ -13,25 +13,34 @@ func validateCat(contractReq ContractReq) bool {
 	}
 
 	// Regex für die Überprüfung, ob der String nur Buchstaben enthält.
-	nameRegex := regexp.MustCompile(`^[a-zA-Z]+$`)
+	nameRegex := regexp.MustCompile(`^[A-Z][a-z]*$`)
 
-	// Überprüft, ob CatName nur Buchstaben enthält. Wenn nicht, gib false zurück.
-	if !nameRegex.MatchString(contractReq.CatName) {
+	// Überprüft, ob CatName, Breed, Color, Personality und Environment nur Buchstaben enthalten. Wenn nicht, gib false zurück.
+	if !nameRegex.MatchString(contractReq.CatName) ||
+		!nameRegex.MatchString(contractReq.Breed) ||
+		!nameRegex.MatchString(contractReq.Color) ||
+		!nameRegex.MatchString(contractReq.Personality) ||
+		!nameRegex.MatchString(contractReq.Environment) {
 		return false
 	}
 
-	// Überprüft, ob Environment nur Buchstaben enthält. Wenn nicht, gib false zurück.
-	if !nameRegex.MatchString(contractReq.Environment) {
+	// Überprüft, ob die Start- und Enddaten ein gültiges Format haben.
+	if _, err := time.Parse("2006-01-02", contractReq.StartDate); err != nil {
+		return false
+	}
+	if _, err := time.Parse("2006-01-02", contractReq.EndDate); err != nil {
 		return false
 	}
 
-	// Überprüft, ob Breed nur Buchstaben enthält. Wenn nicht, gib false zurück.
-	if !nameRegex.MatchString(contractReq.Breed) {
+	// Überprüft, ob das Startdatum nicht in der Vergangenheit liegt.
+	parsedStartDate, _ := time.Parse("2006-01-02", contractReq.StartDate)
+	if parsedStartDate.Before(time.Now()) {
 		return false
 	}
 
-	// Überprüft, ob Personality nur Buchstaben enthält. Wenn nicht, gib false zurück.
-	if !nameRegex.MatchString(contractReq.Personality) {
+	// Überprüft, ob das Enddatum nicht vor dem Startdatum liegt.
+	parsedEndDate, _ := time.Parse("2006-01-02", contractReq.EndDate)
+	if parsedEndDate.Before(parsedStartDate) {
 		return false
 	}
 
@@ -51,7 +60,7 @@ func validateCustomer(customerReq CustomerReq) bool {
 	}
 
 	// Regex für die Überprüfung, ob der String nur Buchstaben enthält.
-	nameRegex := regexp.MustCompile(`^[a-zA-Z]+$`)
+	nameRegex := regexp.MustCompile(`^[A-Z][a-z]*$`)
 
 	//Überprüfung für den Vor und Nachnamen
 	if !nameRegex.MatchString(customerReq.FirstName) || !nameRegex.MatchString(customerReq.LastName) {
@@ -64,13 +73,38 @@ func validateCustomer(customerReq CustomerReq) bool {
 		return false
 	}
 
-	// Überprüft, ob das Geburtsdatum in der Zukunft liegt.
-	if parsedBirthDate.After(time.Now().AddDate(0, 0, -1)) {
+	// Überprüft, ob BirthDate ein gültiges Datum ist und nicht in der Zukunft oder mehr als 110 Jahre in der Vergangenheit liegt.
+	parsedBirthDate, err = time.Parse("2006-01-02", customerReq.BirthDate)
+	if err != nil || parsedBirthDate.After(time.Now().AddDate(0, 0, -1)) || parsedBirthDate.Before(time.Now().AddDate(-110, 0, 0)) {
 		return false
 	}
 
-	// Überprüft, ob das Geburtsdatum mehr als 110 Jahre zurückliegt.
-	if parsedBirthDate.Before(time.Now().AddDate(-110, 0, 0)) {
+	// Überprüft, ob SocialSecurityNumber und TaxId dem Muster entsprechen.
+	if !regexp.MustCompile(`^[0-9]{11}$`).MatchString(customerReq.SocialSecurityNumber) ||
+		!regexp.MustCompile(`^[0-9]{11}$`).MatchString(customerReq.TaxId) {
+		return false
+	}
+
+	// Überprüft, ob Street, City und HouseNumber dem Muster entsprechen.
+	if !nameRegex.MatchString(customerReq.Address.Street) ||
+		!nameRegex.MatchString(customerReq.Address.City) ||
+		!regexp.MustCompile(`^[0-9]{1,3}[a-z]?$`).MatchString(customerReq.Address.HouseNumber) {
+		return false
+	}
+
+	// Überprüft, ob ZipCode im gültigen Bereich liegt.
+	if customerReq.Address.ZipCode < 0 || customerReq.Address.ZipCode > 99999 {
+		return false
+	}
+
+	// Überprüft, ob IBAN und BIC den entsprechenden Regex-Mustern entsprechen.
+	if !regexp.MustCompile(`^[A-Z]{2}[0-9]{2}[A-Z]{4}[0-9]{7}([A-Z0-9]{0,16})?$`).MatchString(customerReq.BankDetails.Iban) ||
+		!regexp.MustCompile(`^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$`).MatchString(customerReq.BankDetails.Bic) {
+		return false
+	}
+
+	// Überprüft, ob Name dem Muster entspricht.
+	if !nameRegex.MatchString(customerReq.BankDetails.Name) {
 		return false
 	}
 
