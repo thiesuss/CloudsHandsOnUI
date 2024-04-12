@@ -621,8 +621,9 @@ class _CustomerState extends State<Customer> {
                           width: double.infinity,
                           height: 100);
                     }
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return Text("Error: ${snapshot.error}");
+                    if (snapshot.hasError) {
+                      return buildErrorTile(
+                          "Error loading contracts", snapshot.error.toString());
                     }
 
                     return SizedBox(

@@ -30,3 +30,16 @@ final logo = Container(
 String dateTimeToString(DateTime dateTime) {
   return "${dateTime.day}.${dateTime.month}.${dateTime.year}";
 }
+
+ExpansionTile buildErrorTile(String title, String error) {
+  return ExpansionTile(
+    leading: Icon(
+      Icons.error,
+      color: Colors.redAccent,
+    ),
+    title: Text(title),
+    children: [
+      Text(error),
+    ],
+  );
+}

@@ -161,7 +161,8 @@ class _DashboardState extends State<Dashboard> {
                               height: 100);
                         }
                         if (snapshot.hasError) {
-                          return Text("Error: ${snapshot.error}");
+                          return buildErrorTile("Fehler beim Laden der Kunden",
+                              snapshot.error.toString());
                         }
                         return SizedBox(
                           width: double.infinity,
