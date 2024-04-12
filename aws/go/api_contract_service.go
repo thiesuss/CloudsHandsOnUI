@@ -177,7 +177,7 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 	isValid := validateCat(contractReq)
 	if !isValid {
 		tx.Rollback()
-        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
+		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
 	}
 
 	// Insert into Contract table
@@ -293,6 +293,10 @@ func (s *ContractAPIService) GetCustomerContracts(ctx context.Context, customerI
 	// Check for errors during rows iteration
 	if err := rows.Err(); err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error iterating over contract details: %v", err)
+	}
+
+	if len(contracts) == 0 {
+		return Response(http.StatusOK, []int{}), nil
 	}
 
 	// Return success response with the customer details
