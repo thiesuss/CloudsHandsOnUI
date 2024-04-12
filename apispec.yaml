@@ -153,6 +153,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CustomerRes"
+        "404":
+          description: Could not find customer corresponding to the ID.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Not found
     delete:
       operationId: deleteCustomer
       tags:
@@ -168,6 +175,13 @@ paths:
       responses:
         "200":
           description: Customer deleted
+        "404":
+          description: Could not find customer corresponding to the ID.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Not found
     patch:
       operationId: updateCustomer
       tags:
@@ -191,6 +205,13 @@ paths:
           description: Customer updated
         "400":
           description: Invalid input data
+        "404":
+          description: Could not find customer corresponding to the ID.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Not found
   /customers/{customerId}/contracts:
     get:
       operationId: getCustomerContracts
@@ -228,6 +249,13 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ContractRes"
+        "404":
+          description: Could not find customer corresponding to the ID.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Not found
   /contracts/{contractId}:
     get:
       operationId: getContract
@@ -247,6 +275,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContractRes"
+        "404":
+          description: Could not find contract corresponding to the ID.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Not found
   /employees:
     post:
       operationId: createEmployee
