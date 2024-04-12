@@ -47,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   // TODO: Extract Logo
                   logo,
+                  SizedBox(height: kDefaultMargin),
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(

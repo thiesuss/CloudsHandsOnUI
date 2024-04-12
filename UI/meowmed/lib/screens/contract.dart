@@ -6,6 +6,7 @@ import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
+import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
 
@@ -44,7 +45,7 @@ class _ContractState extends State<Contract> {
   void initState() {
     super.initState();
     final obj = contract.getObj();
-    startDate =  obj.startDate;
+    startDate = obj.startDate;
     endDate = obj.endDate;
     coverageController.text = obj.coverage.toString();
     catNameController.text = obj.catName;
@@ -72,6 +73,7 @@ class _ContractState extends State<Contract> {
           children: [
             Row(
               children: [
+                Header("Vertrag: " + contract.getObj().catName, []),
                 Expanded(child: Container()),
                 Column(
                   children: [
@@ -79,7 +81,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          enabled: editMode,
+                          readOnly: editMode,
                           controller: birthDateController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -118,7 +120,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          enabled: editMode,
+                          readOnly: editMode,
                           controller: birthDateController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
