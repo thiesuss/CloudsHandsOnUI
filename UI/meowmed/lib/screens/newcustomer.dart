@@ -87,7 +87,6 @@ class _NewCustomerState extends State<NewCustomer> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
         key: newCustomerFormKey,
         child: Container(
           padding: EdgeInsets.all(30),
@@ -235,26 +234,32 @@ class _NewCustomerState extends State<NewCustomer> {
                     width: 100,
                   ),
                   Container(
-                      height: 50,
-                      width: 230,
-                      child: DateTimeFormField(
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Eingabe darf nicht leer sein';
-                          }
-                          return null;
-                        },
-                        dateFormat: DateFormat('dd.MM.yyyy'),
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Geburtstag"),
-                        firstDate: DateTime.now()
-                            .subtract(const Duration(days: 40000)),
-                        lastDate: DateTime.now(),
-                        onDateSelected: (DateTime? value) {
-                          birthDate = value!;
-                        },
-                      )),
+                    height: 50,
+                    width: 230,
+                    child: TextFormField(
+                      controller: birthDateController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "Geburtstag",
+                      ),
+                      onTap: () async {
+                        final date = await showDatePicker(
+                            context: context,
+                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                            initialDate: DateTime.now(),
+                            firstDate:
+                                DateTime.now().subtract(Duration(days: 40000)),
+                            lastDate: DateTime.now());
+                        if (date != null) {
+                          setState(() {
+                            birthDate = date;
+                            birthDateController.text =
+                                DateFormat('dd.MM.yyyy').format(date);
+                          });
+                        }
+                      },
+                    ),
+                  ),
                   Expanded(child: Container()),
                 ],
               ),

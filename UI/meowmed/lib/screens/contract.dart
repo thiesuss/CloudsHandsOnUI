@@ -44,7 +44,7 @@ class _ContractState extends State<Contract> {
   void initState() {
     super.initState();
     final obj = contract.getObj();
-    startDate = obj.startDate;
+    startDate =  obj.startDate;
     endDate = obj.endDate;
     coverageController.text = obj.coverage.toString();
     catNameController.text = obj.catName;
@@ -56,6 +56,9 @@ class _ContractState extends State<Contract> {
     environmentController.text = obj.environment;
     weightController.text = obj.weight.toString();
     customerIdController.text = obj.customerId.toString();
+    birthDateController.text = DateFormat('dd.MM.yyyy').format(birthDate);
+    startDateController.text = DateFormat('dd.MM.yyyy').format(startDate);
+    endDateController.text = DateFormat('dd.MM.yyyy').format(endDate);
   }
 
   @override
@@ -63,7 +66,6 @@ class _ContractState extends State<Contract> {
     return Scaffold(
         body: Form(
       //hier noch key in zukunft
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Container(
         padding: EdgeInsets.all(30),
         child: Column(
@@ -76,23 +78,37 @@ class _ContractState extends State<Contract> {
                     Container(
                         height: 50,
                         width: 230,
-                        child: DateTimeFormField(
+                        child: TextFormField(
+                          enabled: editMode,
+                          controller: birthDateController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Beginn",
+                          ),
                           validator: (value) {
                             if (value == null) {
                               return "Bitte Startdatum angeben";
                             }
                             return null;
                           },
-                          dateFormat: DateFormat('dd.MM.yyyy'),
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Beginn"),
-                          firstDate: DateTime.now()
-                              .subtract(const Duration(days: 365)),
-                          lastDate:
-                              DateTime.now().add(const Duration(days: 36500)),
-                          onDateSelected: (DateTime? value) {
-                            startDate = value!;
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialEntryMode:
+                                  DatePickerEntryMode.calendarOnly,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate: DateTime.now()
+                                  .add(const Duration(days: 36500)),
+                            );
+                            if (date != null) {
+                              setState(() {
+                                startDate = date;
+                                birthDateController.text =
+                                    DateFormat('dd.MM.yyyy').format(date);
+                              });
+                            }
                           },
                         )),
                     SizedBox(
@@ -101,21 +117,36 @@ class _ContractState extends State<Contract> {
                     Container(
                         height: 50,
                         width: 230,
-                        child: DateTimeFormField(
+                        child: TextFormField(
+                          enabled: editMode,
+                          controller: birthDateController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Ende",
+                          ),
                           validator: (value) {
                             if (value == null) {
                               return "Bitte Enddatum angeben";
                             }
                             return null;
                           },
-                          dateFormat: DateFormat('dd.MM.yyyy'),
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: "Ende"),
-                          firstDate: DateTime.now(),
-                          lastDate:
-                              DateTime.now().add(const Duration(days: 36500)),
-                          onDateSelected: (DateTime? value) {
-                            endDate = value!;
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialEntryMode:
+                                  DatePickerEntryMode.calendarOnly,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime.now()
+                                  .add(const Duration(days: 36500)),
+                            );
+                            if (date != null) {
+                              setState(() {
+                                endDate = date;
+                                birthDateController.text =
+                                    DateFormat('dd.MM.yyyy').format(date);
+                              });
+                            }
                           },
                         )),
                     SizedBox(
@@ -233,26 +264,34 @@ class _ContractState extends State<Contract> {
                       height: 20,
                     ),
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: DateTimeFormField(
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
-                          },
-                          dateFormat: DateFormat('dd.MM.yyyy'),
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Geburtstag"),
-                          firstDate: DateTime.now()
-                              .subtract(const Duration(days: 9300)),
-                          lastDate: DateTime.now(),
-                          onDateSelected: (DateTime? value) {
-                            birthDate = value!;
-                          },
-                        )),
+                      height: 50,
+                      width: 230,
+                      child: TextFormField(
+                        readOnly: editMode,
+                        controller: birthDateController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Geburtstag",
+                        ),
+                        onTap: () async {
+                          final date = await showDatePicker(
+                              context: context,
+                              initialEntryMode:
+                                  DatePickerEntryMode.calendarOnly,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now()
+                                  .subtract(Duration(days: 40000)),
+                              lastDate: DateTime.now());
+                          if (date != null) {
+                            setState(() {
+                              birthDate = date;
+                              birthDateController.text =
+                                  DateFormat('dd.MM.yyyy').format(date);
+                            });
+                          }
+                        },
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(

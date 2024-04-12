@@ -77,7 +77,7 @@ class _CustomerState extends State<Customer> {
     customerStatusTitleContoller.text = obj.title.toString();
     selectedTitleEnum = obj.title;
     birthDate = obj.birthDate;
-    birthDateController.text = obj.birthDate.toString();
+    birthDateController.text = DateFormat('dd.MM.yyyy').format(obj.birthDate);
     svnummercontroller.text = obj.socialSecurityNumber;
     steueridcontroller.text = obj.taxId;
     // adressecontroller.text = obj.address.toString();
@@ -153,7 +153,6 @@ class _CustomerState extends State<Customer> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Form(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       key: customerFormKey,
       child: Container(
         padding: EdgeInsets.all(30),
@@ -295,27 +294,34 @@ class _CustomerState extends State<Customer> {
                 Column(
                   children: [
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: DateTimeFormField(
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
-                          },
-                          dateFormat: DateFormat('dd.MM.yyyy'),
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Geburtstag"),
-                          firstDate: DateTime.now()
-                              .subtract(const Duration(days: 40000)),
-                          lastDate: DateTime.now(),
-                          initialValue: customer.getObj().birthDate,
-                          onDateSelected: (DateTime? value) {
-                            birthDate = value!;
-                          },
-                        )),
+                      height: 50,
+                      width: 230,
+                      child: TextFormField(
+                        enabled: !editMode,
+                        controller: birthDateController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Geburtstag",
+                        ),
+                        onTap: () async {
+                          final date = await showDatePicker(
+                              context: context,
+                              initialEntryMode:
+                                  DatePickerEntryMode.calendarOnly,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now()
+                                  .subtract(Duration(days: 40000)),
+                              lastDate: DateTime.now());
+                          if (date != null) {
+                            setState(() {
+                              birthDate = date;
+                              birthDateController.text =
+                                  DateFormat('dd.MM.yyyy').format(date);
+                            });
+                          }
+                        },
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
