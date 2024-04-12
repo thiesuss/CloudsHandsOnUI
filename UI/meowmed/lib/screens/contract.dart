@@ -71,9 +71,9 @@ class _ContractState extends State<Contract> {
         padding: EdgeInsets.all(30),
         child: Column(
           children: [
+            Header("Vertrag: " + contract.getObj().catName, []),
             Row(
               children: [
-                Header("Vertrag: " + contract.getObj().catName, []),
                 Expanded(child: Container()),
                 Column(
                   children: [

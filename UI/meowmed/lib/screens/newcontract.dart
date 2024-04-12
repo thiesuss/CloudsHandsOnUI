@@ -1,6 +1,8 @@
 import 'package:date_field/date_field.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/catinfoservice.dart';
@@ -88,24 +90,30 @@ class _NewContractState extends State<NewContract> {
 
   Future<double> reloadPrice() async {
     priceReloadingState.add(PriceReloadingState.loading);
-    final coverage = int.parse(coverageController.text);
-    final weight = double.parse(weightController.text);
-    final zipCode = 99999;
-    final rateReq = RateCalculationReq(
-        coverage: coverage,
-        breed: breedController.text,
-        color: colorController.text,
-        birthDate: birthDate,
-        neutered: isNeutered,
-        personality: personalityController.text,
-        environment: environmentController.text,
-        weight: weight,
-        zipCode: zipCode);
-    final rateRes = await contractService.getRate(rateReq);
-    double price = rateRes.rate!.toDouble();
-    this.price = price;
-    priceReloadingState.add(PriceReloadingState.done);
-    return price;
+    try {
+      final coverage = int.parse(coverageController.text);
+      final weight = double.parse(weightController.text);
+      final zipCode = 99999;
+      final rateReq = RateCalculationReq(
+          coverage: coverage,
+          breed: breedController.text,
+          color: colorController.text,
+          birthDate: birthDate,
+          neutered: isNeutered,
+          personality: personalityController.text,
+          environment: environmentController.text,
+          weight: weight,
+          zipCode: zipCode);
+      final rateRes = await contractService.getRate(rateReq);
+      double price = rateRes.rate!.toDouble();
+      this.price = price;
+      priceReloadingState.add(PriceReloadingState.done);
+      return price;
+    } catch (e) {
+      priceReloadingState.add(PriceReloadingState.idle);
+      print("Failed to reload price: $e");
+    }
+    return 0;
   }
 
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
@@ -125,8 +133,10 @@ class _NewContractState extends State<NewContract> {
         },
         key: newContractFormKey,
         child: Container(
-          padding: EdgeInsets.all(30),
+          padding: EdgeInsets.all(kDefaultSitePadding),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Header("Neuen Vertrag Anlegen", []),
               Row(
@@ -146,364 +156,341 @@ class _NewContractState extends State<NewContract> {
                                   fontSize: 30, fontWeight: FontWeight.bold),
                             );
                           })),
-                  SizedBox(
-                    width: 70,
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            controller: birthDateController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Beginn",
-                            ),
-                            validator: (value) {
-                              if (value == null) {
-                                return "Bitte Startdatum angeben";
-                              }
-                              return null;
-                            },
-                            onTap: () async {
-                              final date = await showDatePicker(
-                                context: context,
-                                initialEntryMode:
-                                    DatePickerEntryMode.calendarOnly,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now()
-                                    .subtract(const Duration(days: 365)),
-                                lastDate: DateTime.now()
-                                    .add(const Duration(days: 36500)),
-                              );
-                              if (date != null) {
-                                setState(() {
-                                  startDate = date;
-                                  birthDateController.text =
-                                      DateFormat('dd.MM.yyyy').format(date);
-                                });
-                              }
-                            },
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            controller: birthDateController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Ende",
-                            ),
-                            validator: (value) {
-                              if (value == null) {
-                                return "Bitte Enddatum angeben";
-                              }
-                              return null;
-                            },
-                            onTap: () async {
-                              final date = await showDatePicker(
-                                context: context,
-                                initialEntryMode:
-                                    DatePickerEntryMode.calendarOnly,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime.now()
-                                    .add(const Duration(days: 36500)),
-                              );
-                              if (date != null) {
-                                setState(() {
-                                  endDate = date;
-                                  birthDateController.text =
-                                      DateFormat('dd.MM.yyyy').format(date);
-                                });
-                              }
-                            },
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Eingabe darf nicht leer sein';
-                              }
-                              try {
-                                int.parse(value);
-                              } catch (e) {
-                                return 'Ungültige Eingabe';
-                              }
-                              return null;
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            controller: coverageController,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Deckung"),
-                          )),
-                    ],
-                  ),
-                  SizedBox(
-                    width: 70,
-                  ),
-                  Column(
-                    children: [
-                      LoadingButton(
-                        label: "Vertrag Abschließen",
-                        onPressed: () async {
-                          final result = await save();
-                          if (result) Navigator.pop(context);
-                        },
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("Abbrechen")),
-                    ],
-                  ),
-                  Expanded(child: Container())
                 ],
               ),
-              Row(
-                children: [
-                  Text(
-                    "Katze",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                  Expanded(child: Container())
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(child: Container()),
-                  Column(
-                    children: [
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Eingabe darf nicht leer sein';
-                              }
-                              return null;
-                            },
-                            controller: catNameController,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Name"),
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      // Container(
-                      //     height: 50,
-                      //     width: 230,
-                      //     child: TextFormField(
-                      //       validator: (value) {
-                      //         if (value == null || value.isEmpty) {
-                      //           return 'Eingabe darf nicht leer sein';
-                      //         }
-                      //         //check ob Rasse hier?
-                      //         return null;
-                      //       },
-                      //       controller: breedController,
-                      //       decoration: InputDecoration(
-                      //           border: OutlineInputBorder(),
-                      //           labelText: "Rasse"),
-                      //     )),
-                      Container(
-                        //dropdown menu für enum
-                        height: 50,
-                        width: 230,
-                        child: DropdownMenu<CatBreedEnum>(
-                          initialSelection: selectedBreed,
-                          controller: breedController,
-                          requestFocusOnTap: true,
-                          label: const Text('Rasse'),
-                          onSelected: (CatBreedEnum? breed) {
-                            setState(() {
-                              if (breed == null) return;
-                              selectedBreed = breed;
-                            });
-                          },
-                          dropdownMenuEntries: CatBreedEnum.values
-                              .map<DropdownMenuEntry<CatBreedEnum>>(
-                                  (CatBreedEnum breed) {
-                            return DropdownMenuEntry<CatBreedEnum>(
-                              value: breed,
-                              label: CatBreedEnum.breedToString(
-                                  breed), // familienstatusenum.ledig
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Eingabe darf nicht leer sein';
-                              }
-                              //check auf Farbe?
-                              return null;
-                            },
-                            controller: colorController,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Farbe"),
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          controller: birthDateController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Geburtstag",
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: kDefaultMargin),
+                      child: Column(
+                        children: [
+                          Container(
+                              height: 50,
+                              width: 230,
+                              child: TextFormField(
+                                controller: birthDateController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Beginn",
+                                ),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Bitte Startdatum angeben";
+                                  }
+                                  return null;
+                                },
+                                onTap: () async {
+                                  final date = await showDatePicker(
+                                    context: context,
+                                    initialEntryMode:
+                                        DatePickerEntryMode.calendarOnly,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now()
+                                        .subtract(const Duration(days: 365)),
+                                    lastDate: DateTime.now()
+                                        .add(const Duration(days: 36500)),
+                                  );
+                                  if (date != null) {
+                                    setState(() {
+                                      startDate = date;
+                                      birthDateController.text =
+                                          DateFormat('dd.MM.yyyy').format(date);
+                                    });
+                                  }
+                                },
+                              )),
+                          SizedBox(
+                            height: 20,
                           ),
-                          onTap: () async {
-                            final date = await showDatePicker(
-                                context: context,
-                                initialEntryMode:
-                                    DatePickerEntryMode.calendarOnly,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now()
-                                    .subtract(Duration(days: 40000)),
-                                lastDate: DateTime.now());
-                            if (date != null) {
-                              setState(() {
-                                birthDate = date;
-                                birthDateController.text =
-                                    DateFormat('dd.MM.yyyy').format(date);
-                              });
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Eingabe darf nicht leer sein';
-                              }
-                              return null;
-                            },
-                            controller: personalityController,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Persönlichkeit"),
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Eingabe darf nicht leer sein';
-                              }
-                              return null;
-                            },
-                            controller: environmentController,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Umgebung"),
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          height: 50,
-                          width: 230,
-                          child: Row(
-                            children: [
-                              TextFormField(
+                          Container(
+                              height: 50,
+                              width: 230,
+                              child: TextFormField(
+                                controller: birthDateController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Ende",
+                                ),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Bitte Enddatum angeben";
+                                  }
+                                  return null;
+                                },
+                                onTap: () async {
+                                  final date = await showDatePicker(
+                                    context: context,
+                                    initialEntryMode:
+                                        DatePickerEntryMode.calendarOnly,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime.now()
+                                        .add(const Duration(days: 36500)),
+                                  );
+                                  if (date != null) {
+                                    setState(() {
+                                      endDate = date;
+                                      birthDateController.text =
+                                          DateFormat('dd.MM.yyyy').format(date);
+                                    });
+                                  }
+                                },
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                              height: 50,
+                              width: 230,
+                              child: TextFormField(
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Eingabe darf nicht leer sein';
+                                  }
+                                  try {
+                                    int.parse(value);
+                                  } catch (e) {
+                                    return 'Ungültige Eingabe';
                                   }
                                   return null;
                                 },
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly
                                 ],
-                                controller: weightController,
+                                controller: coverageController,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
-                                    labelText: "Gewicht"),
-                              ),
-                              Container(
-                                width: 70,
-                                child: TextFormField(
-                                  enabled: false,
-                                  initialValue: "Gramm",
-                                ),
-                              )
-                            ],
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Kastriert',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Checkbox(
-                              value: isNeutered,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  isNeutered = value!;
-                                });
-                              })
+                                    labelText: "Deckung"),
+                              )),
                         ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      )
-                    ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: kDefaultMargin),
+                      child: Column(
+                        children: [
+                          Container(
+                              height: 50,
+                              width: 230,
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Eingabe darf nicht leer sein';
+                                  }
+                                  return null;
+                                },
+                                controller: catNameController,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Name"),
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          // Container(
+                          //     height: 50,
+                          //     width: 230,
+                          //     child: TextFormField(
+                          //       validator: (value) {
+                          //         if (value == null || value.isEmpty) {
+                          //           return 'Eingabe darf nicht leer sein';
+                          //         }
+                          //         //check ob Rasse hier?
+                          //         return null;
+                          //       },
+                          //       controller: breedController,
+                          //       decoration: InputDecoration(
+                          //           border: OutlineInputBorder(),
+                          //           labelText: "Rasse"),
+                          //     )),
+                          Container(
+                            //dropdown menu für enum
+                            height: 50,
+                            width: 230,
+                            child: DropdownMenu<CatBreedEnum>(
+                              initialSelection: selectedBreed,
+                              controller: breedController,
+                              requestFocusOnTap: true,
+                              label: const Text('Rasse'),
+                              onSelected: (CatBreedEnum? breed) {
+                                setState(() {
+                                  if (breed == null) return;
+                                  selectedBreed = breed;
+                                });
+                              },
+                              dropdownMenuEntries: CatBreedEnum.values
+                                  .map<DropdownMenuEntry<CatBreedEnum>>(
+                                      (CatBreedEnum breed) {
+                                return DropdownMenuEntry<CatBreedEnum>(
+                                  value: breed,
+                                  label: CatBreedEnum.breedToString(
+                                      breed), // familienstatusenum.ledig
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                              height: 50,
+                              width: 230,
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Eingabe darf nicht leer sein';
+                                  }
+                                  //check auf Farbe?
+                                  return null;
+                                },
+                                controller: colorController,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Farbe"),
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            height: 50,
+                            width: 230,
+                            child: TextFormField(
+                              controller: birthDateController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "Geburtstag",
+                              ),
+                              onTap: () async {
+                                final date = await showDatePicker(
+                                    context: context,
+                                    initialEntryMode:
+                                        DatePickerEntryMode.calendarOnly,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now()
+                                        .subtract(Duration(days: 40000)),
+                                    lastDate: DateTime.now());
+                                if (date != null) {
+                                  setState(() {
+                                    birthDate = date;
+                                    birthDateController.text =
+                                        DateFormat('dd.MM.yyyy').format(date);
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: kDefaultMargin),
+                      child: Column(
+                        children: [
+                          Container(
+                              height: 50,
+                              width: 230,
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Eingabe darf nicht leer sein';
+                                  }
+                                  return null;
+                                },
+                                controller: personalityController,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Persönlichkeit"),
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                              height: 50,
+                              width: 230,
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Eingabe darf nicht leer sein';
+                                  }
+                                  return null;
+                                },
+                                controller: environmentController,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Umgebung"),
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            height: 50,
+                            width: 230,
+                            child: TextFormField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Eingabe darf nicht leer sein';
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              controller: weightController,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Gewicht"),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'Kastriert',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Checkbox(
+                                  value: isNeutered,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isNeutered = value!;
+                                    });
+                                  })
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  LoadingButton(
+                    label: "Vertrag Abschließen",
+                    onPressed: () async {
+                      final result = await save();
+                      if (result) Navigator.pop(context);
+                    },
                   ),
-                  Expanded(child: Container()),
+                  SizedBox(
+                    height: 30,
+                  ),
                   TextButton(
-                      onPressed: () async {
-                        await reloadPrice();
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
-                      child: Text("Reload Rate"))
+                      child: Text("Abbrechen")),
                 ],
               ),
             ],

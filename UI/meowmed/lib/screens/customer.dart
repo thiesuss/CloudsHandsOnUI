@@ -156,7 +156,7 @@ class _CustomerState extends State<Customer> {
       key: customerFormKey,
       child: Container(
         padding: EdgeInsets.all(30),
-        child: ListView(
+        child: Column(
           children: [
             Header("Kundendetails", []),
             Row(
@@ -585,90 +585,90 @@ class _CustomerState extends State<Customer> {
             SizedBox(
               height: 20,
             ),
-            StreamBuilder<List<CachedObj<ContractRes>>>(
-              stream: filteredContracts.stream,
-              initialData: [],
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
-                if (!snapshot.hasData) {
-                  return Text("Not correctly initialized");
-                }
-                return FutureBuilder<List<CachedObj<ContractRes>>>(
-                  future: contractFuture,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return DataTableSchimmer(
-                          columns: [
-                            "ID",
-                            "Katze",
-                            "Beginn",
-                            "Ende",
-                            "Deckung",
-                            "Aktionen"
-                          ],
-                          itemsToSchimmer: 1,
-                          width: double.infinity,
-                          height: 100);
-                    }
-                    if (snapshot.hasError) {
-                      return buildErrorTile(
-                          "Error loading contracts", snapshot.error.toString());
-                    }
+            Expanded(
+              child: StreamBuilder<List<CachedObj<ContractRes>>>(
+                stream: filteredContracts.stream,
+                initialData: [],
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text("Not correctly initialized");
+                  }
+                  return FutureBuilder<List<CachedObj<ContractRes>>>(
+                    future: contractFuture,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return DataTableSchimmer(
+                            columns: [
+                              "ID",
+                              "Katze",
+                              "Beginn",
+                              "Ende",
+                              "Deckung",
+                              "Aktionen"
+                            ],
+                            itemsToSchimmer: 1,
+                            width: double.infinity,
+                            height: 100);
+                      }
+                      if (snapshot.hasError) {
+                        return buildErrorTile("Error loading contracts",
+                            snapshot.error.toString());
+                      }
 
-                    return SizedBox(
-                      width: double.infinity,
-                      child: DataTable(
-                          headingTextStyle: dataTableHeading,
-                          border: dataTableBorder,
-                          columns: [
-                            DataColumn(label: Text("ID")),
-                            DataColumn(label: Text("Katze")),
-                            DataColumn(label: Text("Beginn")),
-                            DataColumn(label: Text("Ende")),
-                            DataColumn(label: Text("Deckung")),
-                            DataColumn(label: Text("Aktionen"))
-                          ],
-                          rows: [
-                            ...snapshot.data!.map((e) {
-                              final obj = e.getObj();
-                              return DataRow(cells: [
-                                DataCell(Text(obj.id.toString())),
-                                DataCell(Text(obj.catName.toString())),
-                                DataCell(Text(dateTimeToString(obj.startDate))),
-                                DataCell(Text(dateTimeToString(obj.endDate))),
-                                DataCell(Text(obj.coverage.toString())),
-                                DataCell(Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.edit),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Contract(e)));
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.delete),
-                                      onPressed: () {},
-                                    ),
-                                  ],
-                                ))
-                              ]);
-                            }),
-                          ]),
-                    );
-                  },
-                );
-                // if (snapshot.data!.isEmpty) {
-                //   return Text("Keine Kunden vorhanden");
-                // }
-              },
-            ),
-            SizedBox(
-              height: 30,
+                      return SizedBox(
+                        width: double.infinity,
+                        child: DataTable(
+                            headingTextStyle: dataTableHeading,
+                            border: dataTableBorder,
+                            columns: [
+                              DataColumn(label: Text("ID")),
+                              DataColumn(label: Text("Katze")),
+                              DataColumn(label: Text("Beginn")),
+                              DataColumn(label: Text("Ende")),
+                              DataColumn(label: Text("Deckung")),
+                              DataColumn(label: Text("Aktionen"))
+                            ],
+                            rows: [
+                              ...snapshot.data!.map((e) {
+                                final obj = e.getObj();
+                                return DataRow(cells: [
+                                  DataCell(Text(obj.id.toString())),
+                                  DataCell(Text(obj.catName.toString())),
+                                  DataCell(
+                                      Text(dateTimeToString(obj.startDate))),
+                                  DataCell(Text(dateTimeToString(obj.endDate))),
+                                  DataCell(Text(obj.coverage.toString())),
+                                  DataCell(Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Contract(e)));
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.delete),
+                                        onPressed: () {},
+                                      ),
+                                    ],
+                                  ))
+                                ]);
+                              }),
+                            ]),
+                      );
+                    },
+                  );
+                  // if (snapshot.data!.isEmpty) {
+                  //   return Text("Keine Kunden vorhanden");
+                  // }
+                },
+              ),
             ),
             Row(
               children: [
