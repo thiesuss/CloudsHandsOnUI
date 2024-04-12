@@ -263,12 +263,18 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// Perform a type assertion to slice of whatever type you expect, e.g., []Customer
-	customers, ok := result.Body.([]CustomerRes) // Adjust the type Customer to whatever type you expect
-	if ok && len(customers) == 0 {
-		EncodeJSONResponse([]CustomerRes{}, &result.Code, w) // Adjust the type Customer if necessary
-		return
-	}
+    // Perform a type assertion to []CustomerRes
+    customers, ok := result.Body.([]CustomerRes)
+    if !ok {
+        c.errorHandler(w, r, &TypeAssertionError{}, nil) // Handle or log this case as needed
+        return
+    }
+
+    // Check if the result is empty and handle accordingly
+    if len(customers) == 0 {
+        EncodeJSONResponse([]CustomerRes{}, &result.Code, w)
+        return
+    }
 
 	// If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
@@ -305,4 +311,12 @@ func (c *CustomerAPIController) UpdateCustomer(w http.ResponseWriter, r *http.Re
 	}
 	// If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
+}
+
+type TypeAssertionError struct {
+	Message string
+}
+
+func (e *TypeAssertionError) Error() string {
+	return e.Message
 }
