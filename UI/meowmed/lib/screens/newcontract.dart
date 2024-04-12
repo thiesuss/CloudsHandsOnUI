@@ -128,16 +128,7 @@ class _NewContractState extends State<NewContract> {
           padding: EdgeInsets.all(30),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Header("Neuen Vertrag Anlegen", []),
-                  Expanded(child: Container()),
-                  logo
-                ],
-              ),
-              SizedBox(
-                height: 40,
-              ),
+              Header("Neuen Vertrag Anlegen", []),
               Row(
                 children: [
                   Expanded(child: Container()),

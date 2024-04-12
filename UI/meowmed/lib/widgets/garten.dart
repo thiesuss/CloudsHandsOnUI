@@ -43,3 +43,9 @@ ExpansionTile buildErrorTile(String title, String error) {
     ],
   );
 }
+
+const double kDefaultPadding = 20.0;
+const double kDefaultPaddingSmall = 10.0;
+const double kDefaultMargin = 20.0;
+const double kDefaultMarginSmall = 10.0;
+const double kDefaultSitePadding = 30.0;

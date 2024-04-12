@@ -92,18 +92,9 @@ class _NewCustomerState extends State<NewCustomer> {
           padding: EdgeInsets.all(30),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Header(
-                    "Neuen Kunden Anlegen",
-                    [],
-                  ),
-                  Expanded(child: Container()),
-                  logo
-                ],
-              ),
-              SizedBox(
-                height: 40,
+              Header(
+                "Neuen Kunden Anlegen",
+                [],
               ),
               Row(
                 children: [

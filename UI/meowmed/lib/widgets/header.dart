@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowmed/widgets/garten.dart';
 
 class Header extends StatelessWidget {
   Header(this.title, this.actions, {bool this.disableArrow = false});
@@ -9,15 +10,20 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 4, top: 4, right: 4, bottom: 4),
-      height: 35,
-      child: Hero(
-        tag: "SiteTitle",
-        flightShuttleBuilder: flightShuttleBuilder,
-        child: Text(
-          title,
-          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-        ),
+      margin: EdgeInsets.only(top: kDefaultMarginSmall, bottom: kDefaultMargin),
+      child: Row(
+        children: [
+          Hero(
+            tag: "SiteTitle",
+            flightShuttleBuilder: flightShuttleBuilder,
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(child: Container()),
+          logo,
+        ],
       ),
     );
   }

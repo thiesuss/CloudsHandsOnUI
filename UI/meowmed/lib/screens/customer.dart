@@ -158,17 +158,7 @@ class _CustomerState extends State<Customer> {
         padding: EdgeInsets.all(30),
         child: ListView(
           children: [
-            Row(
-              children: [
-                Header("Kundendetails", []),
-                Expanded(child: Container()),
-                // TODO: Extract Logo
-                logo
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
+            Header("Kundendetails", []),
             Row(
               children: [
                 Expanded(child: Container()),

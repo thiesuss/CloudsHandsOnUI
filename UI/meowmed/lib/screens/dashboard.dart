@@ -87,16 +87,7 @@ class _DashboardState extends State<Dashboard> {
         padding: EdgeInsets.all(30),
         child: Column(
           children: [
-            Row(
-              children: [
-                Header("Mitarbeiter Dashboard", []),
-                Expanded(child: Container()),
-                logo
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
+            Header("Mitarbeiter Dashboard", []),
             Row(
               children: [
                 Container(
