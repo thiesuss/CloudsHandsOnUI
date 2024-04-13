@@ -115,10 +115,10 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 	// Generate UUID for the new customer
 	newCustomerID := uuid.New().String()
 
-	isValid := validateCustomer(customerReq)
-	if !isValid {
+	validationErr := validateCustomer(customerReq)
+	if validationErr != "valid" {
 		tx.Rollback()
-		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
+		return Response(http.StatusBadRequest, nil), fmt.Errorf(validationErr)
 	}
 
 	// Insert into Customer table
@@ -368,10 +368,10 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
 
-	isValid := validateCustomer(customerReq)
-	if !isValid {
+	validationErr := validateCustomer(customerReq)
+	if validationErr != "valid" {
 		tx.Rollback()
-		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
+		return Response(http.StatusBadRequest, nil), fmt.Errorf(validationErr)
 	}
 
 	// Update Customer table
