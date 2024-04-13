@@ -38,6 +38,7 @@ class _LoadingButtonState extends State<LoadingButton> {
           }).then((value) {
             setState(() {
               _isLoading = false;
+              _isError = false;
             });
           });
         },
