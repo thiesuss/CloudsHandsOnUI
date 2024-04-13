@@ -79,22 +79,31 @@ func validateCustomer(customerReq CustomerReq) string {
 		return "name is not valid"
 	}
 
+	// Überprüft, ob BirthDate ein gültiges Datum ist
 	parsedBirthDate, err := time.Parse("2006-01-02", customerReq.BirthDate)
-	// Das Geburtsdatum hat ein ungültiges Format.
 	if err != nil {
 		return "birthDate is not valid"
 	}
 
-	// Überprüft, ob BirthDate ein gültiges Datum ist und nicht in der Zukunft oder mehr als 110 Jahre in der Vergangenheit liegt.
-	parsedBirthDate, err = time.Parse("2006-01-02", customerReq.BirthDate)
-	if err != nil || parsedBirthDate.After(time.Now().AddDate(0, 0, -1)) || parsedBirthDate.Before(time.Now().AddDate(-110, 0, 0)) {
-		return "birthDate is not valid"
+	// Überprüft, ob das Geburtsdatum in der Zukunft liegt
+	if parsedBirthDate.After(time.Now()) {
+		return "birthDate cannot be in the future"
+	}
+
+	age := int(time.Since(parsedBirthDate).Hours() / 24 / 365)
+
+	// Überprüft, ob das Alter zwischen 18 und 110 Jahren liegt
+	if age < 18 || age > 110 {
+		return "age must be between 18 and 110 years"
 	}
 
 	// Überprüft, ob SocialSecurityNumber und TaxId dem Muster entsprechen.
-	if !regexp.MustCompile(`^[0-9]{11}$`).MatchString(customerReq.SocialSecurityNumber) ||
-		!regexp.MustCompile(`^[0-9]{11}$`).MatchString(customerReq.TaxId) {
-		return "socialSecurityNumber or TaxId is not valid"
+	if !regexp.MustCompile(`^[0-9]{12}$`).MatchString(customerReq.SocialSecurityNumber) {
+		return "socialSecurityNumber is not valid"
+	}
+
+	if !regexp.MustCompile(`^[0-9]{11}$`).MatchString(customerReq.TaxId) {
+		return "taxId is not valid"
 	}
 
 	// Überprüft, ob Street, City und HouseNumber dem Muster entsprechen.
