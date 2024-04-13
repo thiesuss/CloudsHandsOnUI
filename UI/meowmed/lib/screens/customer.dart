@@ -20,9 +20,9 @@ import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Customer extends StatefulWidget {
-  Customer(this.customer, this.editMode, {super.key});
+  Customer(this.customer, this.readOnly, {super.key});
   CachedObj<CustomerRes> customer;
-  bool editMode = false;
+  bool readOnly = false;
   @override
   State<Customer> createState() => _CustomerState(customer);
 }
@@ -183,7 +183,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: vornamecontroller,
-                          readOnly: !widget.editMode,
+                          readOnly: widget.readOnly,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -206,7 +206,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: nachnamecontroller,
-                          readOnly: !widget.editMode,
+                          readOnly: widget.readOnly,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -260,7 +260,7 @@ class _CustomerState extends State<Customer> {
                       width: 230,
                       child: TextFormField(
                         controller: emailController,
-                        readOnly: !widget.editMode,
+                        readOnly: widget.readOnly,
                         validator: (value) {
                           if (value == null) {
                             return "Eingabe darf nicht leer sein";
@@ -287,7 +287,7 @@ class _CustomerState extends State<Customer> {
                       height: 50,
                       width: 230,
                       child: TextFormField(
-                        readOnly: !widget.editMode,
+                        readOnly: widget.readOnly,
                         controller: birthDateController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -320,7 +320,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: svnummercontroller,
-                          readOnly: !widget.editMode,
+                          readOnly: widget.readOnly,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -343,7 +343,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: steueridcontroller,
-                          readOnly: !widget.editMode,
+                          readOnly: widget.readOnly,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -361,26 +361,6 @@ class _CustomerState extends State<Customer> {
                     SizedBox(
                       height: 20,
                     ),
-                    // Container(
-                    //     height: 50,
-                    //     width: 230,
-                    //     child: TextFormField(
-                    //       controller: familienstatuscontroller,
-                    //       readOnly: !editMode,
-                    //       validator: (value) {
-                    //         if (value == null) {
-                    //           return "Eingabe darf nicht leer sein";
-                    //         }
-                    //         if (value.isEmpty) {
-                    //           return "Bitte Familienstatus eingeben";
-                    //         }
-                    //         return null;
-                    //       },
-                    //       decoration: InputDecoration(
-                    //         border: OutlineInputBorder(),
-                    //         labelText: "Familienstatus",
-                    //       ),
-                    //     )),
                     Container(
                       //dropdown menu für enum
                       height: 50,
@@ -681,16 +661,18 @@ class _CustomerState extends State<Customer> {
                 TextButton(
                     onPressed: () {
                       setState(() {
-                        widget.editMode = true;
+                        widget.readOnly = !widget.readOnly;
                       });
                     },
-                    child: Text("Bearbeiten")),
+                    child: Text(
+                        widget.readOnly ? "Bearbeiten" : "Bearbeiten beenden")),
                 LoadingButton(
                     label: "Speichern",
                     onPressed: () async {
-                      if (customerFormKey.currentState!.validate()) {
-                        widget.editMode = false;
+                      if (!customerFormKey.currentState!.validate()) {
+                        return;
                       }
+                      widget.readOnly = true;
                       await save();
                     }),
                 LoadingButton(

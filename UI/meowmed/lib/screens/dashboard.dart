@@ -16,6 +16,8 @@ import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/link.dart';
 
+enum DashboardState { loading, loaded, error }
+
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
@@ -25,19 +27,20 @@ class Dashboard extends StatefulWidget {
 
 //TODO: Switch to enum for loading state,
 class _DashboardState extends State<Dashboard> {
-  late List<CachedObj<CustomerRes>> customers;
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
   final customerService =
       (LoginStateContext.getInstance().state as LoggedInState).customerService;
 
-  late Future<List<CachedObj<CustomerRes>>> customerFuture;
+  BehaviorSubject<DashboardState> state =
+      BehaviorSubject.seeded(DashboardState.loading);
+  String? error;
 
   @override
   void initState() {
     super.initState();
-    customerFuture = loadCustomers();
+    loadCustomers();
     refreshTimer = RefreshTimer(() {
-      customerFuture = loadCustomers();
+      loadCustomers();
     });
     refreshTimer!.init();
   }
@@ -45,24 +48,39 @@ class _DashboardState extends State<Dashboard> {
   RefreshTimer? refreshTimer;
 
   Future<List<CachedObj<CustomerRes>>> loadCustomers() async {
+    state.add(DashboardState.loading);
     searchController.clear();
-    final customerResList = await customerService.getCustomers();
-    customers = customerResList;
-    filteredCustomers.add(customers);
-    return customers;
+    try {
+      final customerResList = await customerService.getCustomers();
+      filteredCustomers.add(customerResList);
+      state.add(DashboardState.loaded);
+      return customerResList;
+    } catch (e) {
+      error = e.toString();
+      state.add(DashboardState.error);
+      throw e;
+    }
   }
 
   late BehaviorSubject<List<CachedObj<CustomerRes>>> filteredCustomers =
       BehaviorSubject.seeded([]);
 
   Future<void> _searchCustomer(String search) async {
+    error = null;
     if (search.isEmpty) {
       await loadCustomers();
       return;
     }
     filteredCustomers.add([]);
-    final result = await customerService.searchCustomers(search);
-    filteredCustomers.add(result);
+    state.add(DashboardState.loading);
+    try {
+      final result = await customerService.searchCustomers(search);
+      filteredCustomers.add(result);
+    } catch (e) {
+      error = e.toString();
+      state.add(DashboardState.error);
+      throw e;
+    }
   }
 
   TextEditingController searchController = TextEditingController();
@@ -72,13 +90,6 @@ class _DashboardState extends State<Dashboard> {
     refreshTimer?.dispose();
     super.dispose();
   }
-  // final Uri _rickRoll = Uri.parse('https://youtu.be/dQw4w9WgXcQ');
-
-  // Future<void> _launchRickRoll() async {
-  //   if (!await _launchRickRoll(_rickRoll)) {
-  //     throw Exception('Could not launch $_rickRoll');
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +121,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icon(Icons.search)),
                 IconButton(
                     onPressed: () {
-                      customerFuture = loadCustomers();
+                      loadCustomers();
                     },
                     icon: Icon(Icons.refresh)),
                 Expanded(child: Container()),
@@ -130,95 +141,88 @@ class _DashboardState extends State<Dashboard> {
             Expanded(
                 child: SingleChildScrollView(
                     child: StreamBuilder<void>(
-              stream: filteredCustomers.stream,
+              stream: CombineLatestStream.list<dynamic>(
+                  [filteredCustomers.stream, state.stream]),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 return Column(
                   children: [
-                    FutureBuilder(
-                      future: customerFuture,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return DataTableSchimmer(
-                              columns: [
-                                "ID",
-                                "Nachname",
-                                "Vorname",
-                                "Adresse",
-                                "Aktionen",
-                              ],
-                              itemsToSchimmer: 1,
-                              width: double.infinity,
-                              height: 100);
-                        }
-                        if (snapshot.hasError) {
-                          return buildErrorTile("Fehler beim Laden der Kunden",
-                              snapshot.error.toString());
-                        }
-                        return SizedBox(
+                    if (state.value == DashboardState.loading)
+                      DataTableSchimmer(
+                          columns: [
+                            "ID",
+                            "Nachname",
+                            "Vorname",
+                            "Adresse",
+                            "Aktionen",
+                          ],
+                          itemsToSchimmer: 1,
                           width: double.infinity,
-                          child: DataTable(
-                              headingTextStyle: dataTableHeading,
-                              border: dataTableBorder,
-                              columns: const [
-                                DataColumn(label: Text("ID")),
-                                DataColumn(label: Text("Nachname")),
-                                DataColumn(label: Text("Vorname")),
-                                DataColumn(label: Text("Adresse")),
-                                DataColumn(label: Text("Aktionen"))
-                              ],
-                              rows: [
-                                ...filteredCustomers.value.map((e) {
-                                  final obj = e.getObj();
-                                  final adr = obj.address;
-                                  return DataRow(cells: [
-                                    DataCell(Text(obj.id.toString())),
-                                    DataCell(Text(obj.lastName)),
-                                    DataCell(Text(obj.firstName)),
-                                    DataCell(Text(adr.street +
-                                        " " +
-                                        adr.houseNumber +
-                                        ", " +
-                                        adr.city)),
-                                    DataCell(Row(
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Customer(e, true)));
-                                            },
-                                            icon: Icon(Icons.edit)),
-                                        Link(
-                                          uri: Uri.parse(
-                                              'https://youtu.be/dQw4w9WgXcQ'),
-                                          target: LinkTarget.self,
-                                          builder: (context, followLink) =>
-                                              IconButton(
-                                                  onPressed: () {
-                                                    followLink;
-                                                  },
-                                                  icon: Icon(Icons.delete)),
-                                        ),
-                                        IconButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Customer(e, false)));
-                                            },
-                                            icon: Icon(Icons.remove_red_eye))
-                                      ],
-                                    ))
-                                  ]);
-                                }),
-                              ]),
-                        );
-                      },
-                    ),
+                          height: 100),
+                    if (state.value == DashboardState.error)
+                      buildErrorTile("Fehler beim Laden der Kunden", error!),
+                    if (state.value == DashboardState.loaded)
+                      SizedBox(
+                        width: double.infinity,
+                        child: DataTable(
+                            headingTextStyle: dataTableHeading,
+                            border: dataTableBorder,
+                            columns: const [
+                              DataColumn(label: Text("ID")),
+                              DataColumn(label: Text("Nachname")),
+                              DataColumn(label: Text("Vorname")),
+                              DataColumn(label: Text("Adresse")),
+                              DataColumn(label: Text("Aktionen"))
+                            ],
+                            rows: [
+                              ...filteredCustomers.value.map((e) {
+                                final obj = e.getObj();
+                                final adr = obj.address;
+                                return DataRow(cells: [
+                                  DataCell(Text(obj.id.toString())),
+                                  DataCell(Text(obj.lastName)),
+                                  DataCell(Text(obj.firstName)),
+                                  DataCell(Text(adr.street +
+                                      " " +
+                                      adr.houseNumber +
+                                      ", " +
+                                      adr.city)),
+                                  DataCell(Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Customer(e, false)));
+                                          },
+                                          icon: Icon(Icons.edit)),
+                                      Link(
+                                        uri: Uri.parse(
+                                            'https://youtu.be/dQw4w9WgXcQ'),
+                                        target: LinkTarget.self,
+                                        builder: (context, followLink) =>
+                                            IconButton(
+                                                onPressed: () {
+                                                  followLink;
+                                                },
+                                                icon: Icon(Icons.delete)),
+                                      ),
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Customer(e, true)));
+                                          },
+                                          icon: Icon(Icons.remove_red_eye))
+                                    ],
+                                  ))
+                                ]);
+                              }),
+                            ]),
+                      ),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.expand_circle_down_outlined))
