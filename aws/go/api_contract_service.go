@@ -214,6 +214,23 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		CustomerId:  contractReq.CustomerId,
 	}
 
+	//Send Email for new contract
+	var customerEmail string
+
+	// Perform database query
+	err = db.QueryRowContext(ctx, `
+	SELECT
+		cu.email
+	FROM
+		Customer cu
+	WHERE
+		cu.id = ?`, contractReq.CustomerId).Scan(&customerEmail)
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving email from customer: %v", err)
+	}
+
+	SendEmail(customerEmail, "contract", err)
+
 	return Response(http.StatusCreated, newContractRes), nil
 }
 

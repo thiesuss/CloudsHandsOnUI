@@ -10,8 +10,11 @@ require (
 	github.com/gorilla/mux v1.8.1
 )
 
+require github.com/jmespath/go-jmespath v0.4.0 // indirect
+
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/aws/aws-sdk-go v1.51.21
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.11 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.5 // indirect
