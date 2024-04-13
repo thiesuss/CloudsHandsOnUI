@@ -97,7 +97,7 @@ func NewCustomerAPIService() CustomerAPIServicer {
 	return &CustomerAPIService{}
 }
 
-// CreateCustomer - Create a new customer 
+// CreateCustomer - Create a new customer
 func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq CustomerReq) (ImplResponse, error) {
 	// Retrieve database credentials
 	db, err := connectToDB()
@@ -105,20 +105,20 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error connecting to database: %v", err)
 	}
 	defer db.Close()
- 
+
 	// Begin transaction
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
 	}
- 
+
 	// Generate UUID for the new customer
 	newCustomerID := uuid.New().String()
- 
+
 	isValid := validateCustomer(customerReq)
 	if !isValid {
 		tx.Rollback()
-        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
+		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
 	}
 
 	// Insert into Customer table
@@ -130,28 +130,28 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 		tx.Rollback()
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Customer table: %v", err)
 	}
- 
+
 	// Commit transaction
 	if err := tx.Commit(); err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error committing transaction: %v", err)
 	}
- 
+
 	// Respond with the new customer details
 	newCustomerRes := CustomerRes{
-		Id:                  newCustomerID,
-		FirstName:           customerReq.FirstName,
-		LastName:            customerReq.LastName,
-		Title:               customerReq.Title,
-		FamilyStatus:        customerReq.FamilyStatus,
-		BirthDate:           customerReq.BirthDate,
+		Id:                   newCustomerID,
+		FirstName:            customerReq.FirstName,
+		LastName:             customerReq.LastName,
+		Title:                customerReq.Title,
+		FamilyStatus:         customerReq.FamilyStatus,
+		BirthDate:            customerReq.BirthDate,
 		SocialSecurityNumber: customerReq.SocialSecurityNumber,
-		TaxId:               customerReq.TaxId,
-		Email:               customerReq.Email,
+		TaxId:                customerReq.TaxId,
+		Email:                customerReq.Email,
 		Address: Address{
-			Street:     customerReq.Address.Street,
+			Street:      customerReq.Address.Street,
 			HouseNumber: customerReq.Address.HouseNumber,
-			ZipCode:    customerReq.Address.ZipCode,
-			City:       customerReq.Address.City,
+			ZipCode:     customerReq.Address.ZipCode,
+			City:        customerReq.Address.City,
 		},
 		BankDetails: BankDetails{
 			Iban: customerReq.BankDetails.Iban,
@@ -309,11 +309,14 @@ func (s *CustomerAPIService) SearchCustomers(ctx context.Context, text string, p
         FROM
             Customer AS c
         WHERE
+			c.id LIKE ? OR
             c.firstName LIKE ? OR
             c.lastName LIKE ? OR
-            c.street LIKE ?
+            c.street LIKE ? OR
+			c.houseNumber LIKE ? OR
+			c.city LIKE ?
         ORDER BY c.id ASC
-        LIMIT ? OFFSET ?`, "%"+text+"%", "%"+text+"%", "%"+text+"%", pageSize, offset)
+        LIMIT ? OFFSET ?`, "%"+text+"%", "%"+text+"%", "%"+text+"%", "%"+text+"%", "%"+text+"%", "%"+text+"%", pageSize, offset)
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error searching customers: %v", err)
 	}
@@ -366,9 +369,9 @@ func (s *CustomerAPIService) UpdateCustomer(ctx context.Context, customerId stri
 	isValid := validateCustomer(customerReq)
 	if !isValid {
 		tx.Rollback()
-        return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
+		return Response(http.StatusBadRequest, nil), fmt.Errorf("invalid input")
 	}
-	
+
 	// Update Customer table
 	_, err = tx.ExecContext(ctx, `
         UPDATE Customer
