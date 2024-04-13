@@ -11,6 +11,7 @@ import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
+import 'package:rxdart/rxdart.dart';
 
 class NewCustomer extends StatefulWidget {
   const NewCustomer({super.key});
@@ -22,6 +23,8 @@ class NewCustomer extends StatefulWidget {
 class _NewCustomerState extends State<NewCustomer> {
   CustomerService customerService =
       (LoginStateContext.getInstance().state as LoggedInState).customerService;
+
+  BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
 
   TextEditingController emailController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
@@ -52,9 +55,7 @@ class _NewCustomerState extends State<NewCustomer> {
   CustomerReqTitleEnum? selectedTitleEnum;
 
   Future<void> save() async {
-    if (!newCustomerFormKey.currentState!.validate()) {
-      return;
-    }
+    error.add(null);
     final address = Address(
       street: streetController.text,
       houseNumber: houseNumberController.text,
@@ -77,8 +78,12 @@ class _NewCustomerState extends State<NewCustomer> {
         address: address,
         bankDetails: bankDetails,
         title: selectedTitleEnum);
-
-    final customer = await customerService.createCustomer(customerReq);
+    try {
+      final customer = await customerService.createCustomer(customerReq);
+    } catch (e) {
+      error.add(e.toString());
+      throw e;
+    }
   }
 
   GlobalKey<FormState> newCustomerFormKey = GlobalKey<FormState>();
@@ -145,9 +150,13 @@ class _NewCustomerState extends State<NewCustomer> {
                       width: 230,
                       child: TextFormField(
                         controller: taxIdController,
+                        maxLength: 11,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Eingabe darf nicht leer sein';
+                          }
+                          if (value.length != 11) {
+                            return "Steuer-ID muss 11 Zeichen lang sein";
                           }
                           return null;
                         },
@@ -410,9 +419,13 @@ class _NewCustomerState extends State<NewCustomer> {
                           width: 430,
                           child: TextFormField(
                             controller: bicController,
+                            maxLength: 11,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Eingabe darf nicht leer sein';
+                              }
+                              if (value.length != 11) {
+                                return "BIC muss 11 Zeichen lang sein";
                               }
                               return null;
                             },
@@ -448,12 +461,30 @@ class _NewCustomerState extends State<NewCustomer> {
               SizedBox(
                 height: 20,
               ),
+              StreamBuilder<String?>(
+                stream: error,
+                initialData: null,
+                builder:
+                    (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                  if (snapshot.data == null) {
+                    return Container();
+                  }
+                  return Container(
+                    margin: EdgeInsets.only(top: 20, bottom: 20),
+                    child: buildErrorTile(
+                        "Fehler beim speichern: ", snapshot.data!),
+                  );
+                },
+              ),
               Row(
                 children: [
                   Expanded(child: Container()),
                   LoadingButton(
                       label: "Anlegen",
                       onPressed: () async {
+                        if (!newCustomerFormKey.currentState!.validate()) {
+                          return;
+                        }
                         await save();
                         Navigator.pop(context);
                       }),

@@ -6,9 +6,11 @@ import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
+import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
 import 'package:openapi/api.dart';
+import 'package:rxdart/rxdart.dart';
 
 class Contract extends StatefulWidget {
   Contract(this.contract, {super.key});
@@ -40,6 +42,8 @@ class _ContractState extends State<Contract> {
   TextEditingController customerIdController = TextEditingController();
 
   bool editMode = false; //erstmal kein editieren erlaubt
+
+  BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
 
   @override
   void initState() {
@@ -378,13 +382,14 @@ class _ContractState extends State<Contract> {
                         ),
                         Checkbox(
                             value: isNeutered,
-                            
                             onChanged: (bool? value) {
-                              if(editMode) {
+                              if (editMode) {
                                 setState(() {
                                   isNeutered = value!;
                                 });
-                              } else {null;}
+                              } else {
+                                null;
+                              }
                             })
                       ],
                     ),
@@ -392,6 +397,21 @@ class _ContractState extends State<Contract> {
                       height: 10,
                     )
                   ],
+                ),
+                StreamBuilder<String?>(
+                  stream: error,
+                  initialData: null,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                    if (snapshot.data == null) {
+                      return Container();
+                    }
+                    return Container(
+                      margin: EdgeInsets.only(top: 20, bottom: 20),
+                      child: buildErrorTile(
+                          "Fehler beim speichern: ", snapshot.data!),
+                    );
+                  },
                 ),
                 Expanded(child: Container()),
               ],

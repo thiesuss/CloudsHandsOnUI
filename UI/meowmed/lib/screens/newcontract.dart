@@ -51,7 +51,10 @@ class _NewContractState extends State<NewContract> {
   CatEnvironmentEnum selectedEnvironment = CatEnvironmentEnum.drinnen;
   CatPersonalityEnum selectedPersonality = CatPersonalityEnum.anhaenglich;
 
+  BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
+
   Future<bool> save() async {
+    error.add(null);
     if (!newContractFormKey.currentState!.validate()) {
       return false;
     }
@@ -77,9 +80,15 @@ class _NewContractState extends State<NewContract> {
       weight: weight,
       customerId: widget.customerRes.getId(),
     );
-    final contractRes = await contractService.createContract(contractReq);
-    print("Created contract: ${contractRes.getId()}");
-    return true;
+    try {
+      final contractRes = await contractService.createContract(contractReq);
+      print("Created contract: ${contractRes.getId()}");
+      return true;
+    } catch (e) {
+      print("Failed to create contract: $e");
+      error.add(e.toString());
+      throw e;
+    }
   }
 
   GlobalKey<FormState> newContractFormKey = GlobalKey<FormState>();
@@ -488,6 +497,21 @@ class _NewContractState extends State<NewContract> {
                   ],
                 ),
               ),
+              StreamBuilder<String?>(
+                stream: error,
+                initialData: null,
+                builder:
+                    (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                  if (snapshot.data == null) {
+                    return Container();
+                  }
+                  return Container(
+                    margin: EdgeInsets.only(top: 20, bottom: 20),
+                    child: buildErrorTile(
+                        "Fehler beim speichern: ", snapshot.data!),
+                  );
+                },
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -495,6 +519,9 @@ class _NewContractState extends State<NewContract> {
                   LoadingButton(
                     label: "Vertrag Abschließen",
                     onPressed: () async {
+                      if (!newContractFormKey.currentState!.validate()) {
+                        return;
+                      }
                       final result = await save();
                       if (result) Navigator.pop(context);
                     },

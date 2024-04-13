@@ -120,7 +120,10 @@ class _CustomerState extends State<Customer> {
 
   final customerFormKey = GlobalKey<FormState>();
 
+  BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
+
   Future<void> save() async {
+    error.add(null);
     final state = (LoginStateContext.getInstance().state as LoggedInState);
     final customerService = state.customerService;
     final customerRes = customer.getObj();
@@ -146,7 +149,12 @@ class _CustomerState extends State<Customer> {
         bankDetails: bankDetails,
         email: emailController.text); //Job nicht nötig
     final id = customer.getId();
-    await customerService.updateCustomer(id, customerReq);
+    try {
+      await customerService.updateCustomer(id, customerReq);
+    } catch (e) {
+      error.add(e.toString());
+      throw e;
+    }
   }
 
   @override
@@ -521,9 +529,13 @@ class _CustomerState extends State<Customer> {
                             child: TextFormField(
                               controller: bicController,
                               readOnly: widget.readOnly,
+                              maxLength: 11,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
+                                }
+                                if (value.length != 11) {
+                                  return 'BIC muss 11 Zeichen lang sein';
                                 }
                                 return null;
                               },
@@ -665,6 +677,20 @@ class _CustomerState extends State<Customer> {
                   // }
                 },
               ),
+            ),
+            StreamBuilder<String?>(
+              stream: error,
+              initialData: null,
+              builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                if (snapshot.data == null) {
+                  return Container();
+                }
+                return Container(
+                  margin: EdgeInsets.only(top: 20, bottom: 20),
+                  child:
+                      buildErrorTile("Fehler beim speichern: ", snapshot.data!),
+                );
+              },
             ),
             Row(
               children: [
