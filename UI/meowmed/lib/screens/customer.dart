@@ -331,8 +331,12 @@ class _CustomerState extends State<Customer> {
                             if (value.isEmpty) {
                               return "Bitte SV-Nummer eingeben";
                             }
+                            if (value.length != 11) {
+                              return "SV-Nummer muss 11 Zeichen lang sein";
+                            }
                             return null;
                           },
+                          maxLength: 11,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "SV-Nummer",
@@ -347,12 +351,16 @@ class _CustomerState extends State<Customer> {
                         child: TextFormField(
                           controller: steueridcontroller,
                           readOnly: widget.readOnly,
+                          maxLength: 11,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
                             }
                             if (value.isEmpty) {
                               return "Bitte Steuer ID eingeben";
+                            }
+                            if (value.length != 11) {
+                              return "Steuer ID muss 11 Zeichen lang sein";
                             }
                             return null;
                           },

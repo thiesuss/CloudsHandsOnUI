@@ -265,9 +265,13 @@ class _NewCustomerState extends State<NewCustomer> {
                       width: 230,
                       child: TextFormField(
                         controller: socialSecurityNumberController,
+                        maxLength: 12,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Eingabe darf nicht leer sein';
+                          }
+                          if (value.length != 12) {
+                            return "SV-Nummer muss 11 Zeichen lang sein";
                           }
                           return null;
                         },
