@@ -194,7 +194,7 @@ class _NewContractState extends State<NewContract> {
                                   if (date != null) {
                                     setState(() {
                                       startDate = date;
-                                      birthDateController.text =
+                                      startDateController.text =
                                           DateFormat('dd.MM.yyyy').format(date);
                                     });
                                   }
@@ -231,7 +231,7 @@ class _NewContractState extends State<NewContract> {
                                   if (date != null) {
                                     setState(() {
                                       endDate = date;
-                                      birthDateController.text =
+                                      endDateController.text =
                                           DateFormat('dd.MM.yyyy').format(date);
                                     });
                                   }
