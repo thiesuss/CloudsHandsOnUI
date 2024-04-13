@@ -20,8 +20,9 @@ import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Customer extends StatefulWidget {
-  Customer(this.customer, {super.key});
+  Customer(this.customer, this.editMode, {super.key});
   CachedObj<CustomerRes> customer;
+  bool editMode = false;
   @override
   State<Customer> createState() => _CustomerState(customer);
 }
@@ -117,7 +118,6 @@ class _CustomerState extends State<Customer> {
   late BehaviorSubject<List<CachedObj<ContractRes>>> filteredContracts =
       BehaviorSubject.seeded([]);
 
-  bool editMode = false;
   final customerFormKey = GlobalKey<FormState>();
 
   Future<void> save() async {
@@ -183,7 +183,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: vornamecontroller,
-                          readOnly: !editMode,
+                          readOnly: !widget.editMode,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -206,7 +206,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: nachnamecontroller,
-                          readOnly: !editMode,
+                          readOnly: !widget.editMode,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -260,7 +260,7 @@ class _CustomerState extends State<Customer> {
                       width: 230,
                       child: TextFormField(
                         controller: emailController,
-                        readOnly: !editMode,
+                        readOnly: !widget.editMode,
                         validator: (value) {
                           if (value == null) {
                             return "Eingabe darf nicht leer sein";
@@ -287,7 +287,7 @@ class _CustomerState extends State<Customer> {
                       height: 50,
                       width: 230,
                       child: TextFormField(
-                        enabled: !editMode,
+                        enabled: !widget.editMode,
                         controller: birthDateController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -320,7 +320,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: svnummercontroller,
-                          readOnly: !editMode,
+                          readOnly: !widget.editMode,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -343,7 +343,7 @@ class _CustomerState extends State<Customer> {
                         width: 230,
                         child: TextFormField(
                           controller: steueridcontroller,
-                          readOnly: !editMode,
+                          readOnly: !widget.editMode,
                           validator: (value) {
                             if (value == null) {
                               return "Eingabe darf nicht leer sein";
@@ -681,7 +681,7 @@ class _CustomerState extends State<Customer> {
                 TextButton(
                     onPressed: () {
                       setState(() {
-                        editMode = true;
+                        widget.editMode = true;
                       });
                     },
                     child: Text("Bearbeiten")),
@@ -689,7 +689,7 @@ class _CustomerState extends State<Customer> {
                     label: "Speichern",
                     onPressed: () async {
                       if (customerFormKey.currentState!.validate()) {
-                        editMode = false;
+                        widget.editMode = false;
                       }
                       await save();
                     }),

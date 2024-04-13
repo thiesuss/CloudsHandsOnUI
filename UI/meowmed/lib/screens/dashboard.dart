@@ -23,7 +23,7 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-//TODO: Switch to enum for loading state, 
+//TODO: Switch to enum for loading state,
 class _DashboardState extends State<Dashboard> {
   late List<CachedObj<CustomerRes>> customers;
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
@@ -188,7 +188,7 @@ class _DashboardState extends State<Dashboard> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          Customer(e)));
+                                                          Customer(e, true)));
                                             },
                                             icon: Icon(Icons.edit)),
                                         Link(
@@ -203,7 +203,13 @@ class _DashboardState extends State<Dashboard> {
                                                   icon: Icon(Icons.delete)),
                                         ),
                                         IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Customer(e, false)));
+                                            },
                                             icon: Icon(Icons.remove_red_eye))
                                       ],
                                     ))
