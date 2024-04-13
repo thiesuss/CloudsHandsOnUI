@@ -108,7 +108,7 @@ class CatColorEnum {
       case (CatColorEnum.creme):
         return 'Creme';
       case (CatColorEnum.weiss):
-        return 'Weiss';
+        return 'Weiß';
       case (CatColorEnum.schildpatt):
         return 'Schildpatt';
       case (CatColorEnum.schwarz):
@@ -166,7 +166,7 @@ class CatEnvironmentEnum {
   String toJson() => value;
 
   static const drinnen = CatEnvironmentEnum._(r'Drinnen');
-  static const draussen = CatEnvironmentEnum._(r'Draussen');
+  static const draussen = CatEnvironmentEnum._(r'Draußen');
 
   static const values = <CatEnvironmentEnum>[
     drinnen,
@@ -178,7 +178,7 @@ class CatEnvironmentEnum {
       case (CatEnvironmentEnum.drinnen):
         return 'Drinnen';
       case (CatEnvironmentEnum.draussen):
-        return 'Draussen';
+        return 'Draußen';
       default:
         throw 'Keine Persönlichkeit vorhanden';
     }
