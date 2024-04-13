@@ -236,8 +236,10 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 
 		pageParam = param
 	} else {
+		pageParam = 1
 	}
-	var pageSizeParam int32
+
+	var pageSizeParam int32 
 	if query.Has("pageSize") {
 		param, err := parseNumericParameter[int32](
 			query.Get("pageSize"),
@@ -252,6 +254,7 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 
 		pageSizeParam = param
 	} else {
+		pageSizeParam = 100
 	}
 	result, err := c.service.SearchCustomers(r.Context(), textParam, pageParam, pageSizeParam)
 	// If an error occurred, encode the error with the status code
@@ -259,6 +262,20 @@ func (c *CustomerAPIController) SearchCustomers(w http.ResponseWriter, r *http.R
 		c.errorHandler(w, r, err, &result)
 		return
 	}
+
+    // Perform a type assertion to []CustomerRes
+    customers, ok := result.Body.([]CustomerRes)
+    if !ok {
+        c.errorHandler(w, r, &TypeAssertionError{}, nil) // Handle or log this case as needed
+        return
+    }
+
+    // Check if the result is empty and handle accordingly
+    if len(customers) == 0 {
+        EncodeJSONResponse([]CustomerRes{}, &result.Code, w)
+        return
+    }
+
 	// If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
 }
@@ -294,4 +311,12 @@ func (c *CustomerAPIController) UpdateCustomer(w http.ResponseWriter, r *http.Re
 	}
 	// If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
+}
+
+type TypeAssertionError struct {
+	Message string
+}
+
+func (e *TypeAssertionError) Error() string {
+	return e.Message
 }
