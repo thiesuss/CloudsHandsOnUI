@@ -309,14 +309,12 @@ func (s *CustomerAPIService) SearchCustomers(ctx context.Context, text string, p
         FROM
             Customer AS c
         WHERE
-			c.id LIKE ? OR
             c.firstName LIKE ? OR
             c.lastName LIKE ? OR
             c.street LIKE ? OR
-			c.houseNumber LIKE ? OR
 			c.city LIKE ?
         ORDER BY c.id ASC
-        LIMIT ? OFFSET ?`, "%"+text+"%", "%"+text+"%", "%"+text+"%", "%"+text+"%", "%"+text+"%", "%"+text+"%", pageSize, offset)
+        LIMIT ? OFFSET ?`, "%"+text+"%", "%"+text+"%", "%"+text+"%", "%"+text+"%", pageSize, offset)
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error searching customers: %v", err)
 	}
