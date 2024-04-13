@@ -287,7 +287,7 @@ class _CustomerState extends State<Customer> {
                       height: 50,
                       width: 230,
                       child: TextFormField(
-                        enabled: !widget.editMode,
+                        readOnly: !widget.editMode,
                         controller: birthDateController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
