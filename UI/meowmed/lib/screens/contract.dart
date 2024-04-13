@@ -39,7 +39,7 @@ class _ContractState extends State<Contract> {
   TextEditingController weightController = TextEditingController();
   TextEditingController customerIdController = TextEditingController();
 
-  bool readOnlyMode = true; //
+  bool editMode = false; //erstmal kein editieren erlaubt
 
   @override
   void initState() {
@@ -81,7 +81,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           controller: startDateController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -94,22 +94,24 @@ class _ContractState extends State<Contract> {
                             return null;
                           },
                           onTap: () async {
-                            final date = await showDatePicker(
-                              context: context,
-                              initialEntryMode:
-                                  DatePickerEntryMode.calendarOnly,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now()
-                                  .subtract(const Duration(days: 365)),
-                              lastDate: DateTime.now()
-                                  .add(const Duration(days: 36500)),
-                            );
-                            if (date != null) {
-                              setState(() {
-                                startDate = date;
-                                startDateController.text =
-                                    DateFormat('dd.MM.yyyy').format(date);
-                              });
+                            if (editMode) {
+                              final date = await showDatePicker(
+                                context: context,
+                                initialEntryMode:
+                                    DatePickerEntryMode.calendarOnly,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now()
+                                    .subtract(const Duration(days: 365)),
+                                lastDate: DateTime.now()
+                                    .add(const Duration(days: 36500)),
+                              );
+                              if (date != null) {
+                                setState(() {
+                                  startDate = date;
+                                  startDateController.text =
+                                      DateFormat('dd.MM.yyyy').format(date);
+                                });
+                              }
                             }
                           },
                         )),
@@ -120,7 +122,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           controller: endDateController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -133,21 +135,23 @@ class _ContractState extends State<Contract> {
                             return null;
                           },
                           onTap: () async {
-                            final date = await showDatePicker(
-                              context: context,
-                              initialEntryMode:
-                                  DatePickerEntryMode.calendarOnly,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime.now()
-                                  .add(const Duration(days: 36500)),
-                            );
-                            if (date != null) {
-                              setState(() {
-                                endDate = date;
-                                endDateController.text =
-                                    DateFormat('dd.MM.yyyy').format(date);
-                              });
+                            if (editMode) {
+                              final date = await showDatePicker(
+                                context: context,
+                                initialEntryMode:
+                                    DatePickerEntryMode.calendarOnly,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now()
+                                    .add(const Duration(days: 36500)),
+                              );
+                              if (date != null) {
+                                setState(() {
+                                  endDate = date;
+                                  endDateController.text =
+                                      DateFormat('dd.MM.yyyy').format(date);
+                                });
+                              }
                             }
                           },
                         )),
@@ -158,7 +162,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -213,7 +217,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -231,7 +235,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -250,7 +254,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -269,27 +273,29 @@ class _ContractState extends State<Contract> {
                       height: 50,
                       width: 230,
                       child: TextFormField(
-                        readOnly: readOnlyMode,
+                        readOnly: !editMode,
                         controller: birthDateController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Geburtstag",
                         ),
                         onTap: () async {
-                          final date = await showDatePicker(
-                              context: context,
-                              initialEntryMode:
-                                  DatePickerEntryMode.calendarOnly,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now()
-                                  .subtract(Duration(days: 40000)),
-                              lastDate: DateTime.now());
-                          if (date != null) {
-                            setState(() {
-                              birthDate = date;
-                              birthDateController.text =
-                                  DateFormat('dd.MM.yyyy').format(date);
-                            });
+                          if (editMode) {
+                            final date = await showDatePicker(
+                                context: context,
+                                initialEntryMode:
+                                    DatePickerEntryMode.calendarOnly,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now()
+                                    .subtract(Duration(days: 40000)),
+                                lastDate: DateTime.now());
+                            if (date != null) {
+                              setState(() {
+                                birthDate = date;
+                                birthDateController.text =
+                                    DateFormat('dd.MM.yyyy').format(date);
+                              });
+                            }
                           }
                         },
                       ),
@@ -305,7 +311,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -324,7 +330,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -343,7 +349,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: readOnlyMode,
+                          readOnly: !editMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -372,10 +378,13 @@ class _ContractState extends State<Contract> {
                         ),
                         Checkbox(
                             value: isNeutered,
+                            
                             onChanged: (bool? value) {
-                              setState(() {
-                                isNeutered = value!;
-                              });
+                              if(editMode) {
+                                setState(() {
+                                  isNeutered = value!;
+                                });
+                              } else {null;}
                             })
                       ],
                     ),

@@ -231,6 +231,7 @@ class _CustomerState extends State<Customer> {
                       child: DropdownMenu<CustomerResTitleEnum?>(
                         initialSelection: selectedTitleEnum,
                         controller: customerStatusTitleContoller,
+                        enabled: widget.editMode,
                         requestFocusOnTap: true,
                         label: const Text('Titel'),
                         onSelected: (CustomerResTitleEnum? titleStatus) {
@@ -294,20 +295,22 @@ class _CustomerState extends State<Customer> {
                           labelText: "Geburtstag",
                         ),
                         onTap: () async {
-                          final date = await showDatePicker(
-                              context: context,
-                              initialEntryMode:
-                                  DatePickerEntryMode.calendarOnly,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now()
-                                  .subtract(Duration(days: 40000)),
-                              lastDate: DateTime.now());
-                          if (date != null) {
-                            setState(() {
-                              birthDate = date;
-                              birthDateController.text =
-                                  DateFormat('dd.MM.yyyy').format(date);
-                            });
+                          if (widget.editMode) {
+                            final date = await showDatePicker(
+                                context: context,
+                                initialEntryMode:
+                                    DatePickerEntryMode.calendarOnly,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now()
+                                    .subtract(Duration(days: 40000)),
+                                lastDate: DateTime.now());
+                            if (date != null) {
+                              setState(() {
+                                birthDate = date;
+                                birthDateController.text =
+                                    DateFormat('dd.MM.yyyy').format(date);
+                              });
+                            }
                           }
                         },
                       ),
@@ -361,26 +364,6 @@ class _CustomerState extends State<Customer> {
                     SizedBox(
                       height: 20,
                     ),
-                    // Container(
-                    //     height: 50,
-                    //     width: 230,
-                    //     child: TextFormField(
-                    //       controller: familienstatuscontroller,
-                    //       readOnly: !editMode,
-                    //       validator: (value) {
-                    //         if (value == null) {
-                    //           return "Eingabe darf nicht leer sein";
-                    //         }
-                    //         if (value.isEmpty) {
-                    //           return "Bitte Familienstatus eingeben";
-                    //         }
-                    //         return null;
-                    //       },
-                    //       decoration: InputDecoration(
-                    //         border: OutlineInputBorder(),
-                    //         labelText: "Familienstatus",
-                    //       ),
-                    //     )),
                     Container(
                       //dropdown menu für enum
                       height: 50,
@@ -389,6 +372,7 @@ class _CustomerState extends State<Customer> {
                         initialSelection: selectedFamilyStatus,
                         controller: customerStatusFamilyContoller,
                         requestFocusOnTap: true,
+                        enabled: widget.editMode,
                         label: const Text('Familienstatus'),
                         onSelected:
                             (CustomerResFamilyStatusEnum? familyStatus) {
@@ -427,6 +411,7 @@ class _CustomerState extends State<Customer> {
                                 width: 300,
                                 child: TextFormField(
                                   controller: streetController,
+                                  readOnly: !widget.editMode,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Eingabe darf nicht leer sein';
@@ -442,6 +427,7 @@ class _CustomerState extends State<Customer> {
                                 width: 130,
                                 child: TextFormField(
                                   controller: houseNumberController,
+                                  readOnly: !widget.editMode,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Eingabe darf nicht leer sein';
@@ -465,6 +451,7 @@ class _CustomerState extends State<Customer> {
                             width: 430,
                             child: TextFormField(
                               controller: zipCodeController,
+                              readOnly: !widget.editMode,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
@@ -486,6 +473,7 @@ class _CustomerState extends State<Customer> {
                             width: 430,
                             child: TextFormField(
                               controller: cityController,
+                              readOnly: !widget.editMode,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
@@ -508,6 +496,7 @@ class _CustomerState extends State<Customer> {
                             width: 430,
                             child: TextFormField(
                               controller: ibanController,
+                              readOnly: !widget.editMode,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
@@ -526,6 +515,7 @@ class _CustomerState extends State<Customer> {
                             width: 430,
                             child: TextFormField(
                               controller: bicController,
+                              readOnly: !widget.editMode,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
@@ -544,6 +534,7 @@ class _CustomerState extends State<Customer> {
                             width: 430,
                             child: TextFormField(
                               controller: bankNameController,
+                              readOnly: !widget.editMode,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
