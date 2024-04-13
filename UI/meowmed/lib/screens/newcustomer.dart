@@ -331,9 +331,6 @@ class _NewCustomerState extends State<NewCustomer> {
                                   }
                                   return null;
                                 },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
                                     labelText: "Hausnummer"),
