@@ -169,7 +169,7 @@ class _NewContractState extends State<NewContract> {
                               height: 50,
                               width: 230,
                               child: TextFormField(
-                                controller: birthDateController,
+                                controller: startDateController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: "Beginn",
@@ -207,7 +207,7 @@ class _NewContractState extends State<NewContract> {
                               height: 50,
                               width: 230,
                               child: TextFormField(
-                                controller: birthDateController,
+                                controller: endDateController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: "Ende",
