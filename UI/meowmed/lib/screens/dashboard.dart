@@ -23,6 +23,7 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
+//TODO: Switch to enum for loading state, 
 class _DashboardState extends State<Dashboard> {
   late List<CachedObj<CustomerRes>> customers;
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
@@ -45,13 +46,6 @@ class _DashboardState extends State<Dashboard> {
 
   Future<List<CachedObj<CustomerRes>>> loadCustomers() async {
     searchController.clear();
-    final repo = customerService.repo;
-    final cached = repo.getAll();
-    customers = cached;
-    filteredCustomers.add(customers);
-
-    // TODO: teil oben kann weg, sobald api geht
-
     final customerResList = await customerService.getCustomers();
     customers = customerResList;
     filteredCustomers.add(customers);
@@ -62,7 +56,13 @@ class _DashboardState extends State<Dashboard> {
       BehaviorSubject.seeded([]);
 
   Future<void> _searchCustomer(String search) async {
-    filteredCustomers.add(await customerService.searchCustomers(search));
+    if (search.isEmpty) {
+      await loadCustomers();
+      return;
+    }
+    filteredCustomers.add([]);
+    final result = await customerService.searchCustomers(search);
+    filteredCustomers.add(result);
   }
 
   TextEditingController searchController = TextEditingController();
@@ -168,7 +168,7 @@ class _DashboardState extends State<Dashboard> {
                                 DataColumn(label: Text("Aktionen"))
                               ],
                               rows: [
-                                ...customerService.repo.getAll().map((e) {
+                                ...filteredCustomers.value.map((e) {
                                   final obj = e.getObj();
                                   final adr = obj.address;
                                   return DataRow(cells: [
