@@ -653,7 +653,7 @@ class _CustomerState extends State<Customer> {
                                         },
                                       ),
                                       IconButton(
-                                        icon: Icon(Icons.delete),
+                                        icon: Icon(Icons.not_interested),
                                         onPressed: () {},
                                       ),
                                     ],

@@ -39,7 +39,7 @@ class _ContractState extends State<Contract> {
   TextEditingController weightController = TextEditingController();
   TextEditingController customerIdController = TextEditingController();
 
-  bool editMode = false;
+  bool readOnlyMode = true; //
 
   @override
   void initState() {
@@ -81,7 +81,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           controller: startDateController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -120,7 +120,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           controller: endDateController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -158,7 +158,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -213,7 +213,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -231,7 +231,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -250,7 +250,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -269,7 +269,7 @@ class _ContractState extends State<Contract> {
                       height: 50,
                       width: 230,
                       child: TextFormField(
-                        readOnly: editMode,
+                        readOnly: readOnlyMode,
                         controller: birthDateController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -305,7 +305,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -324,7 +324,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';
@@ -343,7 +343,7 @@ class _ContractState extends State<Contract> {
                         height: 50,
                         width: 230,
                         child: TextFormField(
-                          readOnly: editMode,
+                          readOnly: readOnlyMode,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Eingabe darf nicht leer sein';

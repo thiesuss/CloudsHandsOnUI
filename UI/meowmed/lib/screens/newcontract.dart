@@ -288,22 +288,6 @@ class _NewContractState extends State<NewContract> {
                           SizedBox(
                             height: 20,
                           ),
-                          // Container(
-                          //     height: 50,
-                          //     width: 230,
-                          //     child: TextFormField(
-                          //       validator: (value) {
-                          //         if (value == null || value.isEmpty) {
-                          //           return 'Eingabe darf nicht leer sein';
-                          //         }
-                          //         //check ob Rasse hier?
-                          //         return null;
-                          //       },
-                          //       controller: breedController,
-                          //       decoration: InputDecoration(
-                          //           border: OutlineInputBorder(),
-                          //           labelText: "Rasse"),
-                          //     )),
                           Container(
                             //dropdown menu für enum
                             height: 50,
@@ -334,21 +318,31 @@ class _NewContractState extends State<NewContract> {
                             height: 20,
                           ),
                           Container(
-                              height: 50,
-                              width: 230,
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Eingabe darf nicht leer sein';
-                                  }
-                                  //check auf Farbe?
-                                  return null;
-                                },
-                                controller: colorController,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: "Farbe"),
-                              )),
+                            //dropdown menu für enum
+                            height: 50,
+                            width: 230,
+                            child: DropdownMenu<CatColorEnum>(
+                              initialSelection: selectedColor,
+                              controller: colorController,
+                              requestFocusOnTap: true,
+                              label: const Text('Farbe'),
+                              onSelected: (CatColorEnum? color) {
+                                setState(() {
+                                  if (color == null) return;
+                                  selectedColor = color;
+                                });
+                              },
+                              dropdownMenuEntries: CatColorEnum.values
+                                  .map<DropdownMenuEntry<CatColorEnum>>(
+                                      (CatColorEnum color) {
+                                return DropdownMenuEntry<CatColorEnum>(
+                                  value: color,
+                                  label: CatColorEnum.colorToString(
+                                      color), // familienstatusenum.ledig
+                                );
+                              }).toList(),
+                            ),
+                          ),
                           SizedBox(
                             height: 20,
                           ),
@@ -388,38 +382,60 @@ class _NewContractState extends State<NewContract> {
                       child: Column(
                         children: [
                           Container(
-                              height: 50,
-                              width: 230,
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Eingabe darf nicht leer sein';
-                                  }
-                                  return null;
-                                },
-                                controller: personalityController,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: "Persönlichkeit"),
-                              )),
+                            //dropdown menu für enum
+                            height: 50,
+                            width: 230,
+                            child: DropdownMenu<CatPersonalityEnum>(
+                              initialSelection: selectedPersonality,
+                              controller: personalityController,
+                              requestFocusOnTap: true,
+                              label: const Text('Persönlichkeit'),
+                              onSelected: (CatPersonalityEnum? personality) {
+                                setState(() {
+                                  if (personality == null) return;
+                                  selectedPersonality = personality;
+                                });
+                              },
+                              dropdownMenuEntries: CatPersonalityEnum.values
+                                  .map<DropdownMenuEntry<CatPersonalityEnum>>(
+                                      (CatPersonalityEnum personality) {
+                                return DropdownMenuEntry<CatPersonalityEnum>(
+                                  value: personality,
+                                  label: CatPersonalityEnum.personalityToString(
+                                      personality), // familienstatusenum.ledig
+                                );
+                              }).toList(),
+                            ),
+                          ),
                           SizedBox(
                             height: 20,
                           ),
                           Container(
-                              height: 50,
-                              width: 230,
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Eingabe darf nicht leer sein';
-                                  }
-                                  return null;
-                                },
-                                controller: environmentController,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: "Umgebung"),
-                              )),
+                            //dropdown menu für enum
+                            height: 50,
+                            width: 230,
+                            child: DropdownMenu<CatEnvironmentEnum>(
+                              initialSelection: selectedEnvironment,
+                              controller: environmentController,
+                              requestFocusOnTap: true,
+                              label: const Text('Umgebung'),
+                              onSelected: (CatEnvironmentEnum? environment) {
+                                setState(() {
+                                  if (environment == null) return;
+                                  selectedEnvironment = environment;
+                                });
+                              },
+                              dropdownMenuEntries: CatEnvironmentEnum.values
+                                  .map<DropdownMenuEntry<CatEnvironmentEnum>>(
+                                      (CatEnvironmentEnum environment) {
+                                return DropdownMenuEntry<CatEnvironmentEnum>(
+                                  value: environment,
+                                  label: CatEnvironmentEnum.environmentToString(
+                                      environment), // familienstatusenum.ledig
+                                );
+                              }).toList(),
+                            ),
+                          ),
                           SizedBox(
                             height: 20,
                           ),
