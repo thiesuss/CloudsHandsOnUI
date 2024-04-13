@@ -210,6 +210,15 @@ class _DashboardState extends State<Dashboard> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
+                                                        Customer(e, true)));
+                                          },
+                                          icon: Icon(Icons.remove_red_eye)),
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
                                                         Customer(e, false)));
                                           },
                                           icon: Icon(Icons.edit)),
@@ -220,15 +229,6 @@ class _DashboardState extends State<Dashboard> {
                                             launchUrl(uri);
                                           },
                                           icon: Icon(Icons.delete)),
-                                      IconButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Customer(e, true)));
-                                          },
-                                          icon: Icon(Icons.remove_red_eye))
                                     ],
                                   ))
                                 ]);
