@@ -339,12 +339,12 @@ class _CustomerState extends State<Customer> {
                             if (value.isEmpty) {
                               return "Bitte SV-Nummer eingeben";
                             }
-                            if (value.length != 11) {
-                              return "SV-Nummer muss 11 Zeichen lang sein";
+                            if (value.length != 12) {
+                              return "SV-Nummer muss 12 Zeichen lang sein";
                             }
                             return null;
                           },
-                          maxLength: 11,
+                          maxLength: 12,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "SV-Nummer",
