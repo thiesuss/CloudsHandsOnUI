@@ -15,8 +15,9 @@ import 'package:meowmed/widgets/header.dart';
 import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-enum DashboardState { loading, loaded, error }
+enum DashboardState { loading, loaded, error, initial }
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -32,7 +33,7 @@ class _DashboardState extends State<Dashboard> {
       (LoginStateContext.getInstance().state as LoggedInState).customerService;
 
   BehaviorSubject<DashboardState> state =
-      BehaviorSubject.seeded(DashboardState.loading);
+      BehaviorSubject.seeded(DashboardState.initial);
   String? error;
 
   @override
@@ -48,6 +49,14 @@ class _DashboardState extends State<Dashboard> {
   RefreshTimer? refreshTimer;
 
   Future<List<CachedObj<CustomerRes>>> loadCustomers() async {
+    if (state.value == DashboardState.loading) {
+      await state
+          .firstWhere((element) => element != DashboardState.loading)
+          .asStream()
+          .first;
+      return filteredCustomers.value;
+    }
+    error = null;
     state.add(DashboardState.loading);
     searchController.clear();
     try {
@@ -67,6 +76,12 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _searchCustomer(String search) async {
     error = null;
+    if (state.value == DashboardState.loading) {
+      await state
+          .firstWhere((element) => element != DashboardState.loading)
+          .asStream()
+          .first;
+    }
     if (search.isEmpty) {
       await loadCustomers();
       return;
@@ -76,6 +91,7 @@ class _DashboardState extends State<Dashboard> {
     try {
       final result = await customerService.searchCustomers(search);
       filteredCustomers.add(result);
+      state.add(DashboardState.loaded);
     } catch (e) {
       error = e.toString();
       state.add(DashboardState.error);
@@ -146,7 +162,7 @@ class _DashboardState extends State<Dashboard> {
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 return Column(
                   children: [
-                    if (state.value == DashboardState.loading)
+                    if (state.value != DashboardState.loaded)
                       DataTableSchimmer(
                           columns: [
                             "ID",
@@ -197,17 +213,13 @@ class _DashboardState extends State<Dashboard> {
                                                         Customer(e, false)));
                                           },
                                           icon: Icon(Icons.edit)),
-                                      Link(
-                                        uri: Uri.parse(
-                                            'https://youtu.be/dQw4w9WgXcQ'),
-                                        target: LinkTarget.self,
-                                        builder: (context, followLink) =>
-                                            IconButton(
-                                                onPressed: () {
-                                                  followLink;
-                                                },
-                                                icon: Icon(Icons.delete)),
-                                      ),
+                                      IconButton(
+                                          onPressed: () {
+                                            final uri = Uri.parse(
+                                                'https://youtu.be/dQw4w9WgXcQ');
+                                            launchUrl(uri);
+                                          },
+                                          icon: Icon(Icons.delete)),
                                       IconButton(
                                           onPressed: () {
                                             Navigator.push(
