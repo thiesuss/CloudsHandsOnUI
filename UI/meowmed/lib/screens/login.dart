@@ -50,6 +50,9 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: kDefaultMargin),
                   TextFormField(
                     controller: _usernameController,
+                    onFieldSubmitted: (value) {
+                      _login();
+                    },
                     decoration: InputDecoration(
                       hintText: 'user',
                       labelText: 'Username',
@@ -59,6 +62,9 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordController,
+                    onFieldSubmitted: (value) {
+                      _login();
+                    },
                     obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'pass',
@@ -80,6 +86,9 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                     controller: backendUrlController,
+                    onFieldSubmitted: (value) {
+                      _login();
+                    },
                     decoration: InputDecoration(
                       hintText: 'aws, azure, mock, eigene Url',
                       labelText: 'Backend Url',
