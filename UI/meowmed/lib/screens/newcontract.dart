@@ -103,7 +103,7 @@ class _NewContractState extends State<NewContract> {
     try {
       final coverage = int.parse(coverageController.text);
       final weight = double.parse(weightController.text);
-      final zipCode = 99999;
+      final zipCode = widget.customerRes.getObj().address.zipCode;
       final rateReq = RateCalculationReq(
           coverage: coverage,
           breed: breedController.text,
