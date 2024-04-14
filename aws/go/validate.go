@@ -56,6 +56,10 @@ func validateCat(contractReq ContractReq) string {
 		return "end date is before start date"
 	}
 
+	if contractReq.Personality == "besonders verspielt" {
+		return "keine Versicherung für besonders verspielte Katzen möglich"
+	}
+
 	// Wenn alle Überprüfungen bestanden wurden, gib true zurück.
 	return "valid"
 }
