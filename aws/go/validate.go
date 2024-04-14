@@ -13,7 +13,7 @@ func validateCat(contractReq ContractReq) string {
 	}
 
 	// Regex für die Überprüfung, ob der String nur Buchstaben enthält.
-	nameRegex := regexp.MustCompile(`^[A-Za-zß]+(?:\s[A-Za-zß]+)*$`)
+	nameRegex := regexp.MustCompile(`^[A-Za-zßÄÖÜäöü]+(?:\s[A-Za-zßÄÖÜäöü]+)*$`)
 
 	// Überprüft, ob CatName, Breed, Color, Personality und Environment nur Buchstaben enthalten. Wenn nicht, gib false zurück.
 	if !nameRegex.MatchString(contractReq.CatName) {
@@ -72,7 +72,7 @@ func validateCustomer(customerReq CustomerReq) string {
 	}
 
 	// Regex für die Überprüfung, ob der String nur Buchstaben enthält.
-	nameRegex := regexp.MustCompile(`^[A-Za-zß]+(?:\s[A-Za-zß]+)*$`)
+	nameRegex := regexp.MustCompile(`^[A-Za-zßÄÖÜäöü]+(?:\s[A-Za-zßÄÖÜäöü]+)*$`)
 
 	//Überprüfung für den Vor und Nachnamen
 	if !nameRegex.MatchString(customerReq.FirstName) || !nameRegex.MatchString(customerReq.LastName) {
