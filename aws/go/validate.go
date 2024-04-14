@@ -2,7 +2,8 @@ package openapi
 
 import (
 	"regexp" // Für Regular Expressions
-	"time"   // Für Zeit- und Datumsfunktionen
+	"strings"
+	"time" // Für Zeit- und Datumsfunktionen
 )
 
 // validate cat
@@ -56,7 +57,7 @@ func validateCat(contractReq ContractReq) string {
 		return "end date is before start date"
 	}
 
-	if contractReq.Personality == "besonders verspielt" {
+	if strings.ToLower(contractReq.Personality) == "besonders verspielt" {
 		return "keine Versicherung für besonders verspielte Katzen möglich"
 	}
 
