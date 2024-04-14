@@ -156,7 +156,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	monatlicheVersicherungskosten += float32(illRate)
 
 	rate.Rate = float32(math.Round(float64(monatlicheVersicherungskosten)*100) / 100)
-	globRate = float32(math.Round(float64(monatlicheVersicherungskosten)*100) / 100)
+	globRate = monatlicheVersicherungskosten
 
 	// Return success response with the rate details
 	return Response(http.StatusOK, rate), nil
