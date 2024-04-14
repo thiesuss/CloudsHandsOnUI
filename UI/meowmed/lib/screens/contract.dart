@@ -105,7 +105,7 @@ class _ContractState extends State<Contract> {
                                     DatePickerEntryMode.calendarOnly,
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime.now()
-                                    .subtract(const Duration(days: 365)),
+                                    .subtract(const Duration(days: 900)),
                                 lastDate: DateTime.now()
                                     .add(const Duration(days: 36500)),
                               );

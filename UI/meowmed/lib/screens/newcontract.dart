@@ -196,7 +196,7 @@ class _NewContractState extends State<NewContract> {
                                         DatePickerEntryMode.calendarOnly,
                                     initialDate: DateTime.now(),
                                     firstDate: DateTime.now()
-                                        .subtract(const Duration(days: 365)),
+                                        .subtract(const Duration(days: 900)),
                                     lastDate: DateTime.now()
                                         .add(const Duration(days: 36500)),
                                   );
@@ -307,11 +307,12 @@ class _NewContractState extends State<NewContract> {
                               controller: breedController,
                               requestFocusOnTap: true,
                               label: const Text('Rasse'),
-                              onSelected: (CatBreedEnum? breed) {
+                              onSelected: (CatBreedEnum? breed) async {
                                 setState(() {
                                   if (breed == null) return;
                                   selectedBreed = breed;
                                 });
+                                await reloadPrice();
                               },
                               dropdownMenuEntries: CatBreedEnum.values
                                   .map<DropdownMenuEntry<CatBreedEnum>>(
@@ -336,11 +337,12 @@ class _NewContractState extends State<NewContract> {
                               controller: colorController,
                               requestFocusOnTap: true,
                               label: const Text('Farbe'),
-                              onSelected: (CatColorEnum? color) {
+                              onSelected: (CatColorEnum? color) async {
                                 setState(() {
                                   if (color == null) return;
                                   selectedColor = color;
                                 });
+                                await reloadPrice();
                               },
                               dropdownMenuEntries: CatColorEnum.values
                                   .map<DropdownMenuEntry<CatColorEnum>>(
@@ -400,11 +402,13 @@ class _NewContractState extends State<NewContract> {
                               controller: personalityController,
                               requestFocusOnTap: true,
                               label: const Text('Persönlichkeit'),
-                              onSelected: (CatPersonalityEnum? personality) {
+                              onSelected:
+                                  (CatPersonalityEnum? personality) async {
                                 setState(() {
                                   if (personality == null) return;
                                   selectedPersonality = personality;
                                 });
+                                await reloadPrice();
                               },
                               dropdownMenuEntries: CatPersonalityEnum.values
                                   .map<DropdownMenuEntry<CatPersonalityEnum>>(
@@ -429,11 +433,13 @@ class _NewContractState extends State<NewContract> {
                               controller: environmentController,
                               requestFocusOnTap: true,
                               label: const Text('Umgebung'),
-                              onSelected: (CatEnvironmentEnum? environment) {
+                              onSelected:
+                                  (CatEnvironmentEnum? environment) async {
                                 setState(() {
                                   if (environment == null) return;
                                   selectedEnvironment = environment;
                                 });
+                                await reloadPrice();
                               },
                               dropdownMenuEntries: CatEnvironmentEnum.values
                                   .map<DropdownMenuEntry<CatEnvironmentEnum>>(
@@ -483,10 +489,11 @@ class _NewContractState extends State<NewContract> {
                               ),
                               Checkbox(
                                   value: isNeutered,
-                                  onChanged: (bool? value) {
+                                  onChanged: (bool? value) async {
                                     setState(() {
                                       isNeutered = value!;
                                     });
+                                    await reloadPrice();
                                   })
                             ],
                           ),
