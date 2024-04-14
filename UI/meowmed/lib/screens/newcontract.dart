@@ -19,8 +19,9 @@ import 'package:rxdart/rxdart.dart';
 enum PriceReloadingState { idle, loading, done }
 
 class NewContract extends StatefulWidget {
-  NewContract(this.customerRes);
+  NewContract(this.customerRes, this.reloadContracts);
   CachedObj<CustomerRes> customerRes;
+  VoidCallback? reloadContracts;
   @override
   State<NewContract> createState() => _NewContractState();
 }
@@ -197,8 +198,7 @@ class _NewContractState extends State<NewContract> {
                                     initialEntryMode:
                                         DatePickerEntryMode.calendarOnly,
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime.now()
-                                        .subtract(const Duration(days: 900)),
+                                    firstDate: DateTime.parse("2006-01-02"),
                                     lastDate: DateTime.now()
                                         .add(const Duration(days: 36500)),
                                   );
@@ -235,7 +235,7 @@ class _NewContractState extends State<NewContract> {
                                     initialEntryMode:
                                         DatePickerEntryMode.calendarOnly,
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
+                                    firstDate: DateTime.parse("2006-01-02"),
                                     lastDate: DateTime.now()
                                         .add(const Duration(days: 36500)),
                                   );
@@ -518,8 +518,7 @@ class _NewContractState extends State<NewContract> {
                   }
                   return Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
-                    child: buildErrorTile(
-                        "Fehler: ", snapshot.data!),
+                    child: buildErrorTile("Fehler: ", snapshot.data!),
                   );
                 },
               ),
@@ -535,6 +534,7 @@ class _NewContractState extends State<NewContract> {
                       }
                       final result = await save();
                       if (result) Navigator.pop(context);
+                      widget.reloadContracts!();
                     },
                   ),
                   SizedBox(
@@ -543,6 +543,7 @@ class _NewContractState extends State<NewContract> {
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context);
+                        widget.reloadContracts!();
                       },
                       child: Text("Abbrechen")),
                 ],

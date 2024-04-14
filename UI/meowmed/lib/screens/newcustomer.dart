@@ -14,8 +14,8 @@ import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NewCustomer extends StatefulWidget {
-  const NewCustomer({super.key});
-
+  NewCustomer(this.reloadCustomers, {super.key});
+  VoidCallback? reloadCustomers;
   @override
   State<NewCustomer> createState() => _NewCustomerState();
 }
@@ -487,6 +487,7 @@ class _NewCustomerState extends State<NewCustomer> {
                         }
                         await save();
                         Navigator.pop(context);
+                        widget.reloadCustomers!();
                       }),
                   SizedBox(
                     width: 30,
@@ -494,6 +495,7 @@ class _NewCustomerState extends State<NewCustomer> {
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context);
+                        widget.reloadCustomers!();
                       },
                       child: Text("Abbrechen")),
                   Expanded(child: Container()),

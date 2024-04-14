@@ -13,8 +13,9 @@ import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Contract extends StatefulWidget {
-  Contract(this.contract, {super.key});
+  Contract(this.contract, this.reloadContracts, {super.key});
   CachedObj<ContractRes> contract;
+  VoidCallback reloadContracts;
   @override
   State<Contract> createState() => _ContractState(contract);
 }
@@ -104,8 +105,7 @@ class _ContractState extends State<Contract> {
                                 initialEntryMode:
                                     DatePickerEntryMode.calendarOnly,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime.now()
-                                    .subtract(const Duration(days: 900)),
+                                firstDate: DateTime.parse("2006-01-02"),
                                 lastDate: DateTime.now()
                                     .add(const Duration(days: 36500)),
                               );
@@ -145,7 +145,7 @@ class _ContractState extends State<Contract> {
                                 initialEntryMode:
                                     DatePickerEntryMode.calendarOnly,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
+                                firstDate: DateTime.parse("2006-01-02"),
                                 lastDate: DateTime.now()
                                     .add(const Duration(days: 36500)),
                               );

@@ -146,7 +146,7 @@ class _DashboardState extends State<Dashboard> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NewCustomer()));
+                              builder: (context) => NewCustomer(loadCustomers)));
                     },
                     child: Text("Neuer Kunde"))
               ],
@@ -210,7 +210,7 @@ class _DashboardState extends State<Dashboard> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        Customer(e, true)));
+                                                        Customer(e, true, loadCustomers)));
                                           },
                                           icon: Icon(Icons.remove_red_eye)),
                                       IconButton(
@@ -219,7 +219,8 @@ class _DashboardState extends State<Dashboard> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        Customer(e, false)));
+                                                        Customer(e, false,
+                                                            loadCustomers)));
                                           },
                                           icon: Icon(Icons.edit)),
                                       IconButton(

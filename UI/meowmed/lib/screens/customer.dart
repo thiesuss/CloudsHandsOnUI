@@ -20,9 +20,11 @@ import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Customer extends StatefulWidget {
-  Customer(this.customer, this.readOnly, {super.key});
+  Customer(this.customer, this.readOnly, this.refreshCustomers, {super.key});
   CachedObj<CustomerRes> customer;
   bool readOnly = false;
+  VoidCallback? refreshCustomers;
+
   @override
   State<Customer> createState() => _CustomerState(customer);
 }
@@ -585,7 +587,8 @@ class _CustomerState extends State<Customer> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NewContract(customer)));
+                              builder: (context) =>
+                                  NewContract(customer, loadContracts)));
                     },
                     child: Text("Neuer Vertrag"))
               ],
@@ -657,7 +660,8 @@ class _CustomerState extends State<Customer> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      Contract(e)));
+                                                      Contract(
+                                                          e, loadContracts)));
                                         },
                                       ),
                                       IconButton(
@@ -696,8 +700,9 @@ class _CustomerState extends State<Customer> {
               children: [
                 Expanded(child: Container()),
                 TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.pop(context);
+                      widget.refreshCustomers!();
                     },
                     child: Text("Zurück")),
                 TextButton(
@@ -725,6 +730,7 @@ class _CustomerState extends State<Customer> {
                       final customerService = state.customerService;
                       await customerService.deleteCustomer(customer.getId());
                       Navigator.pop(context);
+                      widget.refreshCustomers!();
                     }),
                 Expanded(child: Container())
               ],
