@@ -47,6 +47,8 @@ func NewContractAPIService() ContractAPIServicer {
 // Gewicht außerhalb von Intervall -> Jedes kilo 5 Euro
 
 // CalculateRate - Calculate rate
+var globRate float32
+
 func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationReq RateCalculationReq) (ImplResponse, error) {
 	// Retrieve database credentials
 	db, err := connectToDB()
@@ -63,7 +65,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 
 	// Grundkosten
 	var promille float32
-	if rateCalculationReq.Breed == "schwarz" {
+	if rateCalculationReq.Breed == "Schwarz" {
 		promille = 0.002
 	} else {
 		promille = 0.0015
@@ -153,6 +155,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	monatlicheVersicherungskosten += float32(illRate)
 
 	rate.Rate = monatlicheVersicherungskosten
+	globRate = monatlicheVersicherungskosten
 
 	// Return success response with the rate details
 	return Response(http.StatusOK, rate), nil
@@ -229,7 +232,7 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving email from customer: %v", err)
 	}
 
-	SendEmail(customerEmail, "contract", err, &contractReq)
+	SendEmail(customerEmail, "contract", globRate, err, &contractReq)
 
 	return Response(http.StatusCreated, newContractRes), nil
 }
