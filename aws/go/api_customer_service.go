@@ -160,7 +160,7 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 		},
 	}
 
-	SendEmail(customerReq.Email, "customer", err)
+	SendEmail(customerReq.Email, "customer", err, nil)
 
 	return Response(http.StatusCreated, newCustomerRes), nil
 }

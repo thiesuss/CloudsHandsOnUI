@@ -229,7 +229,7 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving email from customer: %v", err)
 	}
 
-	SendEmail(customerEmail, "contract", err)
+	SendEmail(customerEmail, "contract", err, &contractReq)
 
 	return Response(http.StatusCreated, newContractRes), nil
 }
