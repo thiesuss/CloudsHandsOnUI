@@ -56,7 +56,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	defer db.Close()
 
 	if rateCalculationReq.Coverage > 50000 {
-		return Response(http.StatusBadRequest, nil), fmt.Errorf("Maximale Jahresdeckung beträgt 50,000: %v", err)
+		return Response(http.StatusBadRequest, nil), fmt.Errorf("maximale Jahresdeckung beträgt 50,000: %v", err)
 	}
 
 	var rate RateRes
@@ -81,7 +81,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	}
 
 	var lastQuartile float32
-	var min, max int
+	var min, max float32
 	var averageAge float32
 
 	err = db.QueryRowContext(ctx, `
@@ -93,7 +93,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving average age details: %v", err)
 	}
 
-	averageAge = float32((min + max) / 2)
+	averageAge = ((min + max) / 2)
 	lastQuartile = averageAge - (averageAge * 0.25)
 
 	// Konvertiere den Geburtsdatum-String in ein time.Time Objekt
@@ -109,7 +109,6 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	// Überprüfe, ob die Katze jünger als 2 Jahre ist
 	if alter < 2 {
 		prozentzuschlag += grundkosten * 0.1
-		//TODO: Außerhalb von Intervall
 	} else if float32(alter) > lastQuartile {
 		prozentzuschlag += grundkosten * 0.2
 	}
@@ -126,6 +125,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 
 	// Gewichtszuschlag
 	// GEWICHT IN GRAMM ANGEGEBEN!!!
+	catWeight := rateCalculationReq.Weight / 1000
 	err = db.QueryRowContext(ctx, `
 		SELECT Durchschnittsgewicht_min, Durchschnittsgewicht_max
 		FROM Rate 
@@ -134,10 +134,10 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving weight intervall details: %v", err)
 	}
-	if int(rateCalculationReq.Weight) < min { //TODO: Intervall
-		monatlicheVersicherungskosten += float32(min - int(rateCalculationReq.Weight)*5)
-	} else if int(rateCalculationReq.Weight) > max {
-		monatlicheVersicherungskosten += float32(int(rateCalculationReq.Weight) - max*5)
+	if catWeight < min {
+		monatlicheVersicherungskosten += (min - catWeight) * 5 //TODO Für jedes Kilo oder die genaue Differenz?
+	} else if catWeight > max {
+		monatlicheVersicherungskosten += (catWeight - max) * 5
 	}
 
 	// Krankheitswahrscheinlichkeitszuschlag
