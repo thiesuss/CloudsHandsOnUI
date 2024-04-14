@@ -98,6 +98,7 @@ class _NewContractState extends State<NewContract> {
       BehaviorSubject.seeded(PriceReloadingState.idle);
 
   Future<double> reloadPrice() async {
+    error.add(null);
     priceReloadingState.add(PriceReloadingState.loading);
     try {
       final coverage = int.parse(coverageController.text);
@@ -120,6 +121,7 @@ class _NewContractState extends State<NewContract> {
       return price;
     } catch (e) {
       priceReloadingState.add(PriceReloadingState.idle);
+      error.add(e.toString());
       print("Failed to reload price: $e");
     }
     return 0;
@@ -517,7 +519,7 @@ class _NewContractState extends State<NewContract> {
                   return Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: buildErrorTile(
-                        "Fehler beim speichern: ", snapshot.data!),
+                        "Fehler: ", snapshot.data!),
                   );
                 },
               ),
