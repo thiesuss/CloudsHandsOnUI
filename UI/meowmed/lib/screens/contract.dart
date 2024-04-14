@@ -183,6 +183,7 @@ class _ContractState extends State<Contract> {
                           ],
                           controller: coverageController,
                           decoration: InputDecoration(
+                              prefixText: "€ ",
                               border: OutlineInputBorder(),
                               labelText: "Deckung"),
                         )),
@@ -365,6 +366,7 @@ class _ContractState extends State<Contract> {
                           ],
                           controller: weightController,
                           decoration: InputDecoration(
+                              suffixText: "g",
                               border: OutlineInputBorder(),
                               labelText: "Gewicht"),
                         )),
