@@ -23,8 +23,8 @@ func SendEmail(receiverMail string, action string, rate float32, err error, cont
 		TextBody = "Wir haben Sie als Kunden registriert. Vielen Dank, dass Sie sich für uns als Versicherer Ihrer geliebten Katze entschieden haben."
 	} else if action == "contract" {
 		Subject = "Vertrag Bestätigung"
-		HTMLBody = "<h1>Sie haben den Vertrag erfolgreich abgeschlossen.</h1><p>Wir bestätigen Ihnen hiermit, dass wir Ihre Katze " + contractReq.CatName + " versichern. Die Monatlichen Versicherungskosten belaufen sich auf " + fmt.Sprintf("%.2f", rate) + "€</p>"
-		TextBody = "Sie haben den Vertrag erfolgreich abgeschlossen. Wir bestätigen Ihnen hiermit, dass wir Ihre Katze versichern."
+		HTMLBody = "<h1>Sie haben den Vertrag erfolgreich abgeschlossen.</h1><p>Wir bestätigen Ihnen hiermit, dass wir Ihre Katze " + contractReq.CatName + " versichern. Die monatlichen Versicherungskosten betragen " + fmt.Sprintf("%.2f", rate) + "€."
+		TextBody = "Sie haben den Vertrag erfolgreich abgeschlossen. Wir bestätigen Ihnen hiermit, dass wir Ihre Katze " + contractReq.CatName + " versichern. Die monatlichen Versicherungskosten betragen " + fmt.Sprintf("%.2f", rate) + "€."
 	} else {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("invalid Email Type: %v", err)
 	}
