@@ -146,7 +146,7 @@ class _NewCustomerState extends State<NewCustomer> {
                 children: [
                   Expanded(child: Container()),
                   Container(
-                      height: 50,
+                      height: 70,
                       width: 230,
                       child: TextFormField(
                         controller: taxIdController,
@@ -270,7 +270,7 @@ class _NewCustomerState extends State<NewCustomer> {
                 children: [
                   Expanded(child: Container()),
                   Container(
-                      height: 50,
+                      height: 70,
                       width: 230,
                       child: TextFormField(
                         controller: socialSecurityNumberController,
@@ -351,7 +351,7 @@ class _NewCustomerState extends State<NewCustomer> {
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
                       Container(
                           height: 50,
@@ -372,7 +372,7 @@ class _NewCustomerState extends State<NewCustomer> {
                                 labelText: "Zip-Code"),
                           )),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
                       Container(
                           height: 50,
@@ -415,7 +415,7 @@ class _NewCustomerState extends State<NewCustomer> {
                         height: 10,
                       ),
                       Container(
-                          height: 50,
+                          height: 70,
                           width: 430,
                           child: TextFormField(
                             controller: bicController,

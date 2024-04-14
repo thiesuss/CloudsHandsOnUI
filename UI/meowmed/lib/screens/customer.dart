@@ -327,7 +327,7 @@ class _CustomerState extends State<Customer> {
                       height: 20,
                     ),
                     Container(
-                        height: 50,
+                        height: 70,
                         width: 230,
                         child: TextFormField(
                           controller: svnummercontroller,
@@ -354,7 +354,7 @@ class _CustomerState extends State<Customer> {
                       height: 20,
                     ),
                     Container(
-                        height: 50,
+                        height: 70,
                         width: 230,
                         child: TextFormField(
                           controller: steueridcontroller,
@@ -524,7 +524,7 @@ class _CustomerState extends State<Customer> {
                           height: 10,
                         ),
                         Container(
-                            height: 50,
+                            height: 70,
                             width: 430,
                             child: TextFormField(
                               controller: bicController,
