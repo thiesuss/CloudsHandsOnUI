@@ -65,7 +65,7 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 
 	// Grundkosten
 	var promille float32
-	if rateCalculationReq.Breed == "Schwarz" {
+	if rateCalculationReq.Color == "Schwarz" {
 		promille = 0.002
 	} else {
 		promille = 0.0015
