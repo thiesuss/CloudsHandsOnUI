@@ -352,10 +352,10 @@ class _NewCustomerState extends State<NewCustomer> {
                         ],
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Container(
-                          height: 50,
+                          height: 70,
                           width: 430,
                           child: TextFormField(
                             controller: zipCodeController,
@@ -378,7 +378,7 @@ class _NewCustomerState extends State<NewCustomer> {
                                 labelText: "Zip-Code"),
                           )),
                       SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Container(
                           height: 50,
