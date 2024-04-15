@@ -68,13 +68,13 @@ class _NewContractState extends State<NewContract> {
     final coverage = int.parse(coverageController.text);
     final weight = double.parse(weightController.text);
     final contractReq = ContractReq(
-      startDate: startDate,
-      endDate: endDate,
+      startDate: startDate.add(const Duration(days: 1)),
+      endDate: endDate.add(const Duration(days: 1)),
       coverage: coverage,
       catName: catNameController.text,
       breed: breedController.text,
       color: colorController.text,
-      birthDate: birthDate,
+      birthDate: birthDate.add(const Duration(days: 1)),
       neutered: isNeutered, //checkbox setState
       personality: personalityController.text,
       environment: environmentController.text,
@@ -109,7 +109,7 @@ class _NewContractState extends State<NewContract> {
           coverage: coverage,
           breed: breedController.text,
           color: colorController.text,
-          birthDate: birthDate,
+          birthDate: birthDate.add(const Duration(days: 1)),
           neutered: isNeutered,
           personality: personalityController.text,
           environment: environmentController.text,
