@@ -182,13 +182,45 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		return Response(http.StatusBadRequest, nil), fmt.Errorf(validationErr)
 	}
 
+	var zipCode float32
+
+	// Perform database query
+	err = db.QueryRowContext(ctx, `
+	SELECT
+		cu.zipCode
+	FROM
+		Customer cu
+	WHERE
+		cu.id = ?`, contractReq.CustomerId).Scan(&zipCode)
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving zipcode from customer: %v", err)
+	}
+
+	// Calculate rate
+	rateCalculationReq := RateCalculationReq{
+		Coverage:    contractReq.Coverage,
+		Color:       contractReq.Color,
+		Breed:       contractReq.Breed,
+		BirthDate:   contractReq.BirthDate,
+		Neutered:    contractReq.Neutered,
+		Weight:      contractReq.Weight,
+		ZipCode:     zipCode,
+		Personality: contractReq.Personality,
+		Environment: contractReq.Environment,
+	}
+
+	rateRes, err := s.CalculateRate(ctx, rateCalculationReq)
+	if err != nil {
+		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error calculating rate: %v", err)
+	}
+
 	// Insert into Contract table
 	newContractID := uuid.New().String()
 	_, err = tx.ExecContext(context.Background(), `
 		INSERT INTO Contract (id, startDate, endDate, coverage, catName, breed, color, birthDate, neutered, personality, environment, weight, customerId, rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		newContractID, contractReq.StartDate, contractReq.EndDate, contractReq.Coverage, contractReq.CatName, contractReq.Breed, contractReq.Color,
-		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId, contractReq.Rate)
+		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId, rateRes)
 	if err != nil {
 		tx.Rollback()
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Contract table: %v", err)
