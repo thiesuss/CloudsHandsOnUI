@@ -504,6 +504,7 @@ components:
       - personality
       - startDate
       - weight
+      - rate
       type: object
     ContractRes:
       allOf:
