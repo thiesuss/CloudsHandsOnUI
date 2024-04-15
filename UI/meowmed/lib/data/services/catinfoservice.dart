@@ -137,12 +137,10 @@ class CatPersonalityEnum {
 
   static const anhaenglich = CatPersonalityEnum._(r'Anhänglich');
   static const spielerisch = CatPersonalityEnum._(r'Spielerisch');
-  static const besonderVerspielt = CatPersonalityEnum._(r'Besonders verspielt');
 
   static const values = <CatPersonalityEnum>[
     anhaenglich,
     spielerisch,
-    besonderVerspielt,
   ];
 
   static String personalityToString(CatPersonalityEnum personality) {
@@ -151,8 +149,6 @@ class CatPersonalityEnum {
         return 'Anhänglich';
       case (CatPersonalityEnum.spielerisch):
         return 'Spielerisch';
-      case (CatPersonalityEnum.besonderVerspielt):
-        return 'Besonders verspielt';
       default:
         throw 'Keine Persönlichkeit vorhanden';
     }
