@@ -1,6 +1,7 @@
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/contractservice.dart';
@@ -41,6 +42,7 @@ class _ContractState extends State<Contract> {
   TextEditingController environmentController = TextEditingController();
   TextEditingController weightController = TextEditingController();
   TextEditingController customerIdController = TextEditingController();
+  TextEditingController rateController = TextEditingController();
 
   bool editMode = false; //erstmal kein editieren erlaubt
 
@@ -53,6 +55,7 @@ class _ContractState extends State<Contract> {
     startDate = obj.startDate.add(const Duration(days: 1));
     endDate = obj.endDate.add(const Duration(days: 1));
     coverageController.text = obj.coverage.toString();
+    rateController.text = obj.rate.toString();
     catNameController.text = obj.catName;
     breedController.text = obj.breed;
     colorController.text = obj.color;
@@ -97,7 +100,7 @@ class _ContractState extends State<Contract> {
                               return "Bitte Startdatum angeben";
                             }
                             final date = DateFormat('dd.MM.yyyy').parse(value);
-                            if (![1,15].contains(date.day))
+                            if (![1, 15].contains(date.day))
                               return "Nur 1. oder 15. eines Monats erlaubt";
                             return null;
                           },
@@ -139,10 +142,9 @@ class _ContractState extends State<Contract> {
                             if (value == null) {
                               return "Bitte Enddatum angeben";
                             }
-                             final date =
-                                      DateFormat('dd.MM.yyyy').parse(value);
-                              if (![14, 31].contains(date.day))
-                                return "Nur 14. oder 31. eines Monats erlaubt";
+                            final date = DateFormat('dd.MM.yyyy').parse(value);
+                            if (![14, 31].contains(date.day))
+                              return "Nur 14. oder 31. eines Monats erlaubt";
                             return null;
                           },
                           onTap: () async {
@@ -193,6 +195,34 @@ class _ContractState extends State<Contract> {
                               prefixText: "€ ",
                               border: OutlineInputBorder(),
                               labelText: "Deckung"),
+                        )),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        height: 50,
+                        width: 230,
+                        child: TextFormField(
+                          readOnly: !editMode,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Eingabe darf nicht leer sein';
+                            }
+                            try {
+                              double.parse(value);
+                            } catch (e) {
+                              return 'Ungültige Eingabe';
+                            }
+                            return null;
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          controller: rateController,
+                          decoration: InputDecoration(
+                              prefixText: "€ ",
+                              border: OutlineInputBorder(),
+                              labelText: "Rate"),
                         )),
                   ],
                 ),

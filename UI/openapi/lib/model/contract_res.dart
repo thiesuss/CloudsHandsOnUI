@@ -26,6 +26,7 @@ class ContractRes {
     required this.environment,
     required this.weight,
     required this.customerId,
+    required this.rate,
   });
 
   String id;
@@ -57,58 +58,65 @@ class ContractRes {
   num weight;
 
   String customerId;
+  num rate;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is ContractRes &&
-    other.id == id &&
-    other.startDate == startDate &&
-    other.endDate == endDate &&
-    other.coverage == coverage &&
-    other.catName == catName &&
-    other.breed == breed &&
-    other.color == color &&
-    other.birthDate == birthDate &&
-    other.neutered == neutered &&
-    other.personality == personality &&
-    other.environment == environment &&
-    other.weight == weight &&
-    other.customerId == customerId;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ContractRes &&
+          other.id == id &&
+          other.startDate == startDate &&
+          other.endDate == endDate &&
+          other.coverage == coverage &&
+          other.catName == catName &&
+          other.breed == breed &&
+          other.color == color &&
+          other.birthDate == birthDate &&
+          other.neutered == neutered &&
+          other.personality == personality &&
+          other.environment == environment &&
+          other.weight == weight &&
+          other.rate == rate &&
+          other.customerId == customerId;
 
   @override
   int get hashCode =>
-    // ignore: unnecessary_parenthesis
-    (id.hashCode) +
-    (startDate.hashCode) +
-    (endDate.hashCode) +
-    (coverage.hashCode) +
-    (catName.hashCode) +
-    (breed.hashCode) +
-    (color.hashCode) +
-    (birthDate.hashCode) +
-    (neutered.hashCode) +
-    (personality.hashCode) +
-    (environment.hashCode) +
-    (weight.hashCode) +
-    (customerId.hashCode);
+      // ignore: unnecessary_parenthesis
+      (id.hashCode) +
+      (startDate.hashCode) +
+      (endDate.hashCode) +
+      (coverage.hashCode) +
+      (catName.hashCode) +
+      (breed.hashCode) +
+      (color.hashCode) +
+      (birthDate.hashCode) +
+      (neutered.hashCode) +
+      (personality.hashCode) +
+      (environment.hashCode) +
+      (weight.hashCode) +
+      (rate.hashCode) +
+      (customerId.hashCode);
 
   @override
-  String toString() => 'ContractRes[id=$id, startDate=$startDate, endDate=$endDate, coverage=$coverage, catName=$catName, breed=$breed, color=$color, birthDate=$birthDate, neutered=$neutered, personality=$personality, environment=$environment, weight=$weight, customerId=$customerId]';
+  String toString() =>
+      'ContractRes[id=$id, startDate=$startDate, endDate=$endDate, coverage=$coverage, catName=$catName, breed=$breed, color=$color, birthDate=$birthDate, neutered=$neutered, personality=$personality, environment=$environment, weight=$weight, rate=$rate, customerId=$customerId]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-      json[r'id'] = this.id;
-      json[r'startDate'] = _dateFormatter.format(this.startDate.toUtc());
-      json[r'endDate'] = _dateFormatter.format(this.endDate.toUtc());
-      json[r'coverage'] = this.coverage;
-      json[r'catName'] = this.catName;
-      json[r'breed'] = this.breed;
-      json[r'color'] = this.color;
-      json[r'birthDate'] = _dateFormatter.format(this.birthDate.toUtc());
-      json[r'neutered'] = this.neutered;
-      json[r'personality'] = this.personality;
-      json[r'environment'] = this.environment;
-      json[r'weight'] = this.weight;
-      json[r'customerId'] = this.customerId;
+    json[r'id'] = this.id;
+    json[r'startDate'] = _dateFormatter.format(this.startDate.toUtc());
+    json[r'endDate'] = _dateFormatter.format(this.endDate.toUtc());
+    json[r'coverage'] = this.coverage;
+    json[r'catName'] = this.catName;
+    json[r'breed'] = this.breed;
+    json[r'color'] = this.color;
+    json[r'birthDate'] = _dateFormatter.format(this.birthDate.toUtc());
+    json[r'neutered'] = this.neutered;
+    json[r'personality'] = this.personality;
+    json[r'environment'] = this.environment;
+    json[r'weight'] = this.weight;
+    json[r'customerId'] = this.customerId;
+    json[r'rate'] = this.rate;
     return json;
   }
 
@@ -124,8 +132,10 @@ class ContractRes {
       // Note 2: this code is stripped in release mode!
       assert(() {
         requiredKeys.forEach((key) {
-          assert(json.containsKey(key), 'Required key "ContractRes[$key]" is missing from JSON.');
-          assert(json[key] != null, 'Required key "ContractRes[$key]" has a null value in JSON.');
+          assert(json.containsKey(key),
+              'Required key "ContractRes[$key]" is missing from JSON.');
+          assert(json[key] != null,
+              'Required key "ContractRes[$key]" has a null value in JSON.');
         });
         return true;
       }());
@@ -144,12 +154,16 @@ class ContractRes {
         environment: mapValueOfType<String>(json, r'environment')!,
         weight: num.parse('${json[r'weight']}'),
         customerId: mapValueOfType<String>(json, r'customerId')!,
+        rate: num.parse('${json[r'rate']}'),
       );
     }
     return null;
   }
 
-  static List<ContractRes> listFromJson(dynamic json, {bool growable = false,}) {
+  static List<ContractRes> listFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final result = <ContractRes>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -177,13 +191,19 @@ class ContractRes {
   }
 
   // maps a json object with a list of ContractRes-objects as value to a dart map
-  static Map<String, List<ContractRes>> mapListFromJson(dynamic json, {bool growable = false,}) {
+  static Map<String, List<ContractRes>> mapListFromJson(
+    dynamic json, {
+    bool growable = false,
+  }) {
     final map = <String, List<ContractRes>>{};
     if (json is Map && json.isNotEmpty) {
       // ignore: parameter_assignments
       json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        map[entry.key] = ContractRes.listFromJson(entry.value, growable: growable,);
+        map[entry.key] = ContractRes.listFromJson(
+          entry.value,
+          growable: growable,
+        );
       }
     }
     return map;
@@ -203,7 +223,7 @@ class ContractRes {
     'personality',
     'environment',
     'weight',
+    'rate',
     'customerId',
   };
 }
-
