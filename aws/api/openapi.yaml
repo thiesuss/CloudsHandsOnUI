@@ -1,0 +1,685 @@
+openapi: 3.0.0
+info:
+  title: Cat Insurance API
+  version: 1.0.0
+servers:
+- url: https://api.catinsurance.com/v1
+paths:
+  /customers:
+    get:
+      operationId: getCustomers
+      parameters:
+      - description: Page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Items per page
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CustomerRes'
+                type: array
+          description: Customers
+      summary: Get all customers
+      tags:
+      - Customer
+    post:
+      operationId: createCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerReq'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerRes'
+          description: Customer created
+        "400":
+          description: Invalid input data
+      summary: Create a new customer
+      tags:
+      - Customer
+  /contracts:
+    post:
+      operationId: createContract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractReq'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractRes'
+          description: Contract created
+        "400":
+          description: Invalid input data
+      summary: Create a new contract
+      tags:
+      - Contract
+  /contracts/rate:
+    post:
+      operationId: calculateRate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateCalculationReq'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateRes'
+          description: Rate calculated
+      summary: Calculate rate
+      tags:
+      - Contract
+  /customers/search:
+    get:
+      operationId: searchCustomers
+      parameters:
+      - explode: true
+        in: query
+        name: text
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: Page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Items per page
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CustomerRes'
+                type: array
+          description: Search results
+      summary: Search for customers
+      tags:
+      - Customer
+  /customers/{customerId}:
+    delete:
+      operationId: deleteCustomer
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Customer deleted
+      summary: Delete a customer
+      tags:
+      - Customer
+    get:
+      operationId: getCustomer
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerRes'
+          description: a
+      summary: Get customer details
+      tags:
+      - Customer
+    patch:
+      operationId: updateCustomer
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerReq'
+        required: true
+      responses:
+        "200":
+          description: Customer updated
+        "400":
+          description: Invalid input data
+      summary: Update a customer
+      tags:
+      - Customer
+  /customers/{customerId}/contracts:
+    get:
+      operationId: getCustomerContracts
+      parameters:
+      - explode: false
+        in: path
+        name: customerId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Items per page
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ContractRes'
+                type: array
+          description: Customer contracts
+      summary: Get customer contracts
+      tags:
+      - Customer
+      - Contract
+  /contracts/{contractId}:
+    get:
+      operationId: getContract
+      parameters:
+      - explode: false
+        in: path
+        name: contractId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractRes'
+          description: Contract details
+      tags:
+      - Contract
+  /employees:
+    patch:
+      operationId: updateEmployee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeReq'
+        required: true
+      responses:
+        "200":
+          description: Employee updated
+        "400":
+          description: Invalid input data
+      summary: Update an employee
+      tags:
+      - Employee
+    post:
+      operationId: createEmployee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeReq'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeRes'
+          description: Employee created
+        "400":
+          description: Invalid input data
+      summary: Create a new employee
+      tags:
+      - Employee
+  /employees/{employeeId}:
+    get:
+      operationId: getEmployee
+      parameters:
+      - explode: false
+        in: path
+        name: employeeId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeRes'
+          description: Employee details
+      summary: Get employee details
+      tags:
+      - Employee
+components:
+  schemas:
+    CustomerReq:
+      example:
+        firstName: Max
+        lastName: Mustermann
+        bankDetails:
+          iban: DE89 3704 0044 0532 0130 00
+          name: Max Mustermann
+          id: 123e4567-e89b-12d3-a456-426614174000
+          bic: INGDDEFFXXX
+        jobStatus: arbeitslos
+        address:
+          zipCode: 12345
+          city: Musterstadt
+          street: Beispielstrasse
+          houseNumber: "42"
+          id: 123e4567-e89b-12d3-a456-426614174000
+        socialSecurityNumber: "12345678901"
+        taxId: "12345678901"
+        title: Dr.
+        birthDate: 2000-01-23
+        email: email
+        familyStatus: ledig
+      properties:
+        email:
+          format: email
+          type: string
+        firstName:
+          example: Max
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        lastName:
+          example: Mustermann
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        title:
+          enum:
+          - Dr.
+          - Prof. Dr.
+          - Dr. Dr.
+          - Prof. Dr. Dr
+          type: string
+        familyStatus:
+          enum:
+          - ledig
+          - verheiratet
+          - geschieden
+          - verwitwet
+          type: string
+        birthDate:
+          format: date
+          type: string
+        socialSecurityNumber:
+          example: "12345678901"
+          pattern: "^[0-9]{12}$"
+          type: string
+        taxId:
+          example: "12345678901"
+          pattern: "^[0-9]{11}$"
+          type: string
+        jobStatus:
+          enum:
+          - arbeitslos
+          - Schueler
+          - Student
+          - Vollzeit
+          - Teilzeit
+          - Minijob
+          - Werkstudent
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        bankDetails:
+          $ref: '#/components/schemas/BankDetails'
+      required:
+      - address
+      - bankDetails
+      - birthDate
+      - email
+      - familyStatus
+      - firstName
+      - grossIncome
+      - jobStatus
+      - lastName
+      - socialSecurityNumber
+      - taxId
+      type: object
+    CustomerRes:
+      allOf:
+      - $ref: '#/components/schemas/CustomerReq'
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+      properties:
+        id:
+          example: 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      required:
+      - id
+    ContractReq:
+      example:
+        coverage: 50000
+        environment: Stadt
+        color: orange
+        personality: verspielt
+        endDate: 2000-01-23
+        catName: Minka
+        customerId: 123e4567-e89b-12d3-a456-426614174000
+        weight: 50.0800828190461
+        birthDate: 2000-01-23
+        neutered: true
+        startDate: 2000-01-23
+        breed: bengal
+      properties:
+        startDate:
+          format: date
+          type: string
+        endDate:
+          format: date
+          type: string
+        coverage:
+          example: 50000
+          minimum: 1
+          type: number
+        catName:
+          example: Minka
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        breed:
+          example: bengal
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        color:
+          example: orange
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        birthDate:
+          format: date
+          type: string
+        neutered:
+          type: boolean
+        personality:
+          example: verspielt
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        environment:
+          example: Stadt
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        weight:
+          description: In Gramm
+          minimum: 50
+          type: number
+        customerId:
+          example: 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      required:
+      - birthDate
+      - breed
+      - catName
+      - color
+      - coverage
+      - customerId
+      - endDate
+      - environment
+      - neutered
+      - personality
+      - startDate
+      - weight
+      type: object
+    ContractRes:
+      allOf:
+      - $ref: '#/components/schemas/ContractReq'
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+      properties:
+        id:
+          example: 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      required:
+      - id
+    RateCalculationReq:
+      example:
+        coverage: 50000
+        zipCode: 60273.95908508573
+        environment: Stadt
+        color: orange
+        personality: wild
+        weight: 50.0800828190461
+        birthDate: 2000-01-23
+        neutered: true
+        breed: bengal
+      properties:
+        coverage:
+          example: 50000
+          minimum: 1
+          type: number
+        breed:
+          example: bengal
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        color:
+          example: orange
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        birthDate:
+          format: date
+          type: string
+        neutered:
+          type: boolean
+        personality:
+          example: wild
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        environment:
+          example: Stadt
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        weight:
+          description: In Gramm
+          minimum: 50
+          type: number
+        zipCode:
+          maximum: 99999
+          minimum: 0
+          type: number
+      required:
+      - birthDate
+      - breed
+      - color
+      - coverage
+      - environment
+      - neutered
+      - personality
+      - weight
+      - zipCode
+      type: object
+    RateRes:
+      example:
+        rate: 8008.201821791069
+      properties:
+        rate:
+          maximum: 99999
+          minimum: 0
+          type: number
+      type: object
+    Address:
+      example:
+        zipCode: 12345
+        city: Musterstadt
+        street: Beispielstrasse
+        houseNumber: "42"
+        id: 123e4567-e89b-12d3-a456-426614174000
+      properties:
+        street:
+          example: Beispielstrasse
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        houseNumber:
+          example: "42"
+          pattern: "^[0-9]{1,3}[a-z]?$"
+          type: string
+        zipCode:
+          example: 12345
+          maximum: 99999
+          minimum: 0
+          type: number
+        city:
+          example: Musterstadt
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        id:
+          example: 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      required:
+      - city
+      - houseNumber
+      - id
+      - street
+      - zipCode
+      type: object
+    BankDetails:
+      example:
+        iban: DE89 3704 0044 0532 0130 00
+        name: Max Mustermann
+        id: 123e4567-e89b-12d3-a456-426614174000
+        bic: INGDDEFFXXX
+      properties:
+        iban:
+          example: DE89 3704 0044 0532 0130 00
+          pattern: "^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$"
+          type: string
+        bic:
+          example: INGDDEFFXXX
+          pattern: "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+          type: string
+        name:
+          example: Max Mustermann
+          pattern: "^[A-Za-zß]+(?:\s[A-Za-zß]+)*$"
+          type: string
+        id:
+          example: 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      required:
+      - bic
+      - iban
+      - id
+      - name
+      type: object
+    EmployeeReq:
+      example:
+        firstName: Max
+        lastName: Mustermann
+        address:
+          zipCode: 12345
+          city: Musterstadt
+          street: Beispielstrasse
+          houseNumber: "42"
+          id: 123e4567-e89b-12d3-a456-426614174000
+      properties:
+        firstName:
+          example: Max
+          type: string
+        lastName:
+          example: Mustermann
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+      required:
+      - address
+      - firstName
+      - lastName
+      type: object
+    EmployeeRes:
+      allOf:
+      - $ref: '#/components/schemas/EmployeeReq'
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+      properties:
+        id:
+          example: 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      required:
+      - id
