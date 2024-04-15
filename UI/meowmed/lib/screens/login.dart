@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -137,18 +138,30 @@ class _LoginPageState extends State<LoginPage> {
     final username = _usernameController.text;
     final password = _passwordController.text;
 
-    final loggedOutState =
-        LoginStateContext.getInstance().state as LoggedOutState;
+    // Construct your authentication request
+    final Map<String, dynamic> authData = {
+      'grant_type': 'password',
+      'client_id': '1mca5mnteu171qjom85iie7ij7',
+      'username': username,
+      'password': password,
+    };
 
-    //TODO: remove, this is just there,
-    // so the user can see what url was chosen
-    await Future.delayed(Duration(seconds: 1), () {});
+    final String userPoolURL = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_N3VD2ejUL/oauth2/token';
+
+    final Uri tokenEndpoint = Uri.parse(userPoolURL);
 
     try {
-      await loggedOutState.login(username, password, backendUrlController.text);
-    } on Exception catch (e) {
+      final response = await http.post(
+        tokenEndpoint,
+        body: authData,
+      );
+
+      // Parse the response
+      final responseData = json.decode(response.body);
+      // Handle the response accordingly
+    } catch (error) {
       setState(() {
-        _errorMessage = e.toString();
+        _errorMessage = 'Authentication failed: $error';
       });
     } finally {
       setState(() {
