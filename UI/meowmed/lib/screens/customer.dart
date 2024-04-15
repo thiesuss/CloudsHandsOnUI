@@ -349,6 +349,7 @@ class _CustomerState extends State<Customer> {
                           maxLength: 12,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
+                            hintText: "bsp: 12345678A123",
                             labelText: "SV-Nummer",
                           ),
                         )),
@@ -467,9 +468,13 @@ class _CustomerState extends State<Customer> {
                             child: TextFormField(
                               controller: zipCodeController,
                               readOnly: widget.readOnly,
+                              maxLength: 5,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
+                                }
+                                if (value.length != 5) {
+                                  return "Zip-Code muss 5 Zeichen lang sein";
                                 }
                                 return null;
                               },
@@ -478,6 +483,7 @@ class _CustomerState extends State<Customer> {
                               ],
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(),
+                                  hintText: "bsp: 12345",
                                   labelText: "Zip-Code"),
                             )),
                         SizedBox(
@@ -536,13 +542,14 @@ class _CustomerState extends State<Customer> {
                                 if (value == null || value.isEmpty) {
                                   return 'Eingabe darf nicht leer sein';
                                 }
-                                if (value.length != 11) {
-                                  return 'BIC muss 11 Zeichen lang sein';
+                                if (value.length != 11 && value.length != 8) {
+                                  return 'BIC muss 8 oder 11 Zeichen lang sein';
                                 }
                                 return null;
                               },
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(),
+                                  hintText: "bsp: ABCDEF12ABC",
                                   labelText: "BIC"),
                             )),
                         SizedBox(
@@ -654,7 +661,7 @@ class _CustomerState extends State<Customer> {
                                   DataCell(Row(
                                     children: [
                                       IconButton(
-                                        icon: Icon(Icons.edit),
+                                        icon: Icon(Icons.remove_red_eye),
                                         onPressed: () {
                                           Navigator.push(
                                               context,

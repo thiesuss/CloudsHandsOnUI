@@ -286,6 +286,7 @@ class _NewCustomerState extends State<NewCustomer> {
                         },
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
+                            hintText: "bsp: 12345678A123",
                             labelText: "SV-Nummer"),
                       )),
                   SizedBox(
@@ -358,9 +359,13 @@ class _NewCustomerState extends State<NewCustomer> {
                           width: 430,
                           child: TextFormField(
                             controller: zipCodeController,
+                            maxLength: 5,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Eingabe darf nicht leer sein';
+                              }
+                              if (value.length != 5) {
+                                return "Zip-Code muss 5 Zeichen lang sein";
                               }
                               return null;
                             },
@@ -369,6 +374,7 @@ class _NewCustomerState extends State<NewCustomer> {
                             ],
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(),
+                                hintText: "bsp: 12345",
                                 labelText: "Zip-Code"),
                           )),
                       SizedBox(
@@ -424,13 +430,15 @@ class _NewCustomerState extends State<NewCustomer> {
                               if (value == null || value.isEmpty) {
                                 return 'Eingabe darf nicht leer sein';
                               }
-                              if (value.length != 11) {
-                                return "BIC muss 11 Zeichen lang sein";
+                              if (value.length != 11 && value.length != 8) {
+                                return 'BIC muss 8 oder 11 Zeichen lang sein';
                               }
                               return null;
                             },
                             decoration: InputDecoration(
-                                border: OutlineInputBorder(), labelText: "BIC"),
+                                border: OutlineInputBorder(),
+                                hintText: "bsp: ABCDEF12ABC",
+                                labelText: "BIC"),
                           )),
                       SizedBox(
                         height: 10,
