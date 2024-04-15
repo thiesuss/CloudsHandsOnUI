@@ -96,6 +96,9 @@ class _ContractState extends State<Contract> {
                             if (value == null) {
                               return "Bitte Startdatum angeben";
                             }
+                            final date = DateFormat('dd.MM.yyyy').parse(value);
+                            if (date.day != 1 || date.day != 15)
+                              return "Nur 1. oder 15. eines Monats erlaubt";
                             return null;
                           },
                           onTap: () async {
@@ -136,6 +139,10 @@ class _ContractState extends State<Contract> {
                             if (value == null) {
                               return "Bitte Enddatum angeben";
                             }
+                             final date =
+                                      DateFormat('dd.MM.yyyy').parse(value);
+                              if (date.day != 14 || date.day != 31)
+                                return "Nur 14. oder 31. eines Monats erlaubt";
                             return null;
                           },
                           onTap: () async {

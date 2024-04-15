@@ -1,0 +1,107 @@
+# Generating a complete AWS SAM template for Golang without placeholders, including all operations specified in the user's OpenAPI spec.
+
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Cat Insurance API Deployment - Complete Golang Version
+
+Globals:
+  Function:
+    Timeout: 30
+  Api:
+    Cors:
+      AllowOrigin: "'*'"
+
+Resources:
+  CatInsuranceAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: CatInsuranceAPI
+      StageName: v1
+      DefinitionBody:
+        openapi: 3.0.0
+        info:
+          title: Cat Insurance API
+          version: 1.0.0
+        paths:
+          /customers:
+            post:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateCustomerFunction.Arn}/invocations
+                httpMethod: POST
+                type: aws_proxy
+            get:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCustomersFunction.Arn}/invocations
+                httpMethod: GET
+                type: aws_proxy
+          /contracts:
+            post:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateContractFunction.Arn}/invocations
+                httpMethod: POST
+                type: aws_proxy
+          /contracts/rate:
+            post:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CalculateRateFunction.Arn}/invocations
+                httpMethod: POST
+                type: aws_proxy
+          /customers/search:
+            get:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchCustomersFunction.Arn}/invocations
+                httpMethod: GET
+                type: aws_proxy
+          /customers/{customerId}:
+            get:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCustomerFunction.Arn}/invocations
+                httpMethod: GET
+                type: aws_proxy
+            delete:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteCustomerFunction.Arn}/invocations
+                httpMethod: DELETE
+                type: aws_proxy
+            patch:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateCustomerFunction.Arn}/invocations
+                httpMethod: PATCH
+                type: aws_proxy
+          /customers/{customerId}/contracts:
+            get:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCustomerContractsFunction.Arn}/invocations
+                httpMethod: GET
+                type: aws_proxy
+          /contracts/{contractId}:
+            get:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetContractFunction.Arn}/invocations
+                httpMethod: GET
+                type: aws_proxy
+          /employees:
+            post:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateEmployeeFunction.Arn}/invocations
+                httpMethod: POST
+                type: aws_proxy
+            patch:
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateEmployeeFunction.Arn}/invocations
+                httpMethod: PATCH
+                type: aws_proxy
+          /employees/{employeeId}:
+            get:
