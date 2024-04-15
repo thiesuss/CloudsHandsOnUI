@@ -57,6 +57,11 @@ func validateCat(contractReq ContractReq) string {
 		return "end date is before start date"
 	}
 
+	//Überprüft, ob die Versicherungsdauer mindestens 1 Jahr beträgt
+	if parsedEndDate.Sub(parsedStartDate).Hours() < 24*365 {
+		return "insurance duration must be at least 1 year"
+	}
+
 	if strings.ToLower(contractReq.Personality) == "besonders verspielt" {
 		return "keine Versicherung für besonders verspielte Katzen möglich"
 	}

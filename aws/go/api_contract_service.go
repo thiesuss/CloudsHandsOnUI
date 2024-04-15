@@ -48,7 +48,6 @@ func NewContractAPIService() ContractAPIServicer {
 // Gewicht außerhalb von Intervall -> Jedes kilo 5 Euro
 
 // CalculateRate - Calculate rate
-var globRate float32
 
 func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationReq RateCalculationReq) (ImplResponse, error) {
 	// Retrieve database credentials
@@ -156,7 +155,6 @@ func (s *ContractAPIService) CalculateRate(ctx context.Context, rateCalculationR
 	monatlicheVersicherungskosten += float32(illRate)
 
 	rate.Rate = float32(math.Round(float64(monatlicheVersicherungskosten)*100) / 100)
-	globRate = monatlicheVersicherungskosten
 
 	// Return success response with the rate details
 	return Response(http.StatusOK, rate), nil
@@ -187,10 +185,10 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 	// Insert into Contract table
 	newContractID := uuid.New().String()
 	_, err = tx.ExecContext(context.Background(), `
-		INSERT INTO Contract (id, startDate, endDate, coverage, catName, breed, color, birthDate, neutered, personality, environment, weight, customerId)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		INSERT INTO Contract (id, startDate, endDate, coverage, catName, breed, color, birthDate, neutered, personality, environment, weight, customerId, rate)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		newContractID, contractReq.StartDate, contractReq.EndDate, contractReq.Coverage, contractReq.CatName, contractReq.Breed, contractReq.Color,
-		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId)
+		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId, contractReq.Rate)
 	if err != nil {
 		tx.Rollback()
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Contract table: %v", err)
@@ -216,6 +214,7 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		Environment: contractReq.Environment,
 		Weight:      contractReq.Weight,
 		CustomerId:  contractReq.CustomerId,
+		Rate:        contractReq.Rate,
 	}
 
 	//Send Email for new contract
@@ -233,7 +232,7 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving email from customer: %v", err)
 	}
 
-	SendEmail(customerEmail, "contract", globRate, err, &contractReq)
+	SendEmail(customerEmail, "contract", err, &contractReq)
 
 	return Response(http.StatusCreated, newContractRes), nil
 }
@@ -254,7 +253,7 @@ func (s *ContractAPIService) GetContract(ctx context.Context, contractId string)
 	err = db.QueryRowContext(ctx, `
 	SELECT
 		co.id, co.startDate, co.endDate, co.coverage, co.catName, co.breed, co.color, co.birthDate, co.neutered, co.personality, co.environment, co.weight, 
-		cu.id
+		cu.id, co.rate
 	FROM
 		Contract co
 	JOIN
@@ -262,7 +261,7 @@ func (s *ContractAPIService) GetContract(ctx context.Context, contractId string)
 	WHERE
 		co.id = ?`, contractId).Scan(
 		&contract.Id, &contract.StartDate, &contract.EndDate, &contract.Coverage, &contract.CatName, &contract.Breed, &contract.Color, &contract.BirthDate, &contract.Neutered,
-		&contract.Personality, &contract.Environment, &contract.Weight, &contract.CustomerId)
+		&contract.Personality, &contract.Environment, &contract.Weight, &contract.CustomerId, &contract.Rate)
 	if err != nil {
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving contract details: %v", err)
 	}
@@ -288,7 +287,7 @@ func (s *ContractAPIService) GetCustomerContracts(ctx context.Context, customerI
 
 	// Query to retrieve paginated contract details
 	rows, err := db.QueryContext(ctx,
-		`SELECT co.id, co.startDate, co.endDate, co.coverage, co.catName, co.breed, co.color, co.birthDate, co.neutered, co.personality, co.environment, co.weight, co.customerId
+		`SELECT co.id, co.startDate, co.endDate, co.coverage, co.catName, co.breed, co.color, co.birthDate, co.neutered, co.personality, co.environment, co.weight, co.customerId, co.rate
 			FROM Contract co
 			WHERE co.customerId = ?
 			ORDER BY co.customerId ASC
@@ -303,7 +302,7 @@ func (s *ContractAPIService) GetCustomerContracts(ctx context.Context, customerI
 		var contract ContractRes
 		if err := rows.Scan(
 			&contract.Id, &contract.StartDate, &contract.EndDate, &contract.Coverage, &contract.CatName, &contract.Breed, &contract.Color, &contract.BirthDate, &contract.Neutered,
-			&contract.Personality, &contract.Environment, &contract.Weight, &contract.CustomerId); err != nil {
+			&contract.Personality, &contract.Environment, &contract.Weight, &contract.CustomerId, &contract.Rate); err != nil {
 			return Response(http.StatusInternalServerError, nil), fmt.Errorf("error scanning contract details: %v", err)
 		}
 

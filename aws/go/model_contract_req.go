@@ -9,15 +9,11 @@
 
 package openapi
 
-
 import (
 	"errors"
 )
 
-
-
 type ContractReq struct {
-
 	StartDate string `json:"startDate"`
 
 	EndDate string `json:"endDate"`
@@ -42,23 +38,26 @@ type ContractReq struct {
 	Weight float32 `json:"weight"`
 
 	CustomerId string `json:"customerId"`
+
+	Rate float32 `json:"rate"`
 }
 
 // AssertContractReqRequired checks if the required fields are not zero-ed
 func AssertContractReqRequired(obj ContractReq) error {
 	elements := map[string]interface{}{
-		"startDate": obj.StartDate,
-		"endDate": obj.EndDate,
-		"coverage": obj.Coverage,
-		"catName": obj.CatName,
-		"breed": obj.Breed,
-		"color": obj.Color,
-		"birthDate": obj.BirthDate,
-		"neutered": obj.Neutered,
+		"startDate":   obj.StartDate,
+		"endDate":     obj.EndDate,
+		"coverage":    obj.Coverage,
+		"catName":     obj.CatName,
+		"breed":       obj.Breed,
+		"color":       obj.Color,
+		"birthDate":   obj.BirthDate,
+		"neutered":    obj.Neutered,
 		"personality": obj.Personality,
 		"environment": obj.Environment,
-		"weight": obj.Weight,
-		"customerId": obj.CustomerId,
+		"weight":      obj.Weight,
+		"customerId":  obj.CustomerId,
+		"rate":        obj.Rate,
 	}
 	for name, el := range elements {
 		if isZero := IsZeroValue(el); isZero {
