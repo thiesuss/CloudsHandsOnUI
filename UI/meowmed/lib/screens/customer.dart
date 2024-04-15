@@ -644,6 +644,7 @@ class _CustomerState extends State<Customer> {
                             DataColumn(label: Text("Beginn")),
                             DataColumn(label: Text("Ende")),
                             DataColumn(label: Text("Deckung")),
+                            DataColumn(label: Text("Rate")),
                             DataColumn(label: Text("Aktionen"))
                           ],
                           rows: [
@@ -654,7 +655,8 @@ class _CustomerState extends State<Customer> {
                                 DataCell(Text(obj.catName.toString())),
                                 DataCell(Text(dateTimeToString(obj.startDate))),
                                 DataCell(Text(dateTimeToString(obj.endDate))),
-                                DataCell(Text(obj.coverage.toString())),
+                                DataCell(Text(obj.coverage.toString() + "€")),
+                                DataCell(Text(obj.rate.toString() + "€")),
                                 DataCell(Row(
                                   children: [
                                     IconButton(
