@@ -159,8 +159,9 @@ func (s *CustomerAPIService) CreateCustomer(ctx context.Context, customerReq Cus
 			Name: customerReq.BankDetails.Name,
 		},
 	}
+	
 
-	SendEmail(customerReq.Email, "customer", err, nil)
+	SendEmail(customerReq.Email, "customer", ImplResponse{}, err, nil)
 
 	return Response(http.StatusCreated, newCustomerRes), nil
 }

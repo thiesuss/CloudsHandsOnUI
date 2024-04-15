@@ -38,8 +38,6 @@ type ContractReq struct {
 	Weight float32 `json:"weight"`
 
 	CustomerId string `json:"customerId"`
-
-	Rate float32 `json:"rate"`
 }
 
 // AssertContractReqRequired checks if the required fields are not zero-ed
@@ -57,7 +55,6 @@ func AssertContractReqRequired(obj ContractReq) error {
 		"environment": obj.Environment,
 		"weight":      obj.Weight,
 		"customerId":  obj.CustomerId,
-		"rate":        obj.Rate,
 	}
 	for name, el := range elements {
 		if isZero := IsZeroValue(el); isZero {
