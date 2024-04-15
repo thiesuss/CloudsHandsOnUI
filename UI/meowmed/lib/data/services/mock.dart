@@ -91,6 +91,7 @@ class MockService {
 
     final contractList = [
       ContractRes(
+        rate: 100.0,
         id: "1",
         customerId: "1",
         startDate: DateTime.now(),
@@ -106,6 +107,7 @@ class MockService {
         weight: 6000,
       ),
       ContractRes(
+        rate: 100.0,
         id: "2",
         customerId: "2",
         startDate: DateTime.now(),
@@ -121,6 +123,7 @@ class MockService {
         weight: 6000,
       ),
       ContractRes(
+        rate: 100.0,
         id: "3",
         customerId: "2",
         startDate: DateTime.now(),
