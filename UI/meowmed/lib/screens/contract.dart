@@ -52,14 +52,14 @@ class _ContractState extends State<Contract> {
   void initState() {
     super.initState();
     final obj = contract.getObj();
-    startDate = obj.startDate;
-    endDate = obj.endDate;
+    startDate = obj.startDate.add(const Duration(days: 1));
+    endDate = obj.endDate.add(const Duration(days: 1));
     coverageController.text = obj.coverage.toString();
     rateController.text = obj.rate.toString();
     catNameController.text = obj.catName;
     breedController.text = obj.breed;
     colorController.text = obj.color;
-    birthDate = obj.birthDate;
+    birthDate = obj.birthDate.add(const Duration(days: 1));
     isNeutered = obj.neutered;
     personalityController.text = obj.personality;
     environmentController.text = obj.environment;
