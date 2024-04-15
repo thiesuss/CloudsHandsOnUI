@@ -97,7 +97,7 @@ class _ContractState extends State<Contract> {
                               return "Bitte Startdatum angeben";
                             }
                             final date = DateFormat('dd.MM.yyyy').parse(value);
-                            if (date.day != 1 || date.day != 15)
+                            if (![1,15].contains(date.day))
                               return "Nur 1. oder 15. eines Monats erlaubt";
                             return null;
                           },
@@ -141,7 +141,7 @@ class _ContractState extends State<Contract> {
                             }
                              final date =
                                       DateFormat('dd.MM.yyyy').parse(value);
-                              if (date.day != 14 || date.day != 31)
+                              if (![14, 31].contains(date.day))
                                 return "Nur 14. oder 31. eines Monats erlaubt";
                             return null;
                           },
