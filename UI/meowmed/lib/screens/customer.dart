@@ -658,8 +658,8 @@ class _CustomerState extends State<Customer> {
                                   DataCell(
                                       Text(dateTimeToString(obj.startDate))),
                                   DataCell(Text(dateTimeToString(obj.endDate))),
-                                  DataCell(Text(obj.coverage.toString())),
-                                  DataCell(Text(obj.rate.toString())),
+                                  DataCell(Text(obj.coverage.toString() + "€")),
+                                  DataCell(Text(obj.rate.toString() + "€")),
                                   DataCell(Row(
                                     children: [
                                       IconButton(
