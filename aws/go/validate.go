@@ -46,8 +46,9 @@ func validateCat(contractReq ContractReq) string {
 	}
 
 	// Überprüft, ob das Startdatum nicht in der Vergangenheit liegt.
+	today := time.Now().Truncate(24 * time.Hour)
 	parsedStartDate, _ := time.Parse("2006-01-02", contractReq.StartDate)
-	if parsedStartDate.Before(time.Now()) {
+	if parsedStartDate.Before(today) {
 		return "start date is in the past"
 	}
 
