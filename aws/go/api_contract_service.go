@@ -221,7 +221,7 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		INSERT INTO Contract (id, startDate, endDate, coverage, catName, breed, color, birthDate, neutered, personality, environment, weight, customerId, rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		newContractID, contractReq.StartDate, contractReq.EndDate, contractReq.Coverage, contractReq.CatName, contractReq.Breed, contractReq.Color,
-		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId, rateImpl.Body)
+		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId, rateImpl.Body.(RateRes).Rate)
 	if err != nil {
 		tx.Rollback()
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Contract table: %v", err)
@@ -264,7 +264,7 @@ func (s *ContractAPIService) CreateContract(ctx context.Context, contractReq Con
 		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving email from customer: %v", err)
 	}
 
-	SendEmail(customerEmail, "contract", rateImpl, err, &contractReq)
+	SendEmail(customerEmail, "contract", rateImpl.Body.(RateRes).Rate, err, &contractReq)
 
 	return Response(http.StatusCreated, newContractRes), nil
 }

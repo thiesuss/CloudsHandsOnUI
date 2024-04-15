@@ -15,7 +15,7 @@ const (
 	CharSet = "UTF-8"
 )
 
-func SendEmail(receiverMail string, action string, rateRes ImplResponse, err error, contractReq *ContractReq) (ImplResponse, error) {
+func SendEmail(receiverMail string, action string, rateRes float32, err error, contractReq *ContractReq) (ImplResponse, error) {
 	var Subject, HTMLBody, TextBody string
 	if action == "customer" {
 		Subject = "Registrierung als Kunde bei MeowMed"
