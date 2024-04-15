@@ -110,9 +110,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: EdgeInsets.all(30),
-        children: [Column(
+      body: ListView(padding: EdgeInsets.all(30), children: [
+        Column(
           children: [
             Header("Mitarbeiter Dashboard", []),
             Row(
@@ -146,7 +145,8 @@ class _DashboardState extends State<Dashboard> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NewCustomer(loadCustomers)));
+                              builder: (context) =>
+                                  NewCustomer(loadCustomers)));
                     },
                     child: Text("Neuer Kunde"))
               ],
@@ -154,8 +154,7 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(
               height: 30,
             ),
-            SingleChildScrollView(
-                    child: StreamBuilder<void>(
+            StreamBuilder<void>(
               stream: CombineLatestStream.list<dynamic>(
                   [filteredCustomers.stream, state.stream]),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -209,7 +208,8 @@ class _DashboardState extends State<Dashboard> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        Customer(e, true, loadCustomers)));
+                                                        Customer(e, true,
+                                                            loadCustomers)));
                                           },
                                           icon: Icon(Icons.remove_red_eye)),
                                       IconButton(
@@ -241,7 +241,7 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 );
               },
-            ))
+            )
           ],
         ),
       ]),

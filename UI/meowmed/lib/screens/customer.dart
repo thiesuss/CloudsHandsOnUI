@@ -174,7 +174,7 @@ class _CustomerState extends State<Customer> {
                 Column(
                   children: [
                     Container(
-                        height: 50,
+                        height: 60,
                         width: 230,
                         child: TextFormField(
                           readOnly: true,
@@ -462,7 +462,7 @@ class _CustomerState extends State<Customer> {
                           height: 10,
                         ),
                         Container(
-                            height: 70,
+                            height: 80,
                             width: 430,
                             child: TextFormField(
                               controller: zipCodeController,
