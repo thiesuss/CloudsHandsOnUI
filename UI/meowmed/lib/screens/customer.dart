@@ -162,9 +162,8 @@ class _CustomerState extends State<Customer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Form(
-      key: customerFormKey,
-      child: Container(
+        body: ListView(key: customerFormKey, children: [
+      Container(
         padding: EdgeInsets.all(30),
         child: Column(
           children: [
@@ -463,7 +462,7 @@ class _CustomerState extends State<Customer> {
                           height: 10,
                         ),
                         Container(
-                            height: 50,
+                            height: 70,
                             width: 430,
                             child: TextFormField(
                               controller: zipCodeController,
@@ -603,93 +602,87 @@ class _CustomerState extends State<Customer> {
             SizedBox(
               height: 20,
             ),
-            Expanded(
-              child: StreamBuilder<List<CachedObj<ContractRes>>>(
-                stream: filteredContracts.stream,
-                initialData: [],
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
-                  if (!snapshot.hasData) {
-                    return Text("Not correctly initialized");
-                  }
-                  return FutureBuilder<List<CachedObj<ContractRes>>>(
-                    future: contractFuture,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return DataTableSchimmer(
-                            columns: [
-                              "ID",
-                              "Katze",
-                              "Beginn",
-                              "Ende",
-                              "Deckung",
-                              "Aktionen"
-                            ],
-                            itemsToSchimmer: 1,
-                            width: double.infinity,
-                            height: 100);
-                      }
-                      if (snapshot.hasError) {
-                        return buildErrorTile("Error loading contracts",
-                            snapshot.error.toString());
-                      }
+            StreamBuilder<List<CachedObj<ContractRes>>>(
+              stream: filteredContracts.stream,
+              initialData: [],
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
+                if (!snapshot.hasData) {
+                  return Text("Not correctly initialized");
+                }
+                return FutureBuilder<List<CachedObj<ContractRes>>>(
+                  future: contractFuture,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<CachedObj<ContractRes>>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return DataTableSchimmer(
+                          columns: [
+                            "ID",
+                            "Katze",
+                            "Beginn",
+                            "Ende",
+                            "Deckung",
+                            "Aktionen"
+                          ],
+                          itemsToSchimmer: 1,
+                          width: double.infinity,
+                          height: 100);
+                    }
+                    if (snapshot.hasError) {
+                      return buildErrorTile(
+                          "Error loading contracts", snapshot.error.toString());
+                    }
 
-                      return SizedBox(
-                        width: double.infinity,
-                        child: DataTable(
-                            headingTextStyle: dataTableHeading,
-                            border: dataTableBorder,
-                            columns: [
-                              DataColumn(label: Text("ID")),
-                              DataColumn(label: Text("Katze")),
-                              DataColumn(label: Text("Beginn")),
-                              DataColumn(label: Text("Ende")),
-                              DataColumn(label: Text("Deckung")),
-                              DataColumn(label: Text("Rate")),
-                              DataColumn(label: Text("Aktionen"))
-                            ],
-                            rows: [
-                              ...snapshot.data!.map((e) {
-                                final obj = e.getObj();
-                                return DataRow(cells: [
-                                  DataCell(Text(obj.id.toString())),
-                                  DataCell(Text(obj.catName.toString())),
-                                  DataCell(
-                                      Text(dateTimeToString(obj.startDate))),
-                                  DataCell(Text(dateTimeToString(obj.endDate))),
-                                  DataCell(Text(obj.coverage.toString())),
-                                  DataCell(Text(obj.rate.toString())),
-                                  DataCell(Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.remove_red_eye),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Contract(
-                                                          e, loadContracts)));
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.not_interested),
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ))
-                                ]);
-                              }),
-                            ]),
-                      );
-                    },
-                  );
-                  // if (snapshot.data!.isEmpty) {
-                  //   return Text("Keine Kunden vorhanden");
-                  // }
-                },
-              ),
+                    return SizedBox(
+                      width: double.infinity,
+                      child: DataTable(
+                          headingTextStyle: dataTableHeading,
+                          border: dataTableBorder,
+                          columns: [
+                            DataColumn(label: Text("ID")),
+                            DataColumn(label: Text("Katze")),
+                            DataColumn(label: Text("Beginn")),
+                            DataColumn(label: Text("Ende")),
+                            DataColumn(label: Text("Deckung")),
+                            DataColumn(label: Text("Aktionen"))
+                          ],
+                          rows: [
+                            ...snapshot.data!.map((e) {
+                              final obj = e.getObj();
+                              return DataRow(cells: [
+                                DataCell(Text(obj.id.toString())),
+                                DataCell(Text(obj.catName.toString())),
+                                DataCell(Text(dateTimeToString(obj.startDate))),
+                                DataCell(Text(dateTimeToString(obj.endDate))),
+                                DataCell(Text(obj.coverage.toString())),
+                                DataCell(Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.remove_red_eye),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Contract(
+                                                    e, loadContracts)));
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.not_interested),
+                                      onPressed: () {},
+                                    ),
+                                  ],
+                                ))
+                              ]);
+                            }),
+                          ]),
+                    );
+                  },
+                );
+                // if (snapshot.data!.isEmpty) {
+                //   return Text("Keine Kunden vorhanden");
+                // }
+              },
             ),
             StreamBuilder<String?>(
               stream: error,
@@ -704,6 +697,9 @@ class _CustomerState extends State<Customer> {
                       buildErrorTile("Fehler beim speichern: ", snapshot.data!),
                 );
               },
+            ),
+            SizedBox(
+              height: 20,
             ),
             Row(
               children: [
@@ -743,10 +739,10 @@ class _CustomerState extends State<Customer> {
                     }),
                 Expanded(child: Container())
               ],
-            )
+            ),
           ],
         ),
       ),
-    ));
+    ]));
   }
 }

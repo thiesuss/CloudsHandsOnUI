@@ -110,9 +110,9 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: ListView(
         padding: EdgeInsets.all(30),
-        child: Column(
+        children: [Column(
           children: [
             Header("Mitarbeiter Dashboard", []),
             Row(
@@ -154,8 +154,7 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(
               height: 30,
             ),
-            Expanded(
-                child: SingleChildScrollView(
+            SingleChildScrollView(
                     child: StreamBuilder<void>(
               stream: CombineLatestStream.list<dynamic>(
                   [filteredCustomers.stream, state.stream]),
@@ -242,10 +241,10 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 );
               },
-            )))
+            ))
           ],
         ),
-      ),
+      ]),
     );
   }
 }
