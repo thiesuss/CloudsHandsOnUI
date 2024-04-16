@@ -249,6 +249,19 @@ class ApiClient {
           return RateCalculationReq.fromJson(value);
         case 'RateRes':
           return RateRes.fromJson(value);
+        // case 'List<ContractRes>':
+        //   print(
+        //       "List<ContractRes>, is not part auf the generated code, deserializing anyways");
+        //   Map map = Map.from(value);
+
+        //   print(map);
+        //   break;
+        // return;
+        // return value.map<dynamic>((dynamic v, dynamic r) {
+        //   print(v);
+        //   print(r);
+        //   return ContractRes.fromJson(v);
+        // }).toList(growable: growable);
         default:
           dynamic match;
           if (value is List &&
@@ -330,7 +343,6 @@ Future<dynamic> decodeAsync(DeserializationMessage message) async {
 Future<dynamic> deserializeAsync(DeserializationMessage message) async {
   // Remove all spaces. Necessary for regular expressions as well.
   final targetType = message.targetType.replaceAll(' ', '');
-
   // If the expected target type is String, nothing to do...
   return targetType == 'String'
       ? message.json

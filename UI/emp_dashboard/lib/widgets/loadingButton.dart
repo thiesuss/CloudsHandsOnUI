@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:meowmed/data/services/debouncer.dart';
 
 class LoadingButton extends StatefulWidget {
   LoadingButton({required this.label, required this.onPressed});
