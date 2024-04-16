@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:internalapi/api.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedOut.dart';
 import 'package:meowmed/data/states/login/state.dart';
 import 'package:meowmed/screens/dashboard.dart';
-import 'package:openapi/api.dart';
 
 class LoggedInState implements LoginState {
   // final CachedObj<EmployeeRes> employee;

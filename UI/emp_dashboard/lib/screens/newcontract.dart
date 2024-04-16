@@ -1,20 +1,16 @@
-import 'package:date_field/date_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:internalapi/api.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
-import 'package:meowmed/data/services/catinfoservice.dart';
-import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
-import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:internalapi/api.dart' as api;
 
 enum PriceReloadingState { idle, loading, done }
 
@@ -47,12 +43,12 @@ class _NewContractState extends State<NewContract> {
   TextEditingController weightController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
 
-  CatBreedEnum selectedBreed = CatBreedEnum.bengal;
-  CatColorEnum selectedColor = CatColorEnum.braun;
-  CatEnvironmentEnum selectedEnvironment = CatEnvironmentEnum.drinnen;
-  CatPersonalityEnum selectedPersonality = CatPersonalityEnum.anhaenglich;
-
   BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
+
+  api.Breed selectedBreed = api.Breed.bengal;
+  api.Color selectedColor = api.Color.braun;
+  api.Personality selectedPersonality = api.Personality.anhnglich;
+  api.Environment selectedEnvironment = api.Environment.drinnen;
 
   Future<bool> save() async {
     error.add(null);
@@ -72,12 +68,12 @@ class _NewContractState extends State<NewContract> {
       endDate: endDate.add(const Duration(days: 1)),
       coverage: coverage,
       catName: catNameController.text,
-      breed: breedController.text,
-      color: colorController.text,
+      breed: selectedBreed,
+      color: selectedColor,
       birthDate: birthDate.add(const Duration(days: 1)),
       neutered: isNeutered, //checkbox setState
-      personality: personalityController.text,
-      environment: environmentController.text,
+      personality: selectedPersonality,
+      environment: selectedEnvironment,
       weight: weight,
       customerId: widget.customerRes.getId(),
     );
@@ -107,12 +103,12 @@ class _NewContractState extends State<NewContract> {
       final zipCode = widget.customerRes.getObj().address.zipCode;
       final rateReq = RateCalculationReq(
           coverage: coverage,
-          breed: breedController.text,
-          color: colorController.text,
+          breed: selectedBreed,
+          color: selectedColor,
           birthDate: birthDate.add(const Duration(days: 1)),
           neutered: isNeutered,
-          personality: personalityController.text,
-          environment: environmentController.text,
+          personality: selectedPersonality,
+          environment: selectedEnvironment,
           weight: weight,
           zipCode: zipCode);
       final rateRes = await contractService.getRate(rateReq);
@@ -312,25 +308,24 @@ class _NewContractState extends State<NewContract> {
                             //dropdown menu für enum
                             height: 50,
                             width: 230,
-                            child: DropdownMenu<CatBreedEnum>(
+                            child: DropdownMenu<api.Breed>(
                               initialSelection: selectedBreed,
                               controller: breedController,
                               requestFocusOnTap: true,
                               label: const Text('Rasse'),
-                              onSelected: (CatBreedEnum? breed) async {
+                              onSelected: (api.Breed? breed) async {
                                 setState(() {
                                   if (breed == null) return;
                                   selectedBreed = breed;
                                 });
                                 await reloadPrice();
                               },
-                              dropdownMenuEntries: CatBreedEnum.values
-                                  .map<DropdownMenuEntry<CatBreedEnum>>(
-                                      (CatBreedEnum breed) {
-                                return DropdownMenuEntry<CatBreedEnum>(
+                              dropdownMenuEntries: api.Breed.values
+                                  .map<DropdownMenuEntry<api.Breed>>((breed) {
+                                return DropdownMenuEntry<api.Breed>(
                                   value: breed,
-                                  label: CatBreedEnum.breedToString(
-                                      breed), // familienstatusenum.ledig
+                                  label: (breed
+                                      .toString()), // familienstatusenum.ledig
                                 );
                               }).toList(),
                             ),
@@ -342,25 +337,25 @@ class _NewContractState extends State<NewContract> {
                             //dropdown menu für enum
                             height: 50,
                             width: 230,
-                            child: DropdownMenu<CatColorEnum>(
+                            child: DropdownMenu<api.Color>(
                               initialSelection: selectedColor,
                               controller: colorController,
                               requestFocusOnTap: true,
                               label: const Text('Farbe'),
-                              onSelected: (CatColorEnum? color) async {
+                              onSelected: (api.Color? color) async {
                                 setState(() {
                                   if (color == null) return;
                                   selectedColor = color;
                                 });
                                 await reloadPrice();
                               },
-                              dropdownMenuEntries: CatColorEnum.values
-                                  .map<DropdownMenuEntry<CatColorEnum>>(
-                                      (CatColorEnum color) {
-                                return DropdownMenuEntry<CatColorEnum>(
+                              dropdownMenuEntries: api.Color.values
+                                  .map<DropdownMenuEntry<api.Color>>(
+                                      (api.Color color) {
+                                return DropdownMenuEntry<api.Color>(
                                   value: color,
-                                  label: CatColorEnum.colorToString(
-                                      color), // familienstatusenum.ledig
+                                  label: (color
+                                      .toString()), // familienstatusenum.ledig
                                 );
                               }).toList(),
                             ),
@@ -407,26 +402,25 @@ class _NewContractState extends State<NewContract> {
                             //dropdown menu für enum
                             height: 50,
                             width: 230,
-                            child: DropdownMenu<CatPersonalityEnum>(
+                            child: DropdownMenu<api.Personality>(
                               initialSelection: selectedPersonality,
                               controller: personalityController,
                               requestFocusOnTap: true,
                               label: const Text('Persönlichkeit'),
-                              onSelected:
-                                  (CatPersonalityEnum? personality) async {
+                              onSelected: (api.Personality? personality) async {
                                 setState(() {
                                   if (personality == null) return;
                                   selectedPersonality = personality;
                                 });
                                 await reloadPrice();
                               },
-                              dropdownMenuEntries: CatPersonalityEnum.values
-                                  .map<DropdownMenuEntry<CatPersonalityEnum>>(
-                                      (CatPersonalityEnum personality) {
-                                return DropdownMenuEntry<CatPersonalityEnum>(
+                              dropdownMenuEntries: api.Personality.values
+                                  .map<DropdownMenuEntry<api.Personality>>(
+                                      (api.Personality personality) {
+                                return DropdownMenuEntry<api.Personality>(
                                   value: personality,
-                                  label: CatPersonalityEnum.personalityToString(
-                                      personality), // familienstatusenum.ledig
+                                  label: personality
+                                      .toString(), // familienstatusenum.ledig
                                 );
                               }).toList(),
                             ),
@@ -438,26 +432,25 @@ class _NewContractState extends State<NewContract> {
                             //dropdown menu für enum
                             height: 50,
                             width: 230,
-                            child: DropdownMenu<CatEnvironmentEnum>(
+                            child: DropdownMenu<api.Environment>(
                               initialSelection: selectedEnvironment,
                               controller: environmentController,
                               requestFocusOnTap: true,
                               label: const Text('Umgebung'),
-                              onSelected:
-                                  (CatEnvironmentEnum? environment) async {
+                              onSelected: (api.Environment? environment) async {
                                 setState(() {
                                   if (environment == null) return;
                                   selectedEnvironment = environment;
                                 });
                                 await reloadPrice();
                               },
-                              dropdownMenuEntries: CatEnvironmentEnum.values
-                                  .map<DropdownMenuEntry<CatEnvironmentEnum>>(
-                                      (CatEnvironmentEnum environment) {
-                                return DropdownMenuEntry<CatEnvironmentEnum>(
+                              dropdownMenuEntries: api.Environment.values
+                                  .map<DropdownMenuEntry<api.Environment>>(
+                                      (api.Environment environment) {
+                                return DropdownMenuEntry<api.Environment>(
                                   value: environment,
-                                  label: CatEnvironmentEnum.environmentToString(
-                                      environment), // familienstatusenum.ledig
+                                  label: environment
+                                      .toString(), // familienstatusenum.ledig
                                 );
                               }).toList(),
                             ),

@@ -1,8 +1,8 @@
+import 'package:internalapi/api.dart';
 import 'package:meowmed/data/exeptions/crud.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/models/service.dart';
 import 'package:meowmed/data/services/repo.dart';
-import 'package:openapi/api.dart';
 
 class ContractService implements StatefullObj {
   ContractService(ApiClient client) {

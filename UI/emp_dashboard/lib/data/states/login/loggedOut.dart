@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:internalapi/api.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/customerservice.dart';
-import 'package:meowmed/data/services/mock.dart';
 import 'package:meowmed/data/states/login/awsKeyAuth.dart';
 import 'package:meowmed/data/states/login/azureKeyAuth.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/data/states/login/state.dart';
 import 'package:meowmed/screens/login.dart';
-import 'package:openapi/api.dart';
 
 enum BackendType { aws, azure, azure1, mock }
 
@@ -57,7 +56,6 @@ class LoggedOutState implements LoginState {
     final client =
         ApiClient(basePath: backendUri.toString(), authentication: auth);
 
-
     return client;
   }
 
@@ -68,8 +66,6 @@ class LoggedOutState implements LoginState {
     final contractService = ContractService(client);
     final customerService = CustomerService(client);
     final state = LoggedInState(client, contractService, customerService);
-    final url = client.basePath;
-    if (url == "http://mock:8080") await MockService().mock(state);
     await nextState(state);
     return state;
   }

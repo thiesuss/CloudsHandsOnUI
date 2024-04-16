@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:internalapi/api.dart';
+import 'package:internalapi/api.dart' as api;
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/customerservice.dart';
@@ -16,7 +16,6 @@ import 'package:meowmed/widgets/dataTableShimmer.dart';
 import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:meowmed/widgets/loadingButton.dart';
-import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Customer extends StatefulWidget {
@@ -37,11 +36,9 @@ class _CustomerState extends State<Customer> {
   TextEditingController idController = TextEditingController();
   TextEditingController vornamecontroller = TextEditingController();
   TextEditingController nachnamecontroller = TextEditingController();
-  TextEditingController customerStatusFamilyContoller = TextEditingController();
-  CustomerResFamilyStatusEnum selectedFamilyStatus =
-      CustomerResFamilyStatusEnum.ledig;
+
   TextEditingController customerStatusTitleContoller = TextEditingController();
-  CustomerResTitleEnum? selectedTitleEnum;
+  api.Title? selectedTitle;
   TextEditingController birthDateController = TextEditingController();
   DateTime birthDate = DateTime.now();
   TextEditingController svnummercontroller = TextEditingController();
@@ -75,10 +72,8 @@ class _CustomerState extends State<Customer> {
     idController.text = obj.id;
     vornamecontroller.text = obj.firstName;
     nachnamecontroller.text = obj.lastName;
-    customerStatusFamilyContoller.text = obj.familyStatus.toString();
-    selectedFamilyStatus = obj.familyStatus;
     customerStatusTitleContoller.text = obj.title.toString();
-    selectedTitleEnum = obj.title;
+    selectedTitle = obj.title;
     birthDate = obj.birthDate;
     birthDateController.text = DateFormat('dd.MM.yyyy').format(obj.birthDate);
     svnummercontroller.text = obj.socialSecurityNumber;
@@ -141,9 +136,7 @@ class _CustomerState extends State<Customer> {
     final customerReq = CustomerReq(
         firstName: vornamecontroller.text,
         lastName: nachnamecontroller.text,
-        familyStatus:
-            CustomerService.familyStatusResToReq(selectedFamilyStatus),
-        title: CustomerService.titleResToReq(selectedTitleEnum),
+        title: selectedTitle,
         birthDate: birthDate, //replace
         socialSecurityNumber: svnummercontroller.text,
         taxId: steueridcontroller.text,
@@ -239,26 +232,25 @@ class _CustomerState extends State<Customer> {
                         //dropdown menu für enum
                         height: 50,
                         width: 230,
-                        child: DropdownMenu<CustomerResTitleEnum?>(
-                          initialSelection: selectedTitleEnum,
+                        child: DropdownMenu<api.Title?>(
+                          initialSelection: selectedTitle,
                           controller: customerStatusTitleContoller,
                           enabled: !widget.readOnly,
                           requestFocusOnTap: true,
                           label: const Text('Titel'),
-                          onSelected: (CustomerResTitleEnum? titleStatus) {
+                          onSelected: (api.Title? titleStatus) {
                             setState(() {
-                              selectedTitleEnum = titleStatus;
+                              selectedTitle = titleStatus;
                             });
                           },
                           dropdownMenuEntries: [
                             DropdownMenuEntry(value: null, label: ""),
-                            ...CustomerResTitleEnum.values
-                                .map<DropdownMenuEntry<CustomerResTitleEnum>>(
-                                    (CustomerResTitleEnum titleStatus) {
-                              return DropdownMenuEntry<CustomerResTitleEnum>(
+                            ...api.Title.values
+                                .map<DropdownMenuEntry<api.Title>>(
+                                    (api.Title titleStatus) {
+                              return DropdownMenuEntry<api.Title>(
                                 value: titleStatus,
-                                label: CustomerService.titleEnumToString(
-                                    CustomerService.titleResToReq(titleStatus)),
+                                label: titleStatus.toString(),
                               );
                             })
                           ],
@@ -381,41 +373,7 @@ class _CustomerState extends State<Customer> {
                               labelText: "Steuer ID",
                             ),
                           )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        //dropdown menu für enum
-                        height: 50,
-                        width: 230,
-                        child: DropdownMenu<CustomerResFamilyStatusEnum>(
-                          initialSelection: selectedFamilyStatus,
-                          controller: customerStatusFamilyContoller,
-                          requestFocusOnTap: true,
-                          enabled: !widget.readOnly,
-                          label: const Text('Familienstatus'),
-                          onSelected:
-                              (CustomerResFamilyStatusEnum? familyStatus) {
-                            setState(() {
-                              if (familyStatus == null) return;
-                              selectedFamilyStatus = familyStatus;
-                            });
-                          },
-                          dropdownMenuEntries:
-                              CustomerResFamilyStatusEnum.values.map<
-                                      DropdownMenuEntry<
-                                          CustomerResFamilyStatusEnum>>(
-                                  (CustomerResFamilyStatusEnum familyStatus) {
-                            return DropdownMenuEntry<
-                                CustomerResFamilyStatusEnum>(
-                              value: familyStatus,
-                              label: CustomerService.familienStatustoString(
-                                  CustomerService.familyStatusResToReq(
-                                      familyStatus)), // familienstatusenum.ledig
-                            );
-                          }).toList(),
-                        ),
-                      ),
+                  
                     ],
                   ),
                   SizedBox(

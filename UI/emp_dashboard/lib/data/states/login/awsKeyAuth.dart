@@ -1,4 +1,5 @@
-import 'package:openapi/api.dart';
+
+import 'package:internalapi/api.dart';
 
 class AwsKeyAuth implements Authentication {
   AwsKeyAuth(this.apiKey);

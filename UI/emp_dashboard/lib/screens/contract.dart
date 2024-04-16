@@ -1,7 +1,7 @@
-import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:internalapi/api.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/contractservice.dart';
@@ -9,8 +9,6 @@ import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
-import 'package:meowmed/widgets/loadingButton.dart';
-import 'package:openapi/api.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Contract extends StatefulWidget {
@@ -57,12 +55,12 @@ class _ContractState extends State<Contract> {
     coverageController.text = obj.coverage.toString();
     rateController.text = obj.rate.toString();
     catNameController.text = obj.catName;
-    breedController.text = obj.breed;
-    colorController.text = obj.color;
+    breedController.text = obj.breed.toString();
+    colorController.text = obj.color.toString();
     birthDate = obj.birthDate.add(const Duration(days: 1));
     isNeutered = obj.neutered;
-    personalityController.text = obj.personality;
-    environmentController.text = obj.environment;
+    personalityController.text = obj.personality.toString();
+    environmentController.text = obj.environment.toString();
     weightController.text = obj.weight.toString();
     customerIdController.text = obj.customerId.toString();
     birthDateController.text = DateFormat('dd.MM.yyyy').format(birthDate);

@@ -1,10 +1,9 @@
+import 'package:internalapi/api.dart';
 import 'package:meowmed/data/exeptions/crud.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
-import 'package:meowmed/data/models/customer.dart';
 import 'package:meowmed/data/models/service.dart';
 import 'package:meowmed/data/services/repo.dart';
 import 'package:meowmed/screens/customer.dart';
-import 'package:openapi/api.dart';
 
 class CustomerService implements StatefullObj {
   CustomerService(ApiClient client) {
@@ -100,76 +99,11 @@ class CustomerService implements StatefullObj {
       cachedObjList.add(cachedObj);
       repo.add(cachedObj);
     }
-    
+
     return cachedObjList;
   }
 
   Future<void> injectCustomer(CachedObj<CustomerRes> customerRes) async {
     repo.add(customerRes);
-  }
-
-  static String familienStatustoString(CustomerReqFamilyStatusEnum familyEnum) {
-    switch (familyEnum) {
-      case (CustomerReqFamilyStatusEnum.geschieden):
-        return 'Geschieden';
-      case (CustomerReqFamilyStatusEnum.ledig):
-        return 'Ledig';
-      case (CustomerReqFamilyStatusEnum.verheiratet):
-        return 'Verheiratet';
-      case (CustomerReqFamilyStatusEnum.verwitwet):
-        return 'Verwitwet';
-      default:
-        throw 'Kein Familienstatus verfügbar';
-    }
-  }
-
-  static String titleEnumToString(CustomerReqTitleEnum? titleEnum) {
-    switch (titleEnum) {
-      case (CustomerReqTitleEnum.drPeriod):
-        return 'Dr.';
-      case (CustomerReqTitleEnum.drPeriodDrPeriod):
-        return 'Dr. Dr.';
-      case (CustomerReqTitleEnum.profPeriodDrPeriod):
-        return 'Prof. Dr.';
-      case (CustomerReqTitleEnum.profPeriodDrPeriodDr):
-        return 'Prof. Dr. Dr.';
-      case (null):
-        return '';
-      default:
-        throw 'Kein Titel Vorhanden';
-    }
-  }
-
-  static CustomerReqFamilyStatusEnum familyStatusResToReq(
-      CustomerResFamilyStatusEnum familystatus) {
-    switch (familystatus) {
-      case (CustomerResFamilyStatusEnum.geschieden):
-        return CustomerReqFamilyStatusEnum.geschieden;
-      case (CustomerResFamilyStatusEnum.ledig):
-        return CustomerReqFamilyStatusEnum.ledig;
-      case (CustomerResFamilyStatusEnum.verheiratet):
-        return CustomerReqFamilyStatusEnum.verheiratet;
-      case (CustomerResFamilyStatusEnum.verwitwet):
-        return CustomerReqFamilyStatusEnum.verwitwet;
-      default:
-        throw 'Kein Familienstatus vorhanden';
-    }
-  }
-
-  static CustomerReqTitleEnum? titleResToReq(CustomerResTitleEnum? titleEnum) {
-    switch (titleEnum) {
-      case (CustomerResTitleEnum.drPeriod):
-        return CustomerReqTitleEnum.drPeriod;
-      case (CustomerResTitleEnum.drPeriodDrPeriod):
-        return CustomerReqTitleEnum.drPeriodDrPeriod;
-      case (CustomerResTitleEnum.profPeriodDrPeriod):
-        return CustomerReqTitleEnum.profPeriodDrPeriod;
-      case (CustomerResTitleEnum.profPeriodDrPeriodDr):
-        return CustomerReqTitleEnum.profPeriodDrPeriodDr;
-      case (null):
-        return null;
-      default:
-        throw 'Kein Titel vorhanden';
-    }
   }
 }
