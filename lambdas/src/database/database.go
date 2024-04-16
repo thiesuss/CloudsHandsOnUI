@@ -55,7 +55,7 @@ func getDBCredentials() (DBCredentials, error) {
 }
 
 // Use getDBCredentials function to retrieve database credentials
-func connectToDB() (*sql.DB, error) {
+func ConnectToDB() (*sql.DB, error) {
 	// Retrieve database credentials
 	dbCredentials, err := getDBCredentials()
 	if err != nil {

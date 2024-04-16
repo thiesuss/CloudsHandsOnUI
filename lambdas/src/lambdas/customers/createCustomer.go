@@ -3,20 +3,32 @@ package customers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/google/uuid"
+	"github.com/marcmarder/CloudsHandsOn/lambdas/src/database"
+	"github.com/marcmarder/CloudsHandsOn/lambdas/src/lambdas/email"
+	"github.com/marcmarder/CloudsHandsOn/lambdas/src/models"
+	"github.com/marcmarder/CloudsHandsOn/lambdas/src/validator"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func createCustomer(ctx context.Context, customerReq events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func createCustomer(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	var customerReq models.CustomerReq
+
+	// Parse request body
+	if err := json.Unmarshal([]byte(req.Body), &customerReq); err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Body:       "Invalid request body",
+		}, nil
+	}
 
 	// Retrieve database credentials
-	db, err := connectToDB()
+	db, err := database.ConnectToDB()
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
@@ -37,10 +49,13 @@ func createCustomer(ctx context.Context, customerReq events.APIGatewayProxyReque
 	// Generate UUID for the new customer
 	newCustomerID := uuid.New().String()
 
-	validationErr := validateCustomer(customerReq)
+	validationErr := validator.ValidateCustomer(customerReq)
 	if validationErr != "valid" {
 		tx.Rollback()
-		return Response(http.StatusBadRequest, nil), fmt.Errorf(validationErr)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       validationErr,
+		}, nil
 	}
 
 	// Insert into Customer table
@@ -65,7 +80,7 @@ func createCustomer(ctx context.Context, customerReq events.APIGatewayProxyReque
 	}
 
 	// Respond with the new customer details
-	newCustomerRes := CustomerRes{
+	newCustomerRes := models.CustomerRes{
 		Id:                   newCustomerID,
 		FirstName:            customerReq.FirstName,
 		LastName:             customerReq.LastName,
@@ -75,13 +90,13 @@ func createCustomer(ctx context.Context, customerReq events.APIGatewayProxyReque
 		SocialSecurityNumber: customerReq.SocialSecurityNumber,
 		TaxId:                customerReq.TaxId,
 		Email:                customerReq.Email,
-		Address: Address{
+		Address: models.Address{
 			Street:      customerReq.Address.Street,
 			HouseNumber: customerReq.Address.HouseNumber,
 			ZipCode:     customerReq.Address.ZipCode,
 			City:        customerReq.Address.City,
 		},
-		BankDetails: BankDetails{
+		BankDetails: models.BankDetails{
 			Iban: customerReq.BankDetails.Iban,
 			Bic:  customerReq.BankDetails.Bic,
 			Name: customerReq.BankDetails.Name,
@@ -97,7 +112,7 @@ func createCustomer(ctx context.Context, customerReq events.APIGatewayProxyReque
 		}, nil
 	}
 
-	SendEmail(customerReq.Email, "customer", 0.0, err, nil)
+	email.SendEmail(customerReq.Email, "customer", 0.0, err, nil)
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,

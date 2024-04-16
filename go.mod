@@ -1,4 +1,5 @@
-module src
+module github.com/marcmarder/CloudsHandsOn
+
 go 1.22.1
 
 require (
