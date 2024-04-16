@@ -63,7 +63,7 @@ func validateCat(contractReq ContractReq) string {
 		return "insurance duration must be at least 1 month"
 	}
 
-	if strings.ToLower(contractReq.Personality) == "besonders verspielt" {
+	if strings.ToLower(contractReq.Personality) == "spielerisch" {
 		return "keine Versicherung für besonders verspielte Katzen möglich"
 	}
 
