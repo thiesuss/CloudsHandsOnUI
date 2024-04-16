@@ -64,7 +64,7 @@ func validateCat(contractReq ContractReq) string {
 	}
 
 	if strings.ToLower(contractReq.Personality) == "spielerisch" {
-		return "keine Versicherung für besonders verspielte Katzen möglich"
+		return "keine Versicherung für spielerische Katzen möglich"
 	}
 
 	// Wenn alle Überprüfungen bestanden wurden, gib true zurück.
@@ -109,8 +109,8 @@ func validateCustomer(customerReq CustomerReq) string {
 	}
 
 	// Überprüft, ob SocialSecurityNumber und TaxId dem Muster entsprechen.
-	if !regexp.MustCompile(`^[0-9]{12}$`).MatchString(customerReq.SocialSecurityNumber) {
-		return "socialSecurityNumber is not valid"
+	if !regexp.MustCompile(`^[0-9]{8}[A-Z][0-9]{3}$`).MatchString(customerReq.SocialSecurityNumber) {
+		return "socialSecurityNumber is not valid (must be 8 digits followed by a capital letter and 3 digits)"
 	}
 
 	if !regexp.MustCompile(`^[0-9]{11}$`).MatchString(customerReq.TaxId) {
@@ -137,11 +137,11 @@ func validateCustomer(customerReq CustomerReq) string {
 
 	// Überprüft, ob IBAN und BIC den entsprechenden Regex-Mustern entsprechen.
 	if !regexp.MustCompile(`^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$`).MatchString(customerReq.BankDetails.Iban) {
-		return "bank iban is not valid"
+		return "bank iban is not valid (must be 2 capital letters followed by 2 digits and 1-30 capital letters or numbers)"
 	}
 
 	if !regexp.MustCompile(`^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$`).MatchString(customerReq.BankDetails.Bic) {
-		return "bank bic is not valid"
+		return "bank bic is not valid (must be 6 capital letters followed by 2 capital letters or numbers and optionally 3 capital letters or numbers)"
 	}
 	// Überprüft, ob Name dem Muster entspricht.
 	if !nameRegex.MatchString(customerReq.BankDetails.Name) {
