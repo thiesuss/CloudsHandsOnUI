@@ -1,4 +1,4 @@
-package customers
+package main
 
 import (
 	"catInsurance/common/database"

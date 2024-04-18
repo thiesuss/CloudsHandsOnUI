@@ -1,4 +1,4 @@
-package contracts
+package main
 
 import (
 	"catInsurance/common/database"

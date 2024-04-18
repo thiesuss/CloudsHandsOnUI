@@ -1,11 +1,11 @@
-package contracts
+package main
 
 import (
 	"catInsurance/common/database"
 	"catInsurance/common/email"
 	"catInsurance/common/models"
+	"catInsurance/common/utils"
 	"catInsurance/common/validator"
-	"catInsurance/contracts/calcRate"
 	"context"
 	"encoding/json"
 	"log"
@@ -85,20 +85,20 @@ func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.API
 		Environment: contractReq.Environment,
 	}
 
-	rateImpl, err := calcRate.InternCall(ctx, rateCalculationReq)
+	rateImpl, err := utils.InternCall(ctx, rateCalculationReq)
 	var rateRes models.RateRes
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error calculating rate",
+		}, nil
+	}
+
 	err = json.Unmarshal([]byte(rateImpl.Body), &rateRes)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "failed to Unmarshal RateRes",
-		}, nil
-	}
-
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       "Error calculating rate",
 		}, nil
 	}
 

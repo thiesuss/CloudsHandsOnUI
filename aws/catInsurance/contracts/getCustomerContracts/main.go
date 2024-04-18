@@ -1,4 +1,4 @@
-package contracts
+package main
 
 import (
 	"catInsurance/common/database"
@@ -11,6 +11,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
 func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -112,4 +113,8 @@ func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.API
 		Body: string(contractsJSON),
 	}, nil
 
+}
+
+func main() {
+	lambda.Start(handler)
 }
