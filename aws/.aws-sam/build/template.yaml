@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'cat-insurance
+
+  Cat Insurance App
+
+  '
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+Resources:
+  GetCustomersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: GetCustomersFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: GetCustomersFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  SearchCustomersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: SearchCustomersFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: SearchCustomersFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /customers/search
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
