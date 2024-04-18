@@ -345,7 +345,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApplicationReq"
+                $ref: "#/components/schemas/ApplicationRes"
         "404":
           description: Could not find application corresponding to the ID.
           content:
