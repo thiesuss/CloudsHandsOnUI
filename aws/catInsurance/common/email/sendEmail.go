@@ -1,9 +1,12 @@
 package email
 
 import (
+	"catInsurance/common/models"
+	"encoding/json"
 	"fmt"
-	"net/http"
+	"log"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -15,7 +18,7 @@ const (
 	CharSet = "UTF-8"
 )
 
-func SendEmail(receiverMail string, action string, rateRes float32, err error, contractReq *ContractReq) (ImplResponse, error) {
+func SendEmail(receiverMail string, action string, rateRes float32, err error, contractReq *models.ContractReq) (events.APIGatewayProxyResponse, error) {
 	var Subject, HTMLBody, TextBody string
 	if action == "customer" {
 		Subject = "Registrierung als Kunde bei MeowMed"
@@ -26,7 +29,10 @@ func SendEmail(receiverMail string, action string, rateRes float32, err error, c
 		HTMLBody = "<h1>Sie haben den Vertrag erfolgreich abgeschlossen.</h1><p>Wir bestätigen Ihnen hiermit, dass wir Ihre Katze " + contractReq.CatName + " versichern. Die monatlichen Versicherungskosten betragen " + fmt.Sprintf("%.2f", rateRes) + "€."
 		TextBody = "Sie haben den Vertrag erfolgreich abgeschlossen. Wir bestätigen Ihnen hiermit, dass wir Ihre Katze " + contractReq.CatName + " versichern. Die monatlichen Versicherungskosten betragen " + fmt.Sprintf("%.2f", rateRes) + "€."
 	} else {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("invalid Email Type: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Invalid email type",
+		}, nil
 	}
 
 	sess, err := session.NewSession(&aws.Config{
@@ -34,7 +40,10 @@ func SendEmail(receiverMail string, action string, rateRes float32, err error, c
 	)
 
 	if err != nil {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("failed to create Session: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Failed to create Session",
+		}, nil
 	}
 
 	svc := ses.New(sess)
@@ -69,19 +78,49 @@ func SendEmail(receiverMail string, action string, rateRes float32, err error, c
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
 			case ses.ErrCodeMessageRejected:
-				return Response(http.StatusInternalServerError, nil), fmt.Errorf("aws error: ErrCodeMessageRejected: %v", err)
+				return events.APIGatewayProxyResponse{
+					StatusCode: 500,
+					Body:       "aws error: ErrCodeMessageRejected",
+				}, nil
 			case ses.ErrCodeMailFromDomainNotVerifiedException:
-				return Response(http.StatusInternalServerError, nil), fmt.Errorf("aws error: ErrCodeMailFromDomainNotVerifiedException: %v", err)
+				return events.APIGatewayProxyResponse{
+					StatusCode: 500,
+					Body:       "aws error: ErrCodeMailFromDomainNotVerifiedException",
+				}, nil
 			case ses.ErrCodeConfigurationSetDoesNotExistException:
-				return Response(http.StatusInternalServerError, nil), fmt.Errorf("aws error: ErrCodeConfigurationSetDoesNotExistException: %v", err)
+				return events.APIGatewayProxyResponse{
+					StatusCode: 500,
+					Body:       "aws error: ErrCodeConfigurationSetDoesNotExistException",
+				}, nil
 			default:
-				return Response(http.StatusInternalServerError, nil), fmt.Errorf("aws error (from SES-Service): %v", err)
+				return events.APIGatewayProxyResponse{
+					StatusCode: 500,
+					Body:       "aws error (from SES-Service)",
+				}, nil
 			}
 		} else {
 			// Falls ein Fehler auftritt, der nicht vom SES-Service ist
-			return Response(http.StatusInternalServerError, nil), fmt.Errorf("aws error (NOT from SES-Service): %v", err)
+			return events.APIGatewayProxyResponse{
+				StatusCode: 500,
+				Body:       "aws error (NOT from SES-Service)",
+			}, nil
 		}
 	}
 
-	return Response(http.StatusOK, receiverMail), nil
+	responseJSON, err := json.Marshal(receiverMail)
+	if err != nil {
+		log.Printf("Error serializing email details: %v\n", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error serializing email details",
+		}, nil
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
+		Body: string(responseJSON),
+	}, nil
 }

@@ -1,13 +1,14 @@
 package validator
 
 import (
+	"catInsurance/common/models"
 	"regexp" // Für Regular Expressions
 	"strings"
 	"time" // Für Zeit- und Datumsfunktionen
 )
 
 // validate cat
-func ValidateCat(contractReq ContractReq) string {
+func ValidateCat(contractReq models.ContractReq) string {
 	// Überprüft, ob das Gewicht im gültigen Bereich liegt.
 	if contractReq.Weight < 5000 {
 		return "weight is not valid"
@@ -72,7 +73,7 @@ func ValidateCat(contractReq ContractReq) string {
 }
 
 // validate cat
-func ValidateCustomer(customerReq CustomerReq) string {
+func ValidateCustomer(customerReq models.CustomerReq) string {
 
 	//Ausdruck für email
 	emailRegex := regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}$`)

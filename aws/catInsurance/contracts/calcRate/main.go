@@ -1,15 +1,15 @@
-package contracts
+package calcRate
 
 import (
+	"catInsurance/common/database"
+	"catInsurance/common/models"
 	"context"
 	"encoding/json"
-	"fmt"
 	"math"
-	"net/http"
 	"time"
 
-	"./database"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
 // Maximale jahresdeckung 50,000
@@ -31,77 +31,81 @@ import (
 
 // CalculateRate - Calculate rate
 
-func CalculateRate(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	var rateReq models.RateCalculationReq
+
+	// Parse request body
+	if err := json.Unmarshal([]byte(req.Body), &rateReq); err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Body:       "Invalid request body",
+		}, nil
+	}
+
 	// Retrieve database credentials
-	db, err := connectToDB()
+	db, err := database.ConnectToDB()
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "error connecting to database",
 		}, nil
-		
+
 	}
 	defer db.Close()
 
-	coverage := req.PathParameters["coverage"]
-
-	if coverage > 50000 {
+	if rateReq.Coverage > 50000 {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "maximale Jahresdeckung beträgt 50,000",
 		}, nil
 	}
 
-	var rate RateRes
+	var rate models.RateRes
 
 	// Grundkosten
 	var promille float32
-	color := req.PathParameters["color"]
 
-	if color == "Schwarz" {
+	if rateReq.Color == "Schwarz" {
 		promille = 0.002
 	} else {
 		promille = 0.0015
 	}
-	grundkosten := float32(coverage) * promille
+	grundkosten := float32(rateReq.Coverage) * promille
 
 	// Prozentzuschlag
 	var prozentzuschlag float32
-	zipcode := req.PathParameters["zipcode"]
-	environment := req.PathParameters["environment"]
 
-	if zipcode <= 19999 {
+	if rateReq.ZipCode <= 19999 {
 		prozentzuschlag = grundkosten * 0.05
 	}
-	if environment == "Draußen" {
+	if rateReq.Environment == "Draußen" {
 		prozentzuschlag += grundkosten * 0.1
 	}
 
 	var lastQuartile float32
 	var min, max float32
 	var averageAge float32
-	breed := req.PathParameters["breed"]
 
 	err = db.QueryRowContext(ctx, `
 		SELECT Durchschnittsalter_min, Durchschnittsalter_max
 		FROM Rate
 		WHERE Rasse = ?
-	`, breed).Scan(&min, &max)
+	`, rateReq.Breed).Scan(&min, &max)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "error retrieving average age details",
 		}, nil
-		
+
 	}
 
 	averageAge = ((min + max) / 2)
 	lastQuartile = averageAge - (averageAge * 0.25)
 
 	// Konvertiere den Geburtsdatum-String in ein time.Time Objekt
-	birthDate := req.PathParameters["birthdate"]
 
-	geburtsdatum, err := time.Parse("2006-01-02", birthDate)
+	geburtsdatum, err := time.Parse("2006-01-02", rateReq.BirthDate)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
@@ -126,28 +130,26 @@ func CalculateRate(ctx context.Context, req events.APIGatewayProxyRequest) (even
 	// Pauschalzuschlag
 	// Kastriert-Zuschlag
 
-	neutered := req.PathParameters["neutered"]
-	if !neutered {
+	if !rateReq.Neutered {
 		monatlicheVersicherungskosten += 5
 	}
 
 	// Gewichtszuschlag
 	// GEWICHT IN GRAMM ANGEGEBEN!!!
-	weight := req.PathParameters["weight"]
 
-	catWeight := weight / 1000
+	catWeight := rateReq.Weight / 1000
 	err = db.QueryRowContext(ctx, `
 		SELECT Durchschnittsgewicht_min, Durchschnittsgewicht_max
 		FROM Rate 
 		WHERE Rasse = ?
-	`, breed).Scan(&min, &max)
+	`, rateReq.Breed).Scan(&min, &max)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "error retrieving weight intervall details",
 		}, nil
 	}
-	}
+
 	if catWeight < min {
 		monatlicheVersicherungskosten += (min - catWeight) * 5 //TODO Für jedes Kilo oder die genaue Differenz?
 	} else if catWeight > max {
@@ -160,7 +162,7 @@ func CalculateRate(ctx context.Context, req events.APIGatewayProxyRequest) (even
 	SELECT Anfälligkeit_für_Krankheiten
 		FROM Rate 
 		WHERE Rasse = ?
-	`, breed).Scan(&illRate)
+	`, rateReq.Breed).Scan(&illRate)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
@@ -176,4 +178,25 @@ func CalculateRate(ctx context.Context, req events.APIGatewayProxyRequest) (even
 		StatusCode: 400,
 		Body:       string(responseJSON),
 	}, nil
+}
+
+func main() {
+	lambda.Start(handler)
+}
+
+func InternCall(ctx context.Context, req models.RateCalculationReq) (events.APIGatewayProxyResponse, error) {
+
+	customerReqJSON, err := json.Marshal(req)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error while calling calcRate intern",
+		}, nil
+	}
+
+	rateReq := events.APIGatewayProxyRequest{
+		Body: string(customerReqJSON),
+	}
+
+	return handler(ctx, rateReq)
 }

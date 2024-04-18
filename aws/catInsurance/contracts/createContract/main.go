@@ -1,31 +1,58 @@
 package contracts
 
 import (
+	"catInsurance/common/database"
+	"catInsurance/common/email"
+	"catInsurance/common/models"
+	"catInsurance/common/validator"
+	"catInsurance/contracts/calcRate"
 	"context"
-	"fmt"
-	"net/http"
+	"encoding/json"
+	"log"
 
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/google/uuid"
 )
 
-func CreateContract(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	var contractReq models.ContractReq
+
+	// Parse request body
+	if err := json.Unmarshal([]byte(req.Body), &contractReq); err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Body:       "Invalid request body",
+		}, nil
+	}
 
 	// Retrieve database credentials
-	db, err := connectToDB()
+	db, err := database.ConnectToDB()
 	if err != nil {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error connecting to database: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error connecting to database",
+		}, nil
 	}
 	defer db.Close()
 
 	// Begin transaction
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error starting transaction: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error starting transaction",
+		}, nil
 	}
 
-	validationErr := validateCat(contractReq)
+	validationErr := validator.ValidateCat(contractReq)
 	if validationErr != "valid" {
 		tx.Rollback()
-		return Response(http.StatusBadRequest, nil), fmt.Errorf(validationErr)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       validationErr,
+		}, nil
 	}
 
 	var zipCode float32
@@ -39,11 +66,14 @@ func CreateContract(ctx context.Context, req events.APIGatewayProxyRequest) (eve
 	WHERE
 		cu.id = ?`, contractReq.CustomerId).Scan(&zipCode)
 	if err != nil {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving zipcode from customer: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error retrieving zipcode from customer",
+		}, nil
 	}
 
 	// Calculate rate
-	rateCalculationReq := RateCalculationReq{
+	rateCalculationReq := models.RateCalculationReq{
 		Coverage:    contractReq.Coverage,
 		Color:       contractReq.Color,
 		Breed:       contractReq.Breed,
@@ -55,10 +85,21 @@ func CreateContract(ctx context.Context, req events.APIGatewayProxyRequest) (eve
 		Environment: contractReq.Environment,
 	}
 
-	rateImpl, err := s.CalculateRate(ctx, rateCalculationReq)
+	rateImpl, err := calcRate.InternCall(ctx, rateCalculationReq)
+	var rateRes models.RateRes
+	err = json.Unmarshal([]byte(rateImpl.Body), &rateRes)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "failed to Unmarshal RateRes",
+		}, nil
+	}
 
 	if err != nil {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error calculating rate: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error calculating rate",
+		}, nil
 	}
 
 	// Insert into Contract table
@@ -67,19 +108,25 @@ func CreateContract(ctx context.Context, req events.APIGatewayProxyRequest) (eve
 		INSERT INTO Contract (id, startDate, endDate, coverage, catName, breed, color, birthDate, neutered, personality, environment, weight, customerId, rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		newContractID, contractReq.StartDate, contractReq.EndDate, contractReq.Coverage, contractReq.CatName, contractReq.Breed, contractReq.Color,
-		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId, rateImpl.Body.(RateRes).Rate)
+		contractReq.BirthDate, contractReq.Neutered, contractReq.Personality, contractReq.Environment, contractReq.Weight, contractReq.CustomerId, rateRes.Rate)
 	if err != nil {
 		tx.Rollback()
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error inserting into Contract table: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error inserting into Customer table",
+		}, nil
 	}
 
 	// Commit transaction
 	if err := tx.Commit(); err != nil {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error committing transaction: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error committing transaction",
+		}, nil
 	}
 
 	// Respond with the new contract details
-	newContractRes := ContractRes{
+	newContractRes := models.ContractRes{
 		Id:          newContractID,
 		StartDate:   contractReq.StartDate,
 		EndDate:     contractReq.EndDate,
@@ -95,6 +142,15 @@ func CreateContract(ctx context.Context, req events.APIGatewayProxyRequest) (eve
 		CustomerId:  contractReq.CustomerId,
 	}
 
+	responseJSON, err := json.Marshal(newContractRes)
+	if err != nil {
+		log.Printf("Error serializing customer details: %v\n", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error serializing contract details",
+		}, nil
+	}
+
 	//Send Email for new contract
 	var customerEmail string
 
@@ -107,10 +163,23 @@ func CreateContract(ctx context.Context, req events.APIGatewayProxyRequest) (eve
 	WHERE
 		cu.id = ?`, contractReq.CustomerId).Scan(&customerEmail)
 	if err != nil {
-		return Response(http.StatusInternalServerError, nil), fmt.Errorf("error retrieving email from customer: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Error retreiving email from customer",
+		}, nil
 	}
 
-	SendEmail(customerEmail, "contract", rateImpl.Body.(RateRes).Rate, err, &contractReq)
+	email.SendEmail(customerEmail, "contract", rateRes.Rate, err, &contractReq)
 
-	return Response(http.StatusCreated, newContractRes), nil
+	return events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
+		Body: string(responseJSON),
+	}, nil
+}
+
+func main() {
+	lambda.Start(handler)
 }
