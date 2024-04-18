@@ -55,7 +55,7 @@ components:
         customer:
           $ref: "#/components/schemas/CustomerReq"
         contract:
-          $ref: "#/components/schemas/ContractReq"
+          $ref: "#/components/schemas/Contract"
     CustomerReq:
       type: object
       required:
@@ -96,7 +96,7 @@ components:
           $ref: "#/components/schemas/Address"
         bankDetails:
           $ref: "#/components/schemas/BankDetails"
-    ContractReq:
+    Contract:
       type: object
       required:
         - startDate
