@@ -1,6 +1,26 @@
 {
-  "httpMethod": "GET",
-  "body": null,
+  "httpMethod": "POST",
+  "body": {
+    "email": "user@example.com",
+    "firstName": "Max",
+    "lastName": "Mustermann",
+    "title": "Dr.",
+    "familyStatus": "ledig",
+    "birthDate": "2024-04-18",
+    "socialSecurityNumber": "45678901E234",
+    "taxId": "12345678901",
+    "address": {
+      "street": "Beispielstrasse",
+      "houseNumber": "42",
+      "zipCode": 12345,
+      "city": "Musterstadt"
+    },
+    "bankDetails": {
+      "iban": "DE89 3704 0044 0532 0130 00",
+      "bic": "INGDDEFFXXX",
+      "name": "Max Mustermann"
+    }
+  },
   "headers": {
     "Content-Type": "application/json"
   }

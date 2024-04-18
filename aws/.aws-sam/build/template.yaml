@@ -55,3 +55,171 @@ Resources:
       Environment:
         Variables:
           PARAM1: VALUE
+  CreateCustomerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: CreateCustomerFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: CreateCustomerFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: POST
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  UpdateCustomerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: UpdateCustomerFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: UpdateCustomerFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /customers/{customerId}
+            Method: PATCH
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  DeleteCustomerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: DeleteCustomerFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: DeleteCustomerFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /customers/{customerId}
+            Method: DELETE
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  GetCustomerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: GetCustomerFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: GetCustomerFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /customers/{customerId}
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  CalculateRateFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: CalculateRateFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: CalculateRateFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /contracts/rate
+            Method: POST
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  CreateContractFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: CreateContractFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: CreateContractFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /contracts/
+            Method: POST
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  GetContractFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: GetContractFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: GetContractFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /contracts/{contractId}
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  GetCustomerContractsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+      SamResourceId: GetCustomerContractsFunction
+    Properties:
+      Role: arn:aws:iam::571832093814:role/catInsuranceRole
+      CodeUri: GetCustomerContractsFunction
+      Handler: bootstrap
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /customers/{customerId}/contracts
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE

@@ -15,7 +15,7 @@ func ValidateCat(contractReq models.ContractReq) string {
 	}
 
 	// Regex für die Überprüfung, ob der String nur Buchstaben enthält.
-	nameRegex := regexp.MustCompile(`^[A-Za-zßÄÖÜäöü]+(?:\s[A-Za-zßÄÖÜäöü]+)*$`)
+	nameRegex := regexp.MustCompile(`^[A-Za-zßÄÖÜäöü]+(?: [A-Za-zßÄÖÜäöü]+)*$`)
 
 	// Überprüft, ob CatName, Breed, Color, Personality und Environment nur Buchstaben enthalten. Wenn nicht, gib false zurück.
 	if !nameRegex.MatchString(contractReq.CatName) {
@@ -84,7 +84,7 @@ func ValidateCustomer(customerReq models.CustomerReq) string {
 	}
 
 	// Regex für die Überprüfung, ob der String nur Buchstaben enthält.
-	nameRegex := regexp.MustCompile(`^[A-Za-zßÄÖÜäöü]+(?:\s[A-Za-zßÄÖÜäöü]+)*$`)
+	nameRegex := regexp.MustCompile(`^[A-Za-zßÄÖÜäöü]+(?: [A-Za-zßÄÖÜäöü]+)*$`)
 
 	//Überprüfung für den Vor und Nachnamen
 	if !nameRegex.MatchString(customerReq.FirstName) || !nameRegex.MatchString(customerReq.LastName) {
@@ -110,7 +110,7 @@ func ValidateCustomer(customerReq models.CustomerReq) string {
 	}
 
 	// Überprüft, ob SocialSecurityNumber und TaxId dem Muster entsprechen.
-	if !regexp.MustCompile(`^[0-9]{8}[A-Z][0-9]{3}$`).MatchString(customerReq.SocialSecurityNumber) {
+	if !regexp.MustCompile(`^[0-9]{8}[A-Z-Za-z][0-9]{3}$`).MatchString(customerReq.SocialSecurityNumber) {
 		return "socialSecurityNumber is not valid (must be 8 digits followed by a capital letter and 3 digits)"
 	}
 
@@ -127,7 +127,7 @@ func ValidateCustomer(customerReq models.CustomerReq) string {
 		return "city is not valid"
 	}
 
-	if !regexp.MustCompile(`^[0-9]{1,3}[a-z]?$`).MatchString(customerReq.Address.HouseNumber) {
+	if !regexp.MustCompile(`^[0-9]{1,4}[A-Za-z]?$`).MatchString(customerReq.Address.HouseNumber) {
 		return "houseNumber is not valid"
 	}
 
@@ -137,7 +137,7 @@ func ValidateCustomer(customerReq models.CustomerReq) string {
 	}
 
 	// Überprüft, ob IBAN und BIC den entsprechenden Regex-Mustern entsprechen.
-	if !regexp.MustCompile(`^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$`).MatchString(customerReq.BankDetails.Iban) {
+	if !regexp.MustCompile(`^[A-Z]{2}[0-9]{2}(?:[ ]?[0-9]{4}){4}(?:[ ]?[0-9]{1,2})?$`).MatchString(customerReq.BankDetails.Iban) {
 		return "bank iban is not valid (must be 2 capital letters followed by 2 digits and 1-30 capital letters or numbers)"
 	}
 
