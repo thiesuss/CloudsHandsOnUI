@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:internalapi/api.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/debouncer.dart';
@@ -14,7 +13,6 @@ import 'package:meowmed/widgets/dataTableShimmer.dart';
 import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum DashboardState { loading, loaded, error, initial }
