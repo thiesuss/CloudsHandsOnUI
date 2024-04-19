@@ -31,20 +31,26 @@ class _ContractPageState extends State<ContractPage> {
   DateTime endDate = DateTime.now();
   TextEditingController coverageController = TextEditingController();
   TextEditingController catNameController = TextEditingController();
-  TextEditingController breedController = TextEditingController();
-  TextEditingController colorController = TextEditingController();
   TextEditingController birthDateController = TextEditingController();
   DateTime birthDate = DateTime.now();
   bool isNeutered = false;
-  TextEditingController personalityController = TextEditingController();
-  TextEditingController environmentController = TextEditingController();
   TextEditingController weightController = TextEditingController();
   TextEditingController customerIdController = TextEditingController();
   TextEditingController rateController = TextEditingController();
 
+  TextEditingController selectedBreedController = TextEditingController();
+  TextEditingController selectedColorController = TextEditingController();
+  TextEditingController selectedPersonalityController = TextEditingController();
+  TextEditingController selectedEnvironmentController = TextEditingController();
+
   bool editMode = false; //erstmal kein editieren erlaubt
 
   BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
+
+  Breed selectedBreed;
+  Color selectedColor;
+  Personality selectedPersonality;
+  Environment selectedEnvironment;
 
   @override
   void initState() {
@@ -55,12 +61,12 @@ class _ContractPageState extends State<ContractPage> {
     coverageController.text = obj.coverage.toString();
     rateController.text = obj.rate.toString();
     catNameController.text = obj.catName;
-    breedController.text = obj.breed.toString();
-    colorController.text = obj.color.toString();
     birthDate = obj.birthDate.add(const Duration(days: 1));
     isNeutered = obj.neutered;
-    personalityController.text = obj.personality.toString();
-    environmentController.text = obj.environment.toString();
+    selectedBreed = obj.breed;
+    selectedColor = obj.color;
+    selectedPersonality = obj.personality;
+    selectedEnvironment = obj.environment;
     weightController.text = obj.weight.toString();
     customerIdController.text = obj.customerId.toString();
     birthDateController.text = DateFormat('dd.MM.yyyy').format(birthDate);
@@ -272,40 +278,64 @@ class _ContractPageState extends State<ContractPage> {
                       height: 20,
                     ),
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            //check ob Rasse hier?
-                            return null;
-                          },
-                          controller: breedController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: "Rasse"),
-                        )),
+                      //dropdown menu für enum
+                      height: 50,
+                      width: 230,
+                      child: DropdownMenu<Breed>(
+                        initialSelection: selectedBreed,
+                        controller: selectedBreedController,
+                        enabled: false,
+                        label: const Text('Color'),
+                        onSelected: (Breed? value) {
+                          setState(() {
+                            selectedBreed = value!;
+                            selectedBreedController.text =
+                                selectedColor.toString();
+                          });
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: null, label: ""),
+                          ...Breed.values.map<DropdownMenuEntry<Breed>>(
+                              (Breed titleStatus) {
+                            return DropdownMenuEntry<Breed>(
+                              value: titleStatus,
+                              label: titleStatus.toString(),
+                            );
+                          })
+                        ],
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            //check auf Farbe?
-                            return null;
-                          },
-                          controller: colorController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: "Farbe"),
-                        )),
+                      //dropdown menu für enum
+                      height: 50,
+                      width: 230,
+                      child: DropdownMenu<Color>(
+                        initialSelection: selectedColor,
+                        controller: selectedColorController,
+                        enabled: false,
+                        label: const Text('Color'),
+                        onSelected: (Color? value) {
+                          setState(() {
+                            selectedColor = value!;
+                            selectedColorController.text =
+                                selectedColor.toString();
+                          });
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: null, label: ""),
+                          ...Color.values.map<DropdownMenuEntry<Color>>(
+                              (Color titleStatus) {
+                            return DropdownMenuEntry<Color>(
+                              value: titleStatus,
+                              label: titleStatus.toString(),
+                            );
+                          })
+                        ],
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
@@ -348,40 +378,64 @@ class _ContractPageState extends State<ContractPage> {
                 Column(
                   children: [
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
-                          },
-                          controller: personalityController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Persönlichkeit"),
-                        )),
+                      //dropdown menu für enum
+                      height: 50,
+                      width: 230,
+                      child: DropdownMenu<Personality>(
+                        initialSelection: selectedPersonality,
+                        controller: selectedPersonalityController,
+                        enabled: false,
+                        label: const Text('Personality'),
+                        onSelected: (Personality? value) {
+                          setState(() {
+                            selectedPersonality = value!;
+                          });
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: null, label: ""),
+                          ...Personality.values
+                              .map<DropdownMenuEntry<Personality>>(
+                                  (Personality titleStatus) {
+                            return DropdownMenuEntry<Personality>(
+                              value: titleStatus,
+                              label: titleStatus.toString(),
+                            );
+                          })
+                        ],
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
                     Container(
-                        height: 50,
-                        width: 230,
-                        child: TextFormField(
-                          readOnly: !editMode,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Eingabe darf nicht leer sein';
-                            }
-                            return null;
-                          },
-                          controller: environmentController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Umgebung"),
-                        )),
+                      //dropdown menu für enum
+                      height: 50,
+                      width: 230,
+                      child: DropdownMenu<Environment>(
+                        initialSelection: selectedEnvironment,
+                        controller: selectedEnvironmentController,
+                        enabled: false,
+                        label: const Text('Environment'),
+                        onSelected: (Environment? env) {
+                          setState(() {
+                            selectedEnvironment = env!;
+                            selectedEnvironmentController.text =
+                                selectedEnvironment.toString();
+                          });
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: null, label: ""),
+                          ...Environment.values
+                              .map<DropdownMenuEntry<Environment>>(
+                                  (Environment titleStatus) {
+                            return DropdownMenuEntry<Environment>(
+                              value: titleStatus,
+                              label: titleStatus.toString(),
+                            );
+                          })
+                        ],
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),

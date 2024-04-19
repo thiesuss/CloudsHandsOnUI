@@ -32,14 +32,12 @@ class _NewContractState extends State<NewContract> {
   DateTime endDate = DateTime.now();
   TextEditingController coverageController = TextEditingController();
   TextEditingController catNameController = TextEditingController();
-  TextEditingController breedController = TextEditingController();
-  TextEditingController colorController = TextEditingController();
+
   TextEditingController birthDateController = TextEditingController();
   DateTime birthDate = DateTime.now();
   // TextEditingController neuteredController = TextEditingController();             Nicht mehr relevant wegen checkbox(?)
   bool isNeutered = false;
-  TextEditingController personalityController = TextEditingController();
-  TextEditingController environmentController = TextEditingController();
+
   TextEditingController weightController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
 
@@ -123,6 +121,11 @@ class _NewContractState extends State<NewContract> {
     }
     return 0;
   }
+
+  TextEditingController breedController = TextEditingController();
+  TextEditingController colorController = TextEditingController();
+  TextEditingController personalityController = TextEditingController();
+  TextEditingController environmentController = TextEditingController();
 
   final debouncer = Debouncer(delay: Duration(milliseconds: 500));
 
