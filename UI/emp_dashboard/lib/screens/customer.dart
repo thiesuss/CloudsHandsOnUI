@@ -628,7 +628,7 @@ class _CustomerState extends State<Customer> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      Contract(
+                                                      ContractPage(
                                                           e, loadContracts)));
                                         },
                                       ),
