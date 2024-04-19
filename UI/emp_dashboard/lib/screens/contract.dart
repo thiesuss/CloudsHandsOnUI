@@ -11,18 +11,18 @@ import 'package:meowmed/widgets/garten.dart';
 import 'package:meowmed/widgets/header.dart';
 import 'package:rxdart/rxdart.dart';
 
-class Contract extends StatefulWidget {
-  Contract(this.contract, this.reloadContracts, {super.key});
+class ContractPage extends StatefulWidget {
+  ContractPage(this.contract, this.reloadContracts, {super.key});
   CachedObj<ContractRes> contract;
   VoidCallback reloadContracts;
   @override
-  State<Contract> createState() => _ContractState(contract);
+  State<ContractPage> createState() => _ContractPageState(contract);
 }
 
-class _ContractState extends State<Contract> {
+class _ContractPageState extends State<ContractPage> {
   ContractService contractService =
       (LoginStateContext.getInstance().state as LoggedInState).contractService;
-  _ContractState(this.contract) {}
+  _ContractPageState(this.contract) {}
   CachedObj<ContractRes> contract;
 
   TextEditingController startDateController = TextEditingController();

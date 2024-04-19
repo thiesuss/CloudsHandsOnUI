@@ -11,8 +11,6 @@ dependencies:
     sdk: flutter
   internalapi:
     path: ../internalapi
-  customerapi:
-    path: ../customerapi
   rxdart:
   logger: ^2.0.2+1
   date_field: ^3.0.3
