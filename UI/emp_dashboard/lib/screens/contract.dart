@@ -47,10 +47,11 @@ class _ContractPageState extends State<ContractPage> {
 
   BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
 
-  Breed selectedBreed;
-  Color selectedColor;
-  Personality selectedPersonality;
-  Environment selectedEnvironment;
+  //darf man so?
+  late Breed selectedBreed;
+  late Color selectedColor;
+  late Personality selectedPersonality;
+  late Environment selectedEnvironment;
 
   @override
   void initState() {
@@ -294,7 +295,7 @@ class _ContractPageState extends State<ContractPage> {
                           });
                         },
                         dropdownMenuEntries: [
-                          DropdownMenuEntry(value: null, label: ""),
+                          DropdownMenuEntry(value: selectedBreed, label: ""),
                           ...Breed.values.map<DropdownMenuEntry<Breed>>(
                               (Breed titleStatus) {
                             return DropdownMenuEntry<Breed>(
@@ -325,7 +326,7 @@ class _ContractPageState extends State<ContractPage> {
                           });
                         },
                         dropdownMenuEntries: [
-                          DropdownMenuEntry(value: null, label: ""),
+                          DropdownMenuEntry(value: selectedColor, label: ""),
                           ...Color.values.map<DropdownMenuEntry<Color>>(
                               (Color titleStatus) {
                             return DropdownMenuEntry<Color>(
@@ -392,7 +393,7 @@ class _ContractPageState extends State<ContractPage> {
                           });
                         },
                         dropdownMenuEntries: [
-                          DropdownMenuEntry(value: null, label: ""),
+                          DropdownMenuEntry(value: selectedPersonality, label: ""),
                           ...Personality.values
                               .map<DropdownMenuEntry<Personality>>(
                                   (Personality titleStatus) {
@@ -424,7 +425,7 @@ class _ContractPageState extends State<ContractPage> {
                           });
                         },
                         dropdownMenuEntries: [
-                          DropdownMenuEntry(value: null, label: ""),
+                          DropdownMenuEntry(value: selectedEnvironment, label: ""),
                           ...Environment.values
                               .map<DropdownMenuEntry<Environment>>(
                                   (Environment titleStatus) {
