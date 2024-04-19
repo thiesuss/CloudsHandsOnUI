@@ -58,5 +58,5 @@ jobs:
 defaults:
   run:
     shell: bash
-    working-directory: ./UI
+    working-directory: ./UI/emp_dashboard
             
