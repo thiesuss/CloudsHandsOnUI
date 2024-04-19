@@ -27,7 +27,7 @@ jobs:
           channel: stable
       - run: pwd
       - run: flutter pub get
-      - run: flutter build web
+      - run: flutter build web --no-tree-shake-icons
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
