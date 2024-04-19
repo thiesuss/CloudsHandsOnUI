@@ -26,7 +26,7 @@ jobs:
         with:
           channel: stable
       - run: pwd
-      - run: flutter pub get //auskommentiert weil der scheiß errors wirft
+      - run: flutter pub get
       - run: flutter test
       - run: flutter build web
       - name: Build And Deploy
