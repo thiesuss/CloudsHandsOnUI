@@ -1,6 +1,7 @@
 import 'package:customerapi/api.dart';
 import 'package:customerapi/api.dart' as api;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:intl/intl.dart';
@@ -124,10 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   TextEditingController _backendController = TextEditingController();
 
-  api.Breed? selectedBreed;
-  api.Color? selectedColor;
-  api.Personality? selectedPersonality;
-  api.Environment? selectedEnvironment;
+  api.Breed? selectedBreed = api.Breed.abyssinian;
+  api.Color? selectedColor = api.Color.blau;
+  api.Personality? selectedPersonality = api.Personality.anhnglich;
+  api.Environment? selectedEnvironment = api.Environment.drauen;
   api.Title? selectedTitle;
   bool isNeutered = false;
 
@@ -165,12 +166,26 @@ class _MyHomePageState extends State<MyHomePage> {
         onChanged: () {
           reloadRate();
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: ListView(
+          padding: const EdgeInsets.all(30),
           children: <Widget>[
+            Row(
+              children: [
+                Expanded(child: Container()),
+                StreamBuilder(
+                  stream: rate.stream,
+                  initialData: 0,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    return Text("Rate: ${snapshot.data} €",
+                        style: TextStyle(fontSize: 20));
+                  },
+                ),
+              ],
+            ),
             Container(
                 height: 50,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: _backendController,
                   validator: (value) {
@@ -190,8 +205,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
                 height: 50,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
-                  controller: vornamecontroller,
+                  controller: firstNameController,
                   validator: (value) {
                     if (value == null) {
                       return "Eingabe darf nicht leer sein";
@@ -206,14 +222,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     labelText: "Vorname",
                   ),
                 )),
-            SizedBox(
-              height: 20,
-            ),
             Container(
                 height: 50,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
-                  controller: nachnamecontroller,
+                  controller: lastNameController,
                   validator: (value) {
                     if (value == null) {
                       return "Eingabe darf nicht leer sein";
@@ -228,16 +242,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     labelText: "Nachname",
                   ),
                 )),
-            SizedBox(
-              height: 20,
-            ),
             Container(
               //dropdown menu für enum
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: DropdownMenu<api.Title?>(
                 initialSelection: selectedTitle,
-                controller: customerStatusTitleContoller,
                 requestFocusOnTap: true,
                 label: const Text('Titel'),
                 onSelected: (api.Title? titleStatus) {
@@ -257,12 +268,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
             Container(
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: TextFormField(
                 controller: emailController,
                 validator: (value) {
@@ -283,6 +292,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: TextFormField(
                 controller: birthDateController,
                 decoration: InputDecoration(
@@ -290,33 +300,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   labelText: "Geburtstag",
                 ),
                 onTap: () async {
-                  if (!widget.readOnly) {
-                    final date = await showDatePicker(
-                        context: context,
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        initialDate: DateTime.now(),
-                        firstDate:
-                            DateTime.now().subtract(Duration(days: 40000)),
-                        lastDate: DateTime.now());
-                    if (date != null) {
-                      setState(() {
-                        birthDate = date;
-                        birthDateController.text =
-                            DateFormat('dd.MM.yyyy').format(date);
-                      });
-                    }
+                  final date = await showDatePicker(
+                      context: context,
+                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now().subtract(Duration(days: 40000)),
+                      lastDate: DateTime.now());
+                  if (date != null) {
+                    birthDateController.text =
+                        DateFormat('dd.MM.yyyy').format(date);
                   }
                 },
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
             Container(
                 height: 70,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
-                  controller: svnummercontroller,
+                  controller: socialSecurityNumberController,
                   validator: (value) {
                     if (value == null) {
                       return "Eingabe darf nicht leer sein";
@@ -336,14 +338,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     labelText: "SV-Nummer",
                   ),
                 )),
-            SizedBox(
-              height: 20,
-            ),
             Container(
                 height: 70,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
-                  controller: steueridcontroller,
+                  controller: taxIdController,
                   maxLength: 11,
                   validator: (value) {
                     if (value == null) {
@@ -365,6 +365,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
                 height: 50,
                 width: 300,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: streetController,
                   validator: (value) {
@@ -379,6 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
                 height: 50,
                 width: 130,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: houseNumberController,
                   validator: (value) {
@@ -393,6 +395,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
                 height: 80,
                 width: 430,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: zipCodeController,
                   maxLength: 5,
@@ -411,12 +414,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       hintText: "bsp: 12345",
                       labelText: "Zip-Code"),
                 )),
-            SizedBox(
-              height: 10,
-            ),
             Container(
                 height: 50,
                 width: 430,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: cityController,
                   validator: (value) {
@@ -431,6 +432,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
                 height: 50,
                 width: 430,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: ibanController,
                   validator: (value) {
@@ -442,12 +444,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: InputDecoration(
                       border: OutlineInputBorder(), labelText: "IBAN"),
                 )),
-            SizedBox(
-              height: 10,
-            ),
             Container(
                 height: 70,
                 width: 430,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: bicController,
                   maxLength: 11,
@@ -465,14 +465,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       hintText: "bsp: ABCDEF12ABC",
                       labelText: "BIC"),
                 )),
-            SizedBox(
-              height: 10,
-            ),
             Container(
                 height: 50,
                 width: 430,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
-                  controller: bankNameController,
+                  controller: nameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Eingabe darf nicht leer sein';
@@ -486,6 +484,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
                 height: 50,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: startDateController,
                   decoration: InputDecoration(
@@ -502,31 +501,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     return null;
                   },
                   onTap: () async {
-                    if (editMode) {
-                      final date = await showDatePicker(
-                        context: context,
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.parse("2006-01-02"),
-                        lastDate:
-                            DateTime.now().add(const Duration(days: 36500)),
-                      );
-                      if (date != null) {
-                        setState(() {
-                          startDate = date;
-                          startDateController.text =
-                              DateFormat('dd.MM.yyyy').format(date);
-                        });
-                      }
+                    final date = await showDatePicker(
+                      context: context,
+                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.parse("2006-01-02"),
+                      lastDate: DateTime.now().add(const Duration(days: 36500)),
+                    );
+                    if (date != null) {
+                      startDateController.text =
+                          DateFormat('dd.MM.yyyy').format(date);
                     }
                   },
                 )),
-            SizedBox(
-              height: 20,
-            ),
             Container(
                 height: 50,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   controller: endDateController,
                   decoration: InputDecoration(
@@ -543,31 +534,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     return null;
                   },
                   onTap: () async {
-                    if (editMode) {
-                      final date = await showDatePicker(
-                        context: context,
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.parse("2006-01-02"),
-                        lastDate:
-                            DateTime.now().add(const Duration(days: 36500)),
-                      );
-                      if (date != null) {
-                        setState(() {
-                          endDate = date;
-                          endDateController.text =
-                              DateFormat('dd.MM.yyyy').format(date);
-                        });
-                      }
+                    final date = await showDatePicker(
+                      context: context,
+                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.parse("2006-01-02"),
+                      lastDate: DateTime.now().add(const Duration(days: 36500)),
+                    );
+                    if (date != null) {
+                      setState(() {
+                        endDateController.text =
+                            DateFormat('dd.MM.yyyy').format(date);
+                      });
                     }
                   },
                 )),
-            SizedBox(
-              height: 20,
-            ),
             Container(
                 height: 50,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -587,34 +572,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       border: OutlineInputBorder(),
                       labelText: "Deckung"),
                 )),
-            SizedBox(
-              height: 20,
-            ),
             Container(
                 height: 50,
                 width: 230,
-                child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Eingabe darf nicht leer sein';
-                    }
-                    try {
-                      double.parse(value);
-                    } catch (e) {
-                      return 'Ungültige Eingabe';
-                    }
-                    return null;
-                  },
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  controller: rateController,
-                  decoration: InputDecoration(
-                      prefixText: "€ ",
-                      border: OutlineInputBorder(),
-                      labelText: "Rate"),
-                )),
-            Container(
-                height: 50,
-                width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -626,26 +587,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: InputDecoration(
                       border: OutlineInputBorder(), labelText: "Name"),
                 )),
-            SizedBox(
-              height: 20,
-            ),
             Container(
               //dropdown menu für enum
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: DropdownMenu<Breed>(
                 initialSelection: selectedBreed,
-                controller: selectedBreedController,
-                enabled: false,
                 label: const Text('Color'),
                 onSelected: (Breed? value) {
                   setState(() {
                     selectedBreed = value!;
-                    selectedBreedController.text = selectedColor.toString();
                   });
                 },
                 dropdownMenuEntries: [
-                  DropdownMenuEntry(value: selectedBreed, label: ""),
+                  DropdownMenuEntry(value: selectedBreed!, label: ""),
                   ...Breed.values
                       .map<DropdownMenuEntry<Breed>>((Breed titleStatus) {
                     return DropdownMenuEntry<Breed>(
@@ -656,26 +612,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
             Container(
               //dropdown menu für enum
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: DropdownMenu<Color>(
                 initialSelection: selectedColor,
-                controller: selectedColorController,
-                enabled: false,
                 label: const Text('Color'),
                 onSelected: (Color? value) {
                   setState(() {
                     selectedColor = value!;
-                    selectedColorController.text = selectedColor.toString();
                   });
                 },
                 dropdownMenuEntries: [
-                  DropdownMenuEntry(value: selectedColor, label: ""),
+                  DropdownMenuEntry(value: selectedColor!, label: ""),
                   ...Color.values
                       .map<DropdownMenuEntry<Color>>((Color titleStatus) {
                     return DropdownMenuEntry<Color>(
@@ -686,12 +637,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
             Container(
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: TextFormField(
                 controller: birthDateController,
                 decoration: InputDecoration(
@@ -699,21 +648,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   labelText: "Geburtstag",
                 ),
                 onTap: () async {
-                  if (editMode) {
-                    final date = await showDatePicker(
-                        context: context,
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        initialDate: DateTime.now(),
-                        firstDate:
-                            DateTime.now().subtract(Duration(days: 40000)),
-                        lastDate: DateTime.now());
-                    if (date != null) {
-                      setState(() {
-                        birthDate = date;
-                        birthDateController.text =
-                            DateFormat('dd.MM.yyyy').format(date);
-                      });
-                    }
+                  final date = await showDatePicker(
+                      context: context,
+                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now().subtract(Duration(days: 40000)),
+                      lastDate: DateTime.now());
+                  if (date != null) {
+                    setState(() {
+                      birthDateController.text =
+                          DateFormat('dd.MM.yyyy').format(date);
+                    });
                   }
                 },
               ),
@@ -722,10 +667,9 @@ class _MyHomePageState extends State<MyHomePage> {
               //dropdown menu für enum
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: DropdownMenu<Personality>(
                 initialSelection: selectedPersonality,
-                controller: selectedPersonalityController,
-                enabled: false,
                 label: const Text('Personality'),
                 onSelected: (Personality? value) {
                   setState(() {
@@ -733,7 +677,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
                 dropdownMenuEntries: [
-                  DropdownMenuEntry(value: selectedPersonality, label: ""),
+                  DropdownMenuEntry(value: selectedPersonality!, label: ""),
                   ...Personality.values.map<DropdownMenuEntry<Personality>>(
                       (Personality titleStatus) {
                     return DropdownMenuEntry<Personality>(
@@ -744,27 +688,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
             Container(
               //dropdown menu für enum
               height: 50,
               width: 230,
+              margin: const EdgeInsets.only(bottom: 20),
               child: DropdownMenu<Environment>(
                 initialSelection: selectedEnvironment,
-                controller: selectedEnvironmentController,
-                enabled: false,
                 label: const Text('Environment'),
                 onSelected: (Environment? env) {
                   setState(() {
                     selectedEnvironment = env!;
-                    selectedEnvironmentController.text =
-                        selectedEnvironment.toString();
                   });
                 },
                 dropdownMenuEntries: [
-                  DropdownMenuEntry(value: selectedEnvironment, label: ""),
+                  DropdownMenuEntry(value: selectedEnvironment!, label: ""),
                   ...Environment.values.map<DropdownMenuEntry<Environment>>(
                       (Environment titleStatus) {
                     return DropdownMenuEntry<Environment>(
@@ -775,12 +713,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
             Container(
                 height: 50,
                 width: 230,
+                margin: const EdgeInsets.only(bottom: 20),
                 child: TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -807,13 +743,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Checkbox(
                     value: isNeutered,
                     onChanged: (bool? value) {
-                      if (editMode) {
-                        setState(() {
-                          isNeutered = value!;
-                        });
-                      } else {
-                        null;
-                      }
+                      setState(() {
+                        isNeutered = value!;
+                      });
                     })
               ],
             ),
