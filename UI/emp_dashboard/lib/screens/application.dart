@@ -4,6 +4,7 @@ import 'package:internalapi/api.dart' as api;
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/services/applicationservice.dart';
+import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
 import 'package:meowmed/widgets/garten.dart';
@@ -27,6 +28,8 @@ class _ApplicationPageState extends State<ApplicationPage> {
   ApplicationService applicationService =
       (LoginStateContext.getInstance().state as LoggedInState)
           .applicationService;
+  ContractService contractService =
+      (LoginStateContext.getInstance().state as LoggedInState).contractService;
 
   BehaviorSubject<String?> error = BehaviorSubject.seeded(null);
 
@@ -76,6 +79,16 @@ class _ApplicationPageState extends State<ApplicationPage> {
                     return snapshot.data == null
                         ? Container()
                         : buildErrorTile("Fehler: ", snapshot.data!);
+                  },
+                ),
+                FutureBuilder<double>(
+                  future: applicationService
+                      .getRateForApplication(applicationCached),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<double> snapshot) {
+                    return snapshot.hasData
+                        ? Text("Rate: ${snapshot.data!}")
+                        : Container();
                   },
                 ),
                 ApplicationInformation(

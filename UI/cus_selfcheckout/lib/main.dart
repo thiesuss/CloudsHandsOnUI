@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:self_checkout/debouncer.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -153,6 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController weightController = TextEditingController();
 
   GlobalKey _formKey = GlobalKey<FormState>();
+  Debouncer debouncer = Debouncer(delay: const Duration(milliseconds: 500));
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +162,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Form(
         key: _formKey,
         onChanged: () {
-          reloadRate();
+          debouncer.run(() {
+            reloadRate();
+          });
         },
         child: ListView(
           padding: const EdgeInsets.all(30),

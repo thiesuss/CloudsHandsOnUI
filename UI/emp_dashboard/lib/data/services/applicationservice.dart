@@ -2,7 +2,10 @@ import 'package:internalapi/api.dart';
 import 'package:meowmed/data/exeptions/crud.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
 import 'package:meowmed/data/models/service.dart';
+import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/repo.dart';
+import 'package:meowmed/data/states/login/context.dart';
+import 'package:meowmed/data/states/login/loggedIn.dart';
 
 class ApplicationService implements StatefullObj {
   ApplicationService(ApiClient client) {
@@ -65,5 +68,28 @@ class ApplicationService implements StatefullObj {
   Future<void> declineApplication(CachedObj<ApplicationRes> cachedObj) async {
     cachedObj.getObj().accepted = false;
     await updateApplication(cachedObj);
+  }
+
+  Future<double> getRateForApplication(
+      CachedObj<ApplicationRes> applicationRes) async {
+    ContractService contractService =
+        (LoginStateContext.getInstance().state as LoggedInState)
+            .contractService;
+
+    final appRes = applicationRes.getObj();
+
+    RateCalculationReq rateCalculationReq = RateCalculationReq(
+        coverage: appRes.contract!.coverage,
+        breed: appRes.contract!.breed,
+        color: appRes.contract!.color,
+        birthDate: appRes.contract!.birthDate,
+        neutered: appRes.contract!.neutered,
+        personality: appRes.contract!.personality,
+        environment: appRes.contract!.environment,
+        weight: appRes.contract!.weight,
+        zipCode: appRes.customer!.address.zipCode);
+
+    final rate = await contractService.getRate(rateCalculationReq);
+    return double.parse(rate.rate!.toString());
   }
 }
