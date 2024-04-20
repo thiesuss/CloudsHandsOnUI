@@ -157,10 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
       body: Form(
         key: _formKey,
         onChanged: () {
@@ -169,6 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView(
           padding: const EdgeInsets.all(30),
           children: <Widget>[
+            Header("Antrag", []),
             Row(
               children: [
                 Expanded(child: Container()),
@@ -769,6 +766,55 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+class Header extends StatelessWidget {
+  Header(this.title, this.actions, {bool this.disableArrow = false});
+  String title;
+  List<Widget> actions;
+  bool disableArrow;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 20, bottom: 20),
+      child: Row(
+        children: [
+          Hero(
+            tag: "SiteTitle",
+            flightShuttleBuilder: flightShuttleBuilder,
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(child: Container()),
+          logo,
+        ],
+      ),
+    );
+  }
+}
+
+final logo = Container(
+  width: 350,
+  height: 50,
+  child: Image(
+    image: AssetImage('assets/images/MeowcroservicesLogoNew.png'),
+  ),
+);
+
+Widget flightShuttleBuilder(
+  BuildContext flightContext,
+  Animation<double> animation,
+  HeroFlightDirection flightDirection,
+  BuildContext fromHeroContext,
+  BuildContext toHeroContext,
+) {
+  return DefaultTextStyle(
+    style: DefaultTextStyle.of(toHeroContext).style,
+    child: toHeroContext.widget,
+  );
 }
 
 ExpansionTile buildErrorTile(String title, String error) {
