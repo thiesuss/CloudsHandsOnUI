@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:internalapi/api.dart';
+import 'package:meowmed/data/services/applicationservice.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/states/login/context.dart';
@@ -13,16 +14,18 @@ class LoggedInState implements LoginState {
   // final CachedObj<EmployeeRes> employee;
   StreamSubscription? _employeeSubscription;
   LoggedInState(
-    // this.employee,
-    this.client,
-    this.contractService,
-    this.customerService,
-    // this.employeeService,
-  ) {}
+      // this.employee,
+      this.client,
+      this.contractService,
+      this.customerService,
+      this.applicationService
+      // this.employeeService,
+      ) {}
 
   ApiClient client;
   late ContractService contractService;
   late CustomerService customerService;
+  late ApplicationService applicationService;
   // late EmployeeService employeeService;
 
   Future<void> logout() async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:internalapi/api.dart';
+import 'package:meowmed/data/services/applicationservice.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/states/login/awsKeyAuth.dart';
@@ -65,7 +66,9 @@ class LoggedOutState implements LoginState {
 
     final contractService = ContractService(client);
     final customerService = CustomerService(client);
-    final state = LoggedInState(client, contractService, customerService);
+    final applicationService = ApplicationService(client);
+    final state = LoggedInState(
+        client, contractService, customerService, applicationService);
     await nextState(state);
     return state;
   }
