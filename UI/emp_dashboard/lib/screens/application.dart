@@ -193,10 +193,10 @@ class _ApplicationPageState extends State<ApplicationPage> {
                           try {
                             await applicationService
                                 .declineApplication(applicationCached);
+                            setState(() {});
                           } catch (e) {
                             error.add(e.toString());
                           }
-                          setState(() {});
                         }),
                     LoadingButton(
                         label: "Annehmen",
@@ -205,10 +205,10 @@ class _ApplicationPageState extends State<ApplicationPage> {
                           try {
                             await applicationService
                                 .acceptApplication(applicationCached);
+                            setState(() {});
                           } catch (e) {
                             error.add(e.toString());
                           }
-                          setState(() {});
                         })
                   ],
                 )
