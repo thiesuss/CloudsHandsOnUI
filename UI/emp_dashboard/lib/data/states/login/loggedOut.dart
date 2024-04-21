@@ -24,7 +24,7 @@ class LoggedOutState implements LoginState {
     switch (backendUrl) {
       case 'aws':
         backendUrl =
-            'http://ec2-18-159-254-31.eu-central-1.compute.amazonaws.com:8081/v1';
+            'https://a8hyu0e2ja.execute-api.eu-central-1.amazonaws.com/Stage/';
         authKey = "zMvbvu4RjkaOof38EPgYU9RIZuCRDfEi7oGFqcyv";
         auth = AwsKeyAuth(authKey);
         backendType = BackendType.aws;

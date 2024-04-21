@@ -209,7 +209,13 @@ class _ApplicationPageState extends State<ApplicationPage> {
                           } catch (e) {
                             error.add(e.toString());
                           }
-                        })
+                        }),
+                    LoadingButton(
+                        label: "Zurück",
+                        onPressed: () async {
+                          error.add(null);
+                          Navigator.pop(context);
+                        }),
                   ],
                 )
               ],
