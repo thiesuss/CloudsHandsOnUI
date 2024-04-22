@@ -22,6 +22,8 @@ class Header extends StatelessWidget {
             ),
           ),
           Expanded(child: Container()),
+          ...actions,
+          SizedBox(width: 10),
           logo,
         ],
       ),

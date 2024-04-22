@@ -7,6 +7,7 @@ import 'package:meowmed/data/services/debouncer.dart';
 import 'package:meowmed/data/services/refreshTimer.dart';
 import 'package:meowmed/data/states/login/context.dart';
 import 'package:meowmed/data/states/login/loggedIn.dart';
+import 'package:meowmed/screens/application.dart';
 import 'package:meowmed/screens/customer.dart';
 import 'package:meowmed/screens/newcustomer.dart';
 import 'package:meowmed/widgets/dataTableShimmer.dart';
@@ -111,7 +112,16 @@ class _DashboardState extends State<Dashboard> {
       body: ListView(padding: EdgeInsets.all(30), children: [
         Column(
           children: [
-            Header("Mitarbeiter Dashboard", []),
+            Header("Mitarbeiter Dashboard", [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ApplicationPage()));
+                  },
+                  icon: Icon(Icons.notifications))
+            ]),
             Row(
               children: [
                 Container(

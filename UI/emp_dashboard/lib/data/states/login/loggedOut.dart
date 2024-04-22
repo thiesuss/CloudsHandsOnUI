@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:internalapi/api.dart';
+import 'package:meowmed/data/services/applicationservice.dart';
 import 'package:meowmed/data/services/contractservice.dart';
 import 'package:meowmed/data/services/customerservice.dart';
 import 'package:meowmed/data/states/login/awsKeyAuth.dart';
@@ -23,13 +24,13 @@ class LoggedOutState implements LoginState {
     switch (backendUrl) {
       case 'aws':
         backendUrl =
-            'http://ec2-18-159-254-31.eu-central-1.compute.amazonaws.com:8081/v1';
+            'https://a8hyu0e2ja.execute-api.eu-central-1.amazonaws.com/Stage/';
         authKey = "zMvbvu4RjkaOof38EPgYU9RIZuCRDfEi7oGFqcyv";
         auth = AwsKeyAuth(authKey);
         backendType = BackendType.aws;
         break;
       case 'azure':
-        backendUrl = 'https://meowmedazure-apim.azure-api.net/';
+        backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
         authKey = "7b96905b26584158a16826123a9b394f";
         auth = AzureKeyAuth(authKey);
         backendType = BackendType.azure;
@@ -65,7 +66,9 @@ class LoggedOutState implements LoginState {
 
     final contractService = ContractService(client);
     final customerService = CustomerService(client);
-    final state = LoggedInState(client, contractService, customerService);
+    final applicationService = ApplicationService(client);
+    final state = LoggedInState(
+        client, contractService, customerService, applicationService);
     await nextState(state);
     return state;
   }

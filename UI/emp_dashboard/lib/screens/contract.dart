@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:internalapi/api.dart';
 import 'package:intl/intl.dart';
 import 'package:meowmed/data/models/cachedObj.dart';
@@ -393,7 +392,8 @@ class _ContractPageState extends State<ContractPage> {
                           });
                         },
                         dropdownMenuEntries: [
-                          DropdownMenuEntry(value: selectedPersonality, label: ""),
+                          DropdownMenuEntry(
+                              value: selectedPersonality, label: ""),
                           ...Personality.values
                               .map<DropdownMenuEntry<Personality>>(
                                   (Personality titleStatus) {
@@ -425,7 +425,8 @@ class _ContractPageState extends State<ContractPage> {
                           });
                         },
                         dropdownMenuEntries: [
-                          DropdownMenuEntry(value: selectedEnvironment, label: ""),
+                          DropdownMenuEntry(
+                              value: selectedEnvironment, label: ""),
                           ...Environment.values
                               .map<DropdownMenuEntry<Environment>>(
                                   (Environment titleStatus) {
