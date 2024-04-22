@@ -35,13 +35,13 @@ class _ApplicationPageState extends State<ApplicationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Scaffold(
+        body: ListView(
       children: [
         Header("Applications", []),
         SizedBox(height: 20),
         FutureBuilder<CachedObj<ApplicationRes>?>(
           future: applicationService.nextApplication(),
-          initialData: null,
           builder: (BuildContext context,
               AsyncSnapshot<CachedObj<ApplicationRes>?> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -193,10 +193,10 @@ class _ApplicationPageState extends State<ApplicationPage> {
                           try {
                             await applicationService
                                 .declineApplication(applicationCached);
+                            setState(() {});
                           } catch (e) {
                             error.add(e.toString());
                           }
-                          setState(() {});
                         }),
                     LoadingButton(
                         label: "Annehmen",
@@ -205,11 +205,17 @@ class _ApplicationPageState extends State<ApplicationPage> {
                           try {
                             await applicationService
                                 .acceptApplication(applicationCached);
+                            setState(() {});
                           } catch (e) {
                             error.add(e.toString());
                           }
-                          setState(() {});
-                        })
+                        }),
+                    LoadingButton(
+                        label: "Zurück",
+                        onPressed: () async {
+                          error.add(null);
+                          Navigator.pop(context);
+                        }),
                   ],
                 )
               ],
@@ -217,7 +223,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
           },
         ),
       ],
-    );
+    ));
   }
 }
 
