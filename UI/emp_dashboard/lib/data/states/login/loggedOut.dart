@@ -1,4 +1,3 @@
-import 'package:dotenv/dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:internalapi/api.dart';
 import 'package:meowmed/data/services/applicationservice.dart';
@@ -12,7 +11,8 @@ import 'package:meowmed/data/states/login/state.dart';
 import 'package:meowmed/screens/login.dart';
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:aad_oauth/model/config.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:dotenv/dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 enum BackendType { aws, azure, azure1, mock }
 final navigatorKey =  GlobalKey<NavigatorState>();
@@ -40,7 +40,7 @@ class LoggedOutState implements LoginState {
     scope: "openid",
     redirectUri: "https://happy-dune-0b8e1ec03.5.azurestaticapps.net", // Note: this is the default for Mobile
     
-    clientSecret: dotenv.env['CLIENT_SECRET'], // Note: do not include secret in publicly available applications
+    // clientSecret: dotenv.env['CLIENT_SECRET'], // Note: do not include secret in publicly available applications
     isB2C: true,
     policy: "B2C_1_azuremeowmedsigninonly",
     tokenIdentifier: "",
