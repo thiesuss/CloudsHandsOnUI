@@ -97,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<double> reloadRate() async {
+    this.rate.add(0.0);
     final api = ApiClient(
       basePath: _backendController.text,
     );
@@ -115,8 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       final rateRaw = await defaultApi.calculateRate(rateCalculationReq);
       if (rateRaw == null) throw Exception('Rate is null');
-      final rate = double.parse(rateRaw.rate.toString());
-      return rate;
+      final newRate = double.parse(rateRaw.rate.toString());
+      this.rate.add(newRate);
+      return newRate;
     } catch (e) {
       error.add(e.toString());
       rethrow;
