@@ -18,6 +18,7 @@ dependencies:
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.11
   flutter_azure_b2c: ^0.0.9
+  aad_oauth: "^0.4.4"
   # injectable:
   # get_it:
   shimmer: ^3.0.0
