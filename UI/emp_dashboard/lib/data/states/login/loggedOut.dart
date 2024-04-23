@@ -1,3 +1,4 @@
+import 'package:dotenv/dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:internalapi/api.dart';
 import 'package:meowmed/data/services/applicationservice.dart';
@@ -11,6 +12,7 @@ import 'package:meowmed/data/states/login/state.dart';
 import 'package:meowmed/screens/login.dart';
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:aad_oauth/model/config.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 enum BackendType { aws, azure, azure1, mock }
 final navigatorKey =  GlobalKey<NavigatorState>();
@@ -31,13 +33,14 @@ class LoggedOutState implements LoginState {
   //   //Optional parameter: Centered CircularProgressIndicator while rendering web page in WebView
   //   loader: Center(child: CircularProgressIndicator()),
   // );
-
+  
   static final Config configB2Ca = Config(
     tenant: "azuremeowmed",
     clientId: "6caacece-1092-4719-b448-df3a9aaf1701",
     scope: "openid",
     redirectUri: "https://happy-dune-0b8e1ec03.5.azurestaticapps.net", // Note: this is the default for Mobile
-    // clientSecret: "YOUR_CLIENT_SECRET", // Note: do not include secret in publicly available applications
+    
+    clientSecret: dotenv.env['CLIENT_SECRET'], // Note: do not include secret in publicly available applications
     isB2C: true,
     policy: "B2C_1_azuremeowmedsigninonly",
     tokenIdentifier: "",
@@ -51,8 +54,8 @@ class LoggedOutState implements LoginState {
     return accessToken;
   }
 
-  static  ApiClient getApiClientFromData (
-      String username, String password, String backendUrl) {
+  static  Future<ApiClient> getApiClientFromData(
+      String username, String password, String backendUrl) async {
     String authKey;
     Authentication? auth;
     BackendType? backendType;
@@ -77,7 +80,7 @@ class LoggedOutState implements LoginState {
         // String? accessToken = oauth.getAccessToken() as String?;
         // String at = accessToken ?? "";
         String at = "";
-        azureB2CLogin().then((value){
+        await azureB2CLogin().then((value){
           at = value ?? "";
         });
         backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
@@ -106,7 +109,7 @@ class LoggedOutState implements LoginState {
 
   Future<LoginState> login(
       String username, String password, String backendUrl) async {
-    ApiClient client = getApiClientFromData(username, password, backendUrl);
+    ApiClient client = await getApiClientFromData(username, password, backendUrl);
 
     final contractService = ContractService(client);
     final customerService = CustomerService(client);
