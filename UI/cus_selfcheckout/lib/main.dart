@@ -988,12 +988,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   catNameController.text = "Minka";
                   catBirthDateController.text = "01.01.2020";
                   weightController.text = "50000";
-                  selectedBreed = Breed.abyssinian;
-                  selectedColor = Color.blau;
-                  selectedPersonality = Personality.anhnglich;
-                  selectedEnvironment = Environment.drauen;
-                  isNeutered = true;
                   nameController.text = "Max Mustermann";
+                  setState(() {
+                    selectedBreed = Breed.abyssinian;
+                    selectedColor = Color.blau;
+                    selectedPersonality = Personality.anhnglich;
+                    selectedEnvironment = Environment.drauen;
+                    isNeutered = true;
+                  });
                 },
                 child: Text("Fill Random")),
             StreamBuilder<String?>(
