@@ -20,6 +20,8 @@ class CustomerService implements StatefullObj {
             "id": obj.getId(),
           }.toString());
 
+  int page = 1;
+
   @override
   Future<void> dispose() async {
     await repo.dispose();
@@ -61,6 +63,13 @@ class CustomerService implements StatefullObj {
     // hoffentlich kein TODO: UpdateCustomer hat keine ID?
     await customerApi.updateCustomer(id, customerReq);
     // throw UnimplementedError("UpdateCustomer hat keine ID?");
+  }
+
+  Future<List<CachedObj<CustomerRes>>> nextPage() async {
+    page++;
+    return [...await getCustomers(page: page), ...repo.getAll()]
+        .toSet()
+        .toList();
   }
 
   Future<List<CachedObj<CustomerRes>>> getCustomers(

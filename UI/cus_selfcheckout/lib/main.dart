@@ -147,6 +147,13 @@ class _MyHomePageState extends State<MyHomePage> {
   api.Personality? selectedPersonality = api.Personality.anhnglich;
   api.Environment? selectedEnvironment = api.Environment.drauen;
   api.Title? selectedTitle;
+
+  TextEditingController selectedBreedController = TextEditingController();
+  TextEditingController selectedColorController = TextEditingController();
+  TextEditingController selectedPersonalityController = TextEditingController();
+  TextEditingController selectedEnvironmentController = TextEditingController();
+  TextEditingController selectedTitleController = TextEditingController();
+
   bool isNeutered = false;
 
   TextEditingController streetController = TextEditingController();
@@ -284,11 +291,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: DropdownMenu<api.Title?>(
                                 initialSelection: selectedTitle,
                                 requestFocusOnTap: true,
+                                controller: selectedTitleController,
                                 label: const Text('Titel'),
                                 onSelected: (api.Title? titleStatus) {
-                                  setState(() {
-                                    selectedTitle = titleStatus;
-                                  });
+                                  selectedTitleController.text =
+                                      titleStatus.toString();
+                                  selectedTitle = titleStatus;
                                 },
                                 dropdownMenuEntries: [
                                   DropdownMenuEntry(value: null, label: ""),
@@ -802,12 +810,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Breed>(
                             width: 230,
+                            controller: selectedBreedController,
                             initialSelection: selectedBreed,
                             label: const Text('Rasse'),
                             onSelected: (Breed? value) {
-                              setState(() {
-                                selectedBreed = value!;
-                              });
+                              selectedBreedController.text = value.toString();
+                              selectedBreed = value!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -832,12 +840,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Color>(
                             width: 230,
+                            controller: selectedColorController,
                             initialSelection: selectedColor,
                             label: const Text('Farbe'),
                             onSelected: (Color? value) {
-                              setState(() {
-                                selectedColor = value!;
-                              });
+                              selectedColorController.text = value.toString();
+                              selectedColor = value!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -863,12 +871,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Personality>(
                             width: 230,
+                            controller: selectedPersonalityController,
                             initialSelection: selectedPersonality,
                             label: const Text('Persönlichkeit'),
                             onSelected: (Personality? value) {
-                              setState(() {
-                                selectedPersonality = value!;
-                              });
+                              selectedPersonalityController.text =
+                                  value.toString();
+                              selectedPersonality = value!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -894,12 +903,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Environment>(
                             width: 230,
+                            controller: selectedEnvironmentController,
                             initialSelection: selectedEnvironment,
                             label: const Text('Umgebung'),
                             onSelected: (Environment? env) {
-                              setState(() {
-                                selectedEnvironment = env!;
-                              });
+                              selectedEnvironmentController.text =
+                                  env.toString();
+                              selectedEnvironment = env!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -989,11 +999,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   catBirthDateController.text = "01.01.2020";
                   weightController.text = "50000";
                   nameController.text = "Max Mustermann";
+
+                  selectedBreedController.text = "Abyssinian";
+                  selectedColorController.text = "Blau";
+                  selectedPersonalityController.text = "Anhnglich";
+                  selectedEnvironmentController.text = "Drauen";
+                  selectedBreed = Breed.abyssinian;
+                  selectedColor = Color.blau;
+                  selectedPersonality = Personality.anhnglich;
+                  selectedEnvironment = Environment.drauen;
                   setState(() {
-                    selectedBreed = Breed.abyssinian;
-                    selectedColor = Color.blau;
-                    selectedPersonality = Personality.anhnglich;
-                    selectedEnvironment = Environment.drauen;
                     isNeutered = true;
                   });
                 },
