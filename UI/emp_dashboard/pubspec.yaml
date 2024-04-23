@@ -36,4 +36,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/MeowcroservicesLogoNew.png
-    - lib\data\states\login\.env
+    # - lib\data\states\login\.env
