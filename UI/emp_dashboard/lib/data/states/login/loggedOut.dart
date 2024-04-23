@@ -46,6 +46,7 @@ class LoggedOutState implements LoginState {
     tokenIdentifier: "",
     navigatorKey: navigatorKey,
   );
+  
 
   static Future<String?> azureB2CLogin() async{
     AadOAuth oauth = new AadOAuth(configB2Ca);
@@ -80,9 +81,13 @@ class LoggedOutState implements LoginState {
         // String? accessToken = oauth.getAccessToken() as String?;
         // String at = accessToken ?? "";
         String at = "";
+        try{
         await azureB2CLogin().then((value){
           at = value ?? "";
         });
+        } catch (NotInitializedError) {
+          break;
+        }
         backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
         authKey = at;
         auth = AzureKeyAuth(authKey);
