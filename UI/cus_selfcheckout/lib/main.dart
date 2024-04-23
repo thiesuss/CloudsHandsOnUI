@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bic: bicController.text,
       name: nameController.text,
     );
-
+    final weight = double.parse(weightController.text);
     final applicationReq = ApplicationReq(
         customer: CustomerReq(
           email: emailController.text,
@@ -76,17 +76,23 @@ class _MyHomePageState extends State<MyHomePage> {
           bankDetails: bankDetails,
         ),
         contract: Contract(
-            startDate: DateFormat('dd.MM.yyyy').parse(startDateController.text).add(const Duration(days: 1)),
-            endDate: DateFormat('dd.MM.yyyy').parse(endDateController.text).add(const Duration(days: 1)),
+            startDate: DateFormat('dd.MM.yyyy')
+                .parse(startDateController.text)
+                .add(const Duration(days: 1)),
+            endDate: DateFormat('dd.MM.yyyy')
+                .parse(endDateController.text)
+                .add(const Duration(days: 1)),
             coverage: rate,
             catName: catNameController.text,
             breed: selectedBreed!,
             color: selectedColor!,
-            birthDate: DateFormat('dd.MM.yyyy').parse(birthDateController.text).add(const Duration(days: 1)),
+            birthDate: DateFormat('dd.MM.yyyy')
+                .parse(birthDateController.text)
+                .add(const Duration(days: 1)),
             neutered: isNeutered,
             personality: selectedPersonality!,
             environment: selectedEnvironment!,
-            weight: double.parse(weightController.text)));
+            weight: weight));
 
     try {
       await defaultApi.createApplication(applicationReq);
@@ -97,27 +103,33 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<double> reloadRate() async {
-    this.rate.add(0.0);
+    rate.add(0.0);
     final api = ApiClient(
       basePath: _backendController.text,
     );
     final defaultApi = DefaultApi(api);
+    final zipCode = int.parse(zipCodeController.text);
+    final weight = double.parse(weightController.text);
+    final coverage = double.parse(coverageController.text);
 
     final rateCalculationReq = RateCalculationReq(
-        coverage: double.parse(coverageController.text),
+        coverage: coverage,
         breed: selectedBreed!,
         color: selectedColor!,
-        birthDate: DateFormat('dd.MM.yyyy').parse(catBirthDateController.text).add(const Duration(days: 1)),
+        birthDate: DateFormat('dd.MM.yyyy')
+            .parse(catBirthDateController.text)
+            .add(const Duration(days: 1)),
         neutered: isNeutered,
         personality: selectedPersonality!,
         environment: selectedEnvironment!,
-        weight: double.parse(weightController.text),
-        zipCode: int.parse(zipCodeController.text));
+        weight: weight,
+        zipCode: zipCode);
     try {
       final rateRaw = await defaultApi.calculateRate(rateCalculationReq);
-      if (rateRaw == null) throw Exception('Rate is null');
-      final newRate = double.parse(rateRaw.rate.toString());
-      this.rate.add(newRate);
+      if (rateRaw == null || rateRaw.rate == null)
+        throw Exception('Rate is null');
+      final newRate = rateRaw.rate!.toDouble();
+      rate.add(newRate);
       return newRate;
     } catch (e) {
       error.add(e.toString());
