@@ -983,11 +983,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   ibanController.text = "DE12345678901234567890";
                   bicController.text = "ABCDEF12ABC";
                   startDateController.text = "01.01.2022";
-                  endDateController.text = "14.01.2022";
+                  endDateController.text = "31.02.2022";
                   coverageController.text = "1000";
                   catNameController.text = "Minka";
                   catBirthDateController.text = "01.01.2020";
-                  weightController.text = "5000";
+                  weightController.text = "50000";
+                  selectedBreed = Breed.abyssinian;
+                  selectedColor = Color.blau;
+                  selectedPersonality = Personality.anhnglich;
+                  selectedEnvironment = Environment.drauen;
+                  isNeutered = true;
+                  nameController.text = "Max Mustermann";
                 },
                 child: Text("Fill Random")),
             StreamBuilder<String?>(
