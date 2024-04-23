@@ -33,16 +33,23 @@ class LoggedOutState implements LoginState {
   // );
 
   static final Config configB2Ca = Config(
-    tenant: "e6ec6ab7-2331-40ca-b7bf-91f68aa466a1",
+    tenant: "azuremeowmed",
     clientId: "6caacece-1092-4719-b448-df3a9aaf1701",
-    scope: "https://azuremeowmed.onmicrosoft.com/6caacece-1092-4719-b448-df3a9aaf1701",
-    // redirectUri: "https://login.live.com/oauth20_desktop.srf", // Note: this is the default for Mobile
+    scope: "openid",
+    redirectUri: "https://happy-dune-0b8e1ec03.5.azurestaticapps.net", // Note: this is the default for Mobile
     // clientSecret: "YOUR_CLIENT_SECRET", // Note: do not include secret in publicly available applications
     isB2C: true,
     policy: "B2C_1_azuremeowmedsigninonly",
+    tokenIdentifier: "",
     navigatorKey: navigatorKey,
   );
 
+  static Future<String?> azureB2CLogin() async{
+    AadOAuth oauth = new AadOAuth(configB2Ca);
+    final result = await oauth.login();
+    String? accessToken = await oauth.getAccessToken();
+    return accessToken;
+  }
 
   static  ApiClient getApiClientFromData (
       String username, String password, String backendUrl) {
@@ -65,10 +72,14 @@ class LoggedOutState implements LoginState {
         backendType = BackendType.azure;
         break;
       case 'azure1':
-        AadOAuth oauth = new AadOAuth(configB2Ca);
-        final result = oauth.login();
-        String? accessToken = oauth.getAccessToken() as String?;
-        String at = accessToken ?? "";
+        // AadOAuth oauth = new AadOAuth(configB2Ca);
+        // final result = oauth.login();
+        // String? accessToken = oauth.getAccessToken() as String?;
+        // String at = accessToken ?? "";
+        String at = "";
+        azureB2CLogin().then((value){
+          at = value ?? "";
+        });
         backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
         authKey = at;
         auth = AzureKeyAuth(authKey);
