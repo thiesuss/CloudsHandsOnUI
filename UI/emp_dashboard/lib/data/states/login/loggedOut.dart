@@ -20,16 +20,27 @@ class LoggedOutState implements LoginState {
   LoggedOutState() {}
 
 
-  static final Config config = Config(
+  // static final Config config = Config(
+  //   tenant: "e6ec6ab7-2331-40ca-b7bf-91f68aa466a1",
+  //   clientId: "6caacece-1092-4719-b448-df3a9aaf1701",
+  //   scope: "https://azuremeowmed.onmicrosoft.com/6caacece-1092-4719-b448-df3a9aaf1701",
+  //   // redirectUri is Optional as a default is calculated based on app type/web location
+  //   redirectUri: "https://happy-dune-0b8e1ec03.5.azurestaticapps.net/",
+  //   navigatorKey: navigatorKey,
+  //   webUseRedirect: true, // default is false - on web only, forces a redirect flow instead of popup auth
+  //   //Optional parameter: Centered CircularProgressIndicator while rendering web page in WebView
+  //   loader: Center(child: CircularProgressIndicator()),
+  // );
+
+  static final Config configB2Ca = Config(
     tenant: "e6ec6ab7-2331-40ca-b7bf-91f68aa466a1",
     clientId: "6caacece-1092-4719-b448-df3a9aaf1701",
     scope: "https://azuremeowmed.onmicrosoft.com/6caacece-1092-4719-b448-df3a9aaf1701",
-    // redirectUri is Optional as a default is calculated based on app type/web location
-    redirectUri: "https://happy-dune-0b8e1ec03.5.azurestaticapps.net/",
+    // redirectUri: "https://login.live.com/oauth20_desktop.srf", // Note: this is the default for Mobile
+    // clientSecret: "YOUR_CLIENT_SECRET", // Note: do not include secret in publicly available applications
+    isB2C: true,
+    policy: "B2C_1_azuremeowmedsigninonly",
     navigatorKey: navigatorKey,
-    webUseRedirect: true, // default is false - on web only, forces a redirect flow instead of popup auth
-    //Optional parameter: Centered CircularProgressIndicator while rendering web page in WebView
-    loader: Center(child: CircularProgressIndicator()),
   );
 
 
@@ -54,13 +65,12 @@ class LoggedOutState implements LoginState {
         backendType = BackendType.azure;
         break;
       case 'azure1':
-        AadOAuth oauth = new AadOAuth(config);
+        AadOAuth oauth = new AadOAuth(configB2Ca);
         final result = oauth.login();
         String? accessToken = oauth.getAccessToken() as String?;
-        
         String at = accessToken ?? "";
         backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
-        authKey = accessToken as String;
+        authKey = at;
         auth = AzureKeyAuth(authKey);
         backendType = BackendType.azure;
         break;
