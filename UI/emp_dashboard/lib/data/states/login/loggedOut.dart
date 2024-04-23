@@ -15,11 +15,12 @@ import 'package:aad_oauth/model/config.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 enum BackendType { aws, azure, azure1, mock }
+final navigatorKey =  GlobalKey<NavigatorState>();
 
-final navigatorKey = GlobalKey<NavigatorState>();
 
 class LoggedOutState implements LoginState {
   LoggedOutState() {}
+
 
   // static final Config config = Config(
   //   tenant: "e6ec6ab7-2331-40ca-b7bf-91f68aa466a1",
@@ -32,41 +33,29 @@ class LoggedOutState implements LoginState {
   //   //Optional parameter: Centered CircularProgressIndicator while rendering web page in WebView
   //   loader: Center(child: CircularProgressIndicator()),
   // );
-
+  
   static final Config configB2Ca = Config(
     tenant: "azuremeowmed",
     clientId: "6caacece-1092-4719-b448-df3a9aaf1701",
     scope: "openid",
-    redirectUri:
-        "https://happy-dune-0b8e1ec03.5.azurestaticapps.net", // Note: this is the default for Mobile
-
-    clientSecret: dotenv.env[
-        'CLIENT_SECRET'], // Note: do not include secret in publicly available applications
+    redirectUri: "https://happy-dune-0b8e1ec03.5.azurestaticapps.net", // Note: this is the default for Mobile
+    
+    clientSecret: dotenv.env['CLIENT_SECRET'], // Note: do not include secret in publicly available applications
     isB2C: true,
     policy: "B2C_1_azuremeowmedsigninonly",
-    // tokenIdentifier: "",
+    tokenIdentifier: "",
     navigatorKey: navigatorKey,
   );
-  static final AadOAuth oauth = AadOAuth(configB2Ca);
+  
 
-  static Future<String?> azureB2CLogin() async {
-    try {
-      final result = await oauth.login();
-      result.fold(
-        (failure) => print(failure.toString()),
-        (token) => print('Logged in successfully, your access token: $token'),
-      );
-      String? accessToken = await oauth.getAccessToken();
-      print(accessToken);
-      return accessToken;
-    } catch (e) {
-      print(e.toString());
-      print("penis");
-      throw e;
-    }
+  static Future<String?> azureB2CLogin() async{
+    AadOAuth oauth = new AadOAuth(configB2Ca);
+    final result = await oauth.login();
+    String? accessToken = await oauth.getAccessToken();
+    return accessToken;
   }
 
-  static Future<ApiClient> getApiClientFromData(
+  static  Future<ApiClient> getApiClientFromData(
       String username, String password, String backendUrl) async {
     String authKey;
     Authentication? auth;
@@ -92,13 +81,12 @@ class LoggedOutState implements LoginState {
         // String? accessToken = oauth.getAccessToken() as String?;
         // String at = accessToken ?? "";
         String at = "";
-        try {
-          await azureB2CLogin().then((value) {
-            at = value ?? "";
-          });
-        } catch (e) {
-          print(e.toString());
-          throw e;
+        try{
+        await azureB2CLogin().then((value){
+          at = value ?? "";
+        });
+        } catch (NotInitializedError) {
+          break;
         }
         backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
         authKey = at;
@@ -126,8 +114,7 @@ class LoggedOutState implements LoginState {
 
   Future<LoginState> login(
       String username, String password, String backendUrl) async {
-    ApiClient client =
-        await getApiClientFromData(username, password, backendUrl);
+    ApiClient client = await getApiClientFromData(username, password, backendUrl);
 
     final contractService = ContractService(client);
     final customerService = CustomerService(client);
