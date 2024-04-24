@@ -1005,12 +1005,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   cityController.text = "Musterstadt";
                   ibanController.text = "DE12345678901234567890";
                   bicController.text = "ABCDEF12ABC";
-                  startDateController.text = "01.01.2022";
-                  endDateController.text = "31.02.2022";
+                  startDateController.text = "01.08.2024";
+                  endDateController.text = "31.10.2024";
                   coverageController.text = "1000";
                   catNameController.text = "Minka";
-                  catBirthDateController.text = "01.01.2020";
-                  weightController.text = "50000";
+                  catBirthDateController.text = "01.01.2023";
+                  weightController.text = "7000";
                   nameController.text = "Max Mustermann";
 
                   selectedBreedController.text = "Abyssinian";
