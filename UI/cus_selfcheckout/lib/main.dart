@@ -217,6 +217,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     labelText: "BackendUrl",
                   ),
                 )),
+                TextButton(
+                onPressed: () {
+                  _backendController.text = "https://meowmedazure-apim.azure-api.net/customer";
+                },
+                child: Text("Azure Backend")),
+                TextButton(
+                onPressed: () {
+                  _backendController.text = "ich kenne euer customer backend nicht lol";
+                },
+                child: Text("AWS Backend")),
             Row(
               children: [
                 Text(
