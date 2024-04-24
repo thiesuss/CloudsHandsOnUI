@@ -35,10 +35,16 @@ class _ApplicationPageState extends State<ApplicationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final reloadButton = IconButton(
+      icon: Icon(Icons.refresh),
+      onPressed: () async {
+        setState(() {});
+      },
+    );
     return Scaffold(
         body: ListView(
       children: [
-        Header("Applications", []),
+        Header("Applications", [reloadButton]),
         SizedBox(height: 20),
         FutureBuilder<CachedObj<ApplicationRes>?>(
           future: applicationService.nextApplication(),
@@ -49,6 +55,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
                 child: CircularProgressIndicator(),
               );
             }
+
             if (snapshot.hasError) {
               return buildErrorTile(
                 "Fehler bei nextApplication(): ",
@@ -101,7 +108,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
                     title: "Email", value: application.customer!.email),
                 ApplicationInformation(
                   title: "Gerburtsdatum",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.customer!.birthDate),
                 ),
                 ApplicationInformation(
@@ -140,12 +147,12 @@ class _ApplicationPageState extends State<ApplicationPage> {
                 ),
                 ApplicationInformation(
                   title: "Startdatum",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.contract!.startDate),
                 ),
                 ApplicationInformation(
                   title: "Enddatum",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.contract!.endDate),
                 ),
                 ApplicationInformation(
@@ -165,7 +172,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
                 ),
                 ApplicationInformation(
                   title: "Geburtsdatum der Katze",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.contract!.birthDate),
                 ),
                 ApplicationInformation(

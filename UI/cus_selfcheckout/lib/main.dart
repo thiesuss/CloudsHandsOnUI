@@ -99,10 +99,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       await defaultApi.createApplication(applicationReq);
+      clear();
+      setState(() {});
+      error.add(null);
     } catch (e) {
       error.add(e.toString());
       rethrow;
     }
+  }
+
+  void clear() {
+    firstNameController.text = "";
+    lastNameController.text = "";
+    emailController.text = "";
+    birthDateController.text = "";
+    socialSecurityNumberController.text = "";
+    taxIdController.text = "";
+    streetController.text = "";
+    houseNumberController.text = "";
+    zipCodeController.text = "";
+    cityController.text = "";
+    ibanController.text = "";
+    bicController.text = "";
+    startDateController.text = "";
+    endDateController.text = "";
+    coverageController.text = "";
+    catNameController.text = "";
+    catBirthDateController.text = "";
+    weightController.text = "";
+    nameController.text = "";
+    selectedBreedController.text = "";
+    selectedColorController.text = "";
+    selectedPersonalityController.text = "";
+    selectedEnvironmentController.text = "";
+    selectedTitleController.text = "";
+    isNeutered = false;
+    selectedBreed = null;
+    selectedColor = null;
+    selectedPersonality = null;
+    selectedEnvironment = null;
+    selectedTitle = null;
   }
 
   Future<double> reloadRate() async {
@@ -217,6 +253,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     labelText: "BackendUrl",
                   ),
                 )),
+            TextButton(
+                onPressed: () {
+                  _backendController.text =
+                      "https://meowmedazure-apim.azure-api.net/customer";
+                },
+                child: Text("Azure Backend")),
+            TextButton(
+                onPressed: () {
+                  _backendController.text =
+                      "ich kenne euer customer backend nicht lol";
+                },
+                child: Text("AWS Backend")),
             Row(
               children: [
                 Text(
@@ -995,12 +1043,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   cityController.text = "Musterstadt";
                   ibanController.text = "DE12345678901234567890";
                   bicController.text = "ABCDEF12ABC";
-                  startDateController.text = "01.01.2022";
-                  endDateController.text = "31.02.2022";
+                  startDateController.text = "01.08.2024";
+                  endDateController.text = "31.10.2024";
                   coverageController.text = "1000";
                   catNameController.text = "Minka";
-                  catBirthDateController.text = "01.01.2020";
-                  weightController.text = "50000";
+                  catBirthDateController.text = "01.01.2023";
+                  weightController.text = "7000";
                   nameController.text = "Max Mustermann";
 
                   selectedBreedController.text = "Abyssinian";

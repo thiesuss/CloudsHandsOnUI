@@ -45,6 +45,10 @@ class ApplicationService implements StatefullObj {
 
   Future<void> updateApplication(CachedObj<ApplicationRes> application) async {
     final applicationRes = application.getObj();
+    applicationRes.contract!.startDate = applicationRes.contract!.startDate.add(Duration(days: 1));
+    applicationRes.contract!.endDate = applicationRes.contract!.endDate.add(Duration(days: 1));
+    applicationRes.contract!.birthDate.add(Duration(days: 1)); //cat
+    applicationRes.customer!.birthDate.add(Duration(days: 1)); //cus
     await applicationApi.updateApplication(applicationRes.id!, applicationRes);
     repo.add(application);
   }
