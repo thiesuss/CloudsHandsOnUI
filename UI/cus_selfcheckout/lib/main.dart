@@ -43,7 +43,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void _apply() async {
-    if (!(_formKey.currentState as FormState).validate()) return;
+    if (!(_formKey.currentState as FormState).validate()) {
+      error.add("Bitte alle Felder korrekt ausfüllen");
+      return;
+    }
     error.add(null);
     final api = ApiClient(
       basePath: _backendController.text,
