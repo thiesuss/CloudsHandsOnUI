@@ -101,7 +101,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
                     title: "Email", value: application.customer!.email),
                 ApplicationInformation(
                   title: "Gerburtsdatum",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.customer!.birthDate),
                 ),
                 ApplicationInformation(
@@ -140,12 +140,12 @@ class _ApplicationPageState extends State<ApplicationPage> {
                 ),
                 ApplicationInformation(
                   title: "Startdatum",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.contract!.startDate),
                 ),
                 ApplicationInformation(
                   title: "Enddatum",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.contract!.endDate),
                 ),
                 ApplicationInformation(
@@ -165,7 +165,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
                 ),
                 ApplicationInformation(
                   title: "Geburtsdatum der Katze",
-                  value: DateFormat("dd.mm.yyyy")
+                  value: DateFormat("dd.MM.yyyy")
                       .format(application.contract!.birthDate),
                 ),
                 ApplicationInformation(
