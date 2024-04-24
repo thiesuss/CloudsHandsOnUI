@@ -43,7 +43,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void _apply() async {
-    if (!(_formKey.currentState as FormState).validate()) return;
+    if (!(_formKey.currentState as FormState).validate()) {
+      error.add("Bitte alle Felder korrekt ausfüllen");
+      return;
+    }
     error.add(null);
     final api = ApiClient(
       basePath: _backendController.text,
@@ -62,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bic: bicController.text,
       name: nameController.text,
     );
-
+    final weight = double.parse(weightController.text);
     final applicationReq = ApplicationReq(
         customer: CustomerReq(
           email: emailController.text,
@@ -76,17 +79,23 @@ class _MyHomePageState extends State<MyHomePage> {
           bankDetails: bankDetails,
         ),
         contract: Contract(
-            startDate: DateFormat('dd.MM.yyyy').parse(startDateController.text),
-            endDate: DateFormat('dd.MM.yyyy').parse(endDateController.text),
+            startDate: DateFormat('dd.MM.yyyy')
+                .parse(startDateController.text)
+                .add(const Duration(days: 1)),
+            endDate: DateFormat('dd.MM.yyyy')
+                .parse(endDateController.text)
+                .add(const Duration(days: 1)),
             coverage: rate,
             catName: catNameController.text,
             breed: selectedBreed!,
             color: selectedColor!,
-            birthDate: DateFormat('dd.MM.yyyy').parse(birthDateController.text),
+            birthDate: DateFormat('dd.MM.yyyy')
+                .parse(birthDateController.text)
+                .add(const Duration(days: 1)),
             neutered: isNeutered,
             personality: selectedPersonality!,
             environment: selectedEnvironment!,
-            weight: double.parse(weightController.text)));
+            weight: weight));
 
     try {
       await defaultApi.createApplication(applicationReq);
@@ -97,26 +106,34 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<double> reloadRate() async {
+    rate.add(0.0);
     final api = ApiClient(
       basePath: _backendController.text,
     );
     final defaultApi = DefaultApi(api);
+    final zipCode = int.parse(zipCodeController.text);
+    final weight = double.parse(weightController.text);
+    final coverage = double.parse(coverageController.text);
 
     final rateCalculationReq = RateCalculationReq(
-        coverage: double.parse(coverageController.text),
+        coverage: coverage,
         breed: selectedBreed!,
         color: selectedColor!,
-        birthDate: DateFormat('dd.MM.yyyy').parse(catBirthDateController.text),
+        birthDate: DateFormat('dd.MM.yyyy')
+            .parse(catBirthDateController.text)
+            .add(const Duration(days: 1)),
         neutered: isNeutered,
         personality: selectedPersonality!,
         environment: selectedEnvironment!,
-        weight: double.parse(weightController.text),
-        zipCode: int.parse(zipCodeController.text));
+        weight: weight,
+        zipCode: zipCode);
     try {
       final rateRaw = await defaultApi.calculateRate(rateCalculationReq);
-      if (rateRaw == null) throw Exception('Rate is null');
-      final rate = double.parse(rateRaw.rate.toString());
-      return rate;
+      if (rateRaw == null || rateRaw.rate == null)
+        throw Exception('Rate is null');
+      final newRate = rateRaw.rate!.toDouble();
+      rate.add(newRate);
+      return newRate;
     } catch (e) {
       error.add(e.toString());
       rethrow;
@@ -133,6 +150,13 @@ class _MyHomePageState extends State<MyHomePage> {
   api.Personality? selectedPersonality = api.Personality.anhnglich;
   api.Environment? selectedEnvironment = api.Environment.drauen;
   api.Title? selectedTitle;
+
+  TextEditingController selectedBreedController = TextEditingController();
+  TextEditingController selectedColorController = TextEditingController();
+  TextEditingController selectedPersonalityController = TextEditingController();
+  TextEditingController selectedEnvironmentController = TextEditingController();
+  TextEditingController selectedTitleController = TextEditingController();
+
   bool isNeutered = false;
 
   TextEditingController streetController = TextEditingController();
@@ -270,11 +294,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: DropdownMenu<api.Title?>(
                                 initialSelection: selectedTitle,
                                 requestFocusOnTap: true,
+                                controller: selectedTitleController,
                                 label: const Text('Titel'),
                                 onSelected: (api.Title? titleStatus) {
-                                  setState(() {
-                                    selectedTitle = titleStatus;
-                                  });
+                                  selectedTitleController.text =
+                                      titleStatus.toString();
+                                  selectedTitle = titleStatus;
                                 },
                                 dropdownMenuEntries: [
                                   DropdownMenuEntry(value: null, label: ""),
@@ -788,12 +813,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Breed>(
                             width: 230,
+                            controller: selectedBreedController,
                             initialSelection: selectedBreed,
                             label: const Text('Rasse'),
                             onSelected: (Breed? value) {
-                              setState(() {
-                                selectedBreed = value!;
-                              });
+                              selectedBreedController.text = value.toString();
+                              selectedBreed = value!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -818,12 +843,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Color>(
                             width: 230,
+                            controller: selectedColorController,
                             initialSelection: selectedColor,
                             label: const Text('Farbe'),
                             onSelected: (Color? value) {
-                              setState(() {
-                                selectedColor = value!;
-                              });
+                              selectedColorController.text = value.toString();
+                              selectedColor = value!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -849,12 +874,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Personality>(
                             width: 230,
+                            controller: selectedPersonalityController,
                             initialSelection: selectedPersonality,
                             label: const Text('Persönlichkeit'),
                             onSelected: (Personality? value) {
-                              setState(() {
-                                selectedPersonality = value!;
-                              });
+                              selectedPersonalityController.text =
+                                  value.toString();
+                              selectedPersonality = value!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -880,12 +906,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: const EdgeInsets.only(bottom: 20),
                           child: DropdownMenu<Environment>(
                             width: 230,
+                            controller: selectedEnvironmentController,
                             initialSelection: selectedEnvironment,
                             label: const Text('Umgebung'),
                             onSelected: (Environment? env) {
-                              setState(() {
-                                selectedEnvironment = env!;
-                              });
+                              selectedEnvironmentController.text =
+                                  env.toString();
+                              selectedEnvironment = env!;
                             },
                             dropdownMenuEntries: [
                               DropdownMenuEntry(
@@ -954,12 +981,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(child: Container()),
               ],
             ),
-            Row(
-              children: [
-                Expanded(child: Container()),
-                Expanded(child: Container()),
-              ],
-            ),
+            TextButton(
+                onPressed: () {
+                  firstNameController.text = "Max";
+                  lastNameController.text = "Mustermann";
+                  emailController.text = "max@musterman.de";
+                  birthDateController.text = "01.01.1990";
+                  socialSecurityNumberController.text = "12345678A123";
+                  taxIdController.text = "12345678901";
+                  streetController.text = "Musterstraße";
+                  houseNumberController.text = "1";
+                  zipCodeController.text = "12345";
+                  cityController.text = "Musterstadt";
+                  ibanController.text = "DE12345678901234567890";
+                  bicController.text = "ABCDEF12ABC";
+                  startDateController.text = "01.01.2022";
+                  endDateController.text = "31.02.2022";
+                  coverageController.text = "1000";
+                  catNameController.text = "Minka";
+                  catBirthDateController.text = "01.01.2020";
+                  weightController.text = "50000";
+                  nameController.text = "Max Mustermann";
+
+                  selectedBreedController.text = "Abyssinian";
+                  selectedColorController.text = "Blau";
+                  selectedPersonalityController.text = "Anhnglich";
+                  selectedEnvironmentController.text = "Drauen";
+                  selectedBreed = Breed.abyssinian;
+                  selectedColor = Color.blau;
+                  selectedPersonality = Personality.anhnglich;
+                  selectedEnvironment = Environment.drauen;
+                  setState(() {
+                    isNeutered = true;
+                  });
+                },
+                child: Text("Fill Random")),
             StreamBuilder<String?>(
               stream: error,
               builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
