@@ -82,9 +82,7 @@ class LoggedOutState implements LoginState {
         // String at = accessToken ?? "";
         String at = "";
         try{
-        await azureB2CLogin().then((value){
-          at = value ?? "";
-        });
+          at = await azureB2CLogin() as String;
         } catch (NotInitializedError) {
           break;
         }
