@@ -51,11 +51,15 @@ class LoggedOutState implements LoginState {
   static Future<String?> azureB2CLogin() async{
     final AadOAuth oauth = AadOAuth(configB2Ca);
     final result = await oauth.login();
+    String? accessToken;
     result.fold(
       (failure) => print("Error: ${failure.toString()}"),
-      (token) => print("Token: ${token.accessToken}"),
+      (token) {
+        print("Token: ${token.accessToken}");
+        accessToken = token.accessToken;
+      },
     );
-    String? accessToken = await oauth.getAccessToken();
+    //accessToken = await oauth.getAccessToken();
     return accessToken;
   }
 
