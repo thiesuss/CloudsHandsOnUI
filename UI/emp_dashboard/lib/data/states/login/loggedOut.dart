@@ -90,7 +90,8 @@ class LoggedOutState implements LoginState {
         }
         backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
         authKey = at;
-        auth = AzureKeyAuth("Bearer " + authKey);
+        print(at);
+        auth = AzureKeyAuth(authKey);
         backendType = BackendType.azure;
         break;
       case '':
