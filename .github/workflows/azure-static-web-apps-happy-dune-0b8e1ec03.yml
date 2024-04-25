@@ -25,9 +25,13 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-      - run: pwd
-      - run: flutter pub get
-      - run: flutter build web --no-tree-shake-icons
+      - run: flutter config --no-cli-animations
+      - name: Resolve flutter dependencies
+        run: flutter pub get
+        working-directory: ./UI/emp_dashboard
+      - name: Build flutter app
+        run: flutter build web --no-tree-shake-icons
+        working-directory: ./UI/emp_dashboard
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -37,10 +41,9 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/UI/emp_dashboard/build/web" # App source code path
+          app_location: ./UI/emp_dashboard/build/web # App source code path
           api_location: "/UI/internalapi" # Api source code path - optional
-          output_location: "/UI/emp_dashboard/build/web" # Built app content directory - optional
-          app_build_command: "flutter build web"
+          skip_app_build: true
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
