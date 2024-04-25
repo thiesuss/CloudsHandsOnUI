@@ -9,7 +9,7 @@ class AzureKeyAuth implements Authentication {
   @override
   Future<void> applyToParams(
       List<QueryParam> queryParams, Map<String, String> headerParams) {
-    headerParams["Ocp-Apim-Subscription-Key"] = apiKey;
+    headerParams["Authorization"] = apiKey;
     return Future.value();
   }
 }
