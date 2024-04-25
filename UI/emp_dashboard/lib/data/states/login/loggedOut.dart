@@ -49,9 +49,13 @@ class LoggedOutState implements LoginState {
   
 
   static Future<String?> azureB2CLogin() async{
-    AadOAuth oauth = new AadOAuth(configB2Ca);
+    AadOAuth oauth = AadOAuth(configB2Ca);
     final result = await oauth.login();
     String? accessToken = await oauth.getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      throw Exception("Access token is empty");
+    }
+
     return accessToken;
   }
 
