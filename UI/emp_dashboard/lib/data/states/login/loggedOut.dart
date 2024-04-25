@@ -49,13 +49,13 @@ class LoggedOutState implements LoginState {
   
 
   static Future<String?> azureB2CLogin() async{
-    AadOAuth oauth = AadOAuth(configB2Ca);
+    final AadOAuth oauth = AadOAuth(configB2Ca);
     final result = await oauth.login();
+    result.fold(
+      (failure) => print("Error: ${failure.toString()}"),
+      (token) => print("Token: ${token.accessToken}"),
+    );
     String? accessToken = await oauth.getAccessToken();
-    if (accessToken == null || accessToken.isEmpty) {
-      throw Exception("Access token is empty");
-    }
-
     return accessToken;
   }
 
@@ -80,19 +80,13 @@ class LoggedOutState implements LoginState {
         backendType = BackendType.azure;
         break;
       case 'azure1':
-        // AadOAuth oauth = new AadOAuth(configB2Ca);
-        // final result = oauth.login();
-        // String? accessToken = oauth.getAccessToken() as String?;
-        // String at = accessToken ?? "";
-        String at = "";
+        String authKey;
         try{
-          at = await azureB2CLogin() as String;
+          authKey = await azureB2CLogin() as String;
         } catch (NotInitializedError) {
           break;
         }
         backendUrl = 'https://meowmedazure-apim.azure-api.net/internal/';
-        authKey = at;
-        print(at);
         auth = AzureKeyAuth(authKey);
         backendType = BackendType.azure;
         break;
